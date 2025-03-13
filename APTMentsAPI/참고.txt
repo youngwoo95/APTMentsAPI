@@ -1,0 +1,2 @@
+﻿[DB 스캐폴드]
+Scaffold-DbContext "Server=123.2.159.98;Port=3306;Database=AptmentWorks;User=root;Password=stecdev1234!;" Pomelo.EntityFrameworkCore.MySql -OutputDir DBModels -ContextDir Repository -Context AptContext -Force
