@@ -1,7 +1,9 @@
 ﻿using APTMentsAPI.DBModels;
+using APTMentsAPI.DTO;
 using APTMentsAPI.DTO.InCarDTO;
 using APTMentsAPI.DTO.OutCarDTO;
 using APTMentsAPI.DTO.PatrolDTO;
+using APTMentsAPI.DTO.ViewsDTO;
 using APTMentsAPI.Repository.TheHamBiz;
 using APTMentsAPI.Services.Logger;
 
@@ -233,6 +235,33 @@ namespace APTMentsAPI.Services.TheHamBizService
             {
                 LoggerService.FileLogMessage(ex.ToString());
                 return -1;
+            }
+        }
+
+        /// <summary>
+        /// 입-출차 리스트
+        /// </summary>
+        /// <returns></returns>
+        public async Task<ResponseUnit<PageNationDTO<InOutViewListDTO>?>> InOutViewListService(int pageNumber, int PageSize)
+        {
+            try
+            {
+                if (pageNumber == 0)
+                    return new ResponseUnit<PageNationDTO<InOutViewListDTO>?>() { message = "필수값이 누락되었습니다.", data = null, code = 200 };
+                if (PageSize == 0)
+                    return new ResponseUnit<PageNationDTO<InOutViewListDTO>?>() { message = "필수값이 누락되었습니다.", data = null, code = 200 };
+
+                var model = await TheHamBizRepository.InOutViewListAsync(pageNumber, PageSize);
+                return new ResponseUnit<PageNationDTO<InOutViewListDTO>?>()
+                {
+                    message = "요청이 정상 처리되었습니다",
+                    data = model,
+                    code = 200
+                };
+            }catch(Exception ex)
+            {
+                LoggerService.FileLogMessage(ex.ToString());
+                return new ResponseUnit<PageNationDTO<InOutViewListDTO>?>() { message = "서버에서 요청을 처리하지 못하였습니다.", data = null, code = 500 };
             }
         }
 

@@ -1,4 +1,6 @@
 ﻿using APTMentsAPI.DBModels;
+using APTMentsAPI.DTO;
+using APTMentsAPI.DTO.ViewsDTO;
 
 namespace APTMentsAPI.Repository.TheHamBiz
 {
@@ -25,6 +27,13 @@ namespace APTMentsAPI.Repository.TheHamBiz
         /// <param name="PatrolLogList"></param>
         /// <returns></returns>
         Task<int> AddPatrolAsync(Patrolpadlogtb PatrolTB, List<Patrollogtblist> PatrolLogList);
+
+        /// <summary>
+        /// 입-출차 리스트 조회
+        /// </summary>
+        /// <returns></returns>
+        //Task<PageNationDTO<InOutViewListDTO>?> InOutViewListAsync();
+        Task<PageNationDTO<InOutViewListDTO>?> InOutViewListAsync(int pageNumber, int pageSize);
 
         /// <summary>
         /// IO_SEQ 검색

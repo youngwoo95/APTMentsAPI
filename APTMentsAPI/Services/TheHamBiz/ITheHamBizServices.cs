@@ -1,6 +1,8 @@
-﻿using APTMentsAPI.DTO.InCarDTO;
+﻿using APTMentsAPI.DTO;
+using APTMentsAPI.DTO.InCarDTO;
 using APTMentsAPI.DTO.OutCarDTO;
 using APTMentsAPI.DTO.PatrolDTO;
+using APTMentsAPI.DTO.ViewsDTO;
 
 namespace APTMentsAPI.Services.TheHamBizService
 {
@@ -26,6 +28,15 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// <param name="dto"></param>
         /// <returns></returns>
         public Task<int> AddPatrolService(RequestPadTheHamBizDTO dto);
+
+        /// <summary>
+        /// 입-출차 리스트
+        /// </summary>
+        /// <returns></returns>
+        public Task<ResponseUnit<PageNationDTO<InOutViewListDTO>?>> InOutViewListService(int pageNumber, int pageSize);
+
+
+
 
     }
 }
