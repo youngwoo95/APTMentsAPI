@@ -21,6 +21,18 @@ namespace APTMentsAPI.Controllers.TheHanBizAPI
             this.TheHamBizServices = _thehambizservices;
         }
 
+        /*
+         출차는 무조건 1번을 보내고,
+            입차는 IS_WAIT에 따라 API전송 횟수가 틀려집니다.
+            정기차량(입주민) 0으로 전송
+            방문차량, 블랙리스트 1로 전송후 입차시 2로 전송
+            예약차량 현장옵션에 따라 틀립니다.
+            - 예약차량인데 방문증을 뽑고 들어가는 현장: 1로 전송 후 2번 전송
+            - 예약차량 자동입차 현장인경우: 0으로 전송
+        
+
+        --> IS_WAIT 따라서 요청횟수가 달라진다고 했는데 IS_WAIT가 0이 아닌 상태 1일때의 IO_STATUS_TP_NM의 값은 뭔데? 우리한테 쏠거아님?
+         */
         /// <summary>
         /// 더함비즈 입차 API
         /// </summary>
@@ -35,8 +47,10 @@ namespace APTMentsAPI.Controllers.TheHanBizAPI
                 var model = await TheHamBizServices.AddInCarSerivce(dto).ConfigureAwait(false);
                 if (model == 1)
                     return Ok(new ResponseDTO() { RES_CD = "1", RES_MSG = "요청이 정상처리되었습니다."});
+                else if(model == 0)
+                    return Ok(new ResponseDTO() { RES_CD = "0", RES_MSG = "잘못된 요청입니다."});
                 else if(model == 2)
-                    return Ok(new ResponseDTO() { RES_CD = "2", RES_MSG = "필수값이 누락되었습니다."});
+                    return Ok(new ResponseDTO() { RES_CD = "2", RES_MSG = "필수값이 누락되었습니다." });
                 else
                     return Ok(new ResponseDTO() { RES_CD = "-1", RES_MSG = "서버에서 요청을 처리하지 못하였습니다." });
             }
@@ -56,12 +70,13 @@ namespace APTMentsAPI.Controllers.TheHanBizAPI
         /// <returns></returns>
         [HttpPatch]
         [Route("io/out")]
-        public IActionResult OutCar([FromBody] RequestOutTheHamBizDTO patchDoc)
+        public async Task<IActionResult> OutCar([FromBody] RequestOutTheHamBizDTO dto)
         {
             try
             {
-                
-                return Ok(patchDoc);
+                var model = await TheHamBizServices.AddOutCarService(dto).ConfigureAwait(false);
+
+                return Ok(dto);
                 //return Ok(new ResponseDTO() { RES_CD = "1", RES_MSG =  });
             }
             catch(Exception ex)

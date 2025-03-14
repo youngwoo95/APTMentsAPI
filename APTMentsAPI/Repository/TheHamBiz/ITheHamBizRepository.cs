@@ -12,6 +12,13 @@ namespace APTMentsAPI.Repository.TheHamBiz
         Task<int> AddInCar(IoParkingHistory HistoryTB);
 
         /// <summary>
+        /// 출차 등록
+        /// </summary>
+        /// <param name="HistoryTB"></param>
+        /// <returns></returns>
+        Task<int> AddOutCar(IoParkingHistory HistoryTB);
+
+        /// <summary>
         /// IO_SEQ 검색
         /// </summary>
         /// <param name="ioseq"></param>

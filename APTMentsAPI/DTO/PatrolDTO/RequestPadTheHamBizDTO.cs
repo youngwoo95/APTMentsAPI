@@ -25,7 +25,7 @@
         /// <summary>
         /// 전체 데이터 개수
         /// </summary>
-        //public int TOT_CNT { get; set; }
+        public int TOT_CNT { get; set; }
 
         public List<PatListInfoDTO>? PAY_LOAD { get; set; } = new List<PatListInfoDTO>();
 

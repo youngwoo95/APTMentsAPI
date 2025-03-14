@@ -147,8 +147,9 @@ public partial class AptContext : DbContext
                 .HasComment("주차장 ID")
                 .HasColumnName("PARK_ID");
             entity.Property(e => e.RegDtm)
+                .HasMaxLength(255)
+                .IsFixedLength()
                 .HasComment("블랙리스트 등록 일시")
-                .HasColumnType("datetime")
                 .HasColumnName("REG_DTM");
             entity.Property(e => e.SPid)
                 .HasComment("IO_ParkingViewTB FK")
@@ -174,33 +175,33 @@ public partial class AptContext : DbContext
             entity.Property(e => e.Pid)
                 .HasColumnType("int(11)")
                 .HasColumnName("PID");
+            entity.Property(e => e.BlackListReason)
+                .HasMaxLength(255)
+                .HasComment("블랙리스트 사유")
+                .HasColumnName("BLACK_LIST_REASON");
             entity.Property(e => e.CarNum)
                 .HasMaxLength(255)
                 .HasComment("차량 번호")
                 .HasColumnName("CAR_NUM");
-            entity.Property(e => e.CreateDt)
-                .HasDefaultValueSql("current_timestamp()")
-                .HasComment("시스템 생성일자")
-                .HasColumnType("datetime")
-                .HasColumnName("CREATE_DT");
             entity.Property(e => e.Dong)
                 .HasMaxLength(255)
                 .HasComment("동")
                 .HasColumnName("DONG");
+            entity.Property(e => e.Etc)
+                .HasMaxLength(255)
+                .HasComment("ETC")
+                .HasColumnName("ETC");
             entity.Property(e => e.Ho)
                 .HasMaxLength(255)
                 .HasComment("호")
                 .HasColumnName("HO");
-            entity.Property(e => e.ImagePath1)
-                .HasMaxLength(255)
-                .HasComment("이미지 경로(입차)")
-                .HasColumnName("IMAGE_PATH1");
-            entity.Property(e => e.ImagePath2)
-                .HasMaxLength(255)
-                .HasComment("이미지 경로(출차)")
-                .HasColumnName("IMAGE_PATH2");
+            entity.Property(e => e.InCreateDt)
+                .HasDefaultValueSql("current_timestamp()")
+                .HasComment("시스템 생성일자")
+                .HasColumnType("datetime")
+                .HasColumnName("IN_CREATE_DT");
             entity.Property(e => e.InDtm)
-                .HasComment("입차 시간")
+                .HasComment("입차 시간 yyyy-MM-dd HH:mm:ss")
                 .HasColumnType("datetime")
                 .HasColumnName("IN_DTM");
             entity.Property(e => e.InGateId)
@@ -211,12 +212,28 @@ public partial class AptContext : DbContext
                 .HasMaxLength(255)
                 .HasComment("입차 게이트 명")
                 .HasColumnName("IN_GATE_NM");
+            entity.Property(e => e.InImagePath)
+                .HasMaxLength(255)
+                .HasComment("이미지 경로(입차)")
+                .HasColumnName("IN_IMAGE_PATH");
+            entity.Property(e => e.InLineNum)
+                .HasComment("입차 라인 번호")
+                .HasColumnType("int(11)")
+                .HasColumnName("IN_LINE_NUM");
+            entity.Property(e => e.InLprStatus)
+                .HasMaxLength(255)
+                .HasComment("입차 LPR 상태")
+                .HasColumnName("IN_LPR_STATUS");
+            entity.Property(e => e.InLprStatusNm)
+                .HasMaxLength(255)
+                .HasComment("입차 LPR 상태 명칭")
+                .HasColumnName("IN_LPR_STATUS_NM");
             entity.Property(e => e.InTicketTp)
                 .HasMaxLength(255)
-                .HasComment("입차 차량 구분")
+                .HasComment("입차 차량 구분 # 2 : 일반차량 6 : 정기차량")
                 .HasColumnName("IN_TICKET_TP");
             entity.Property(e => e.InTicketTpNm)
-                .HasMaxLength(50)
+                .HasMaxLength(255)
                 .HasComment("입차 차량 구분 명")
                 .HasColumnName("IN_TICKET_TP_NM");
             entity.Property(e => e.IoSeq)
@@ -231,13 +248,34 @@ public partial class AptContext : DbContext
                 .HasMaxLength(255)
                 .HasComment("입출 상태명")
                 .HasColumnName("IO_STATUS_TP_NM");
+            entity.Property(e => e.IsBlackList)
+                .HasMaxLength(255)
+                .HasComment("블랙리스트 여부 (입차처리 *블랙리스트로 표시) OR 입차대기 걸고 블랙리스트 표시")
+                .HasColumnName("IS_BLACK_LIST");
+            entity.Property(e => e.IsReservation)
+                .HasMaxLength(255)
+                .HasComment("예약차량여부 0,1")
+                .HasColumnName("IS_RESERVATION");
+            entity.Property(e => e.IsWait)
+                .HasMaxLength(255)
+                .HasComment("해당차량을 입차처리할건지 대기처리할건지 0: 입차, 1: 입차대기, 2:입차대기후 승인")
+                .HasColumnName("IS_WAIT");
+            entity.Property(e => e.IsWaitReason)
+                .HasMaxLength(255)
+                .HasComment("대기 걸린 차량의 이유 - 방문차량, 블랙리스트, 진입금지 그룹")
+                .HasColumnName("IS_WAIT_REASON");
             entity.Property(e => e.Memo)
                 .HasMaxLength(255)
                 .HasComment("메모")
                 .HasColumnName("MEMO");
-            entity.Property(e => e.OutDtm)
-                .HasComment("출차 시간")
+            entity.Property(e => e.OutCreateDt)
+                .HasDefaultValueSql("current_timestamp()")
+                .HasComment("시스템 생성일자")
                 .HasColumnType("datetime")
+                .HasColumnName("OUT_CREATE_DT");
+            entity.Property(e => e.OutDtm)
+                .HasMaxLength(255)
+                .HasComment("출차 시간")
                 .HasColumnName("OUT_DTM");
             entity.Property(e => e.OutGateId)
                 .HasMaxLength(255)
@@ -247,6 +285,22 @@ public partial class AptContext : DbContext
                 .HasMaxLength(255)
                 .HasComment("출차 게이트 명")
                 .HasColumnName("OUT_GATE_NM");
+            entity.Property(e => e.OutImagePath)
+                .HasMaxLength(255)
+                .HasComment("이미지 경로(출차)")
+                .HasColumnName("OUT_IMAGE_PATH");
+            entity.Property(e => e.OutLineNum)
+                .HasComment("출차 라인 번호")
+                .HasColumnType("int(11)")
+                .HasColumnName("OUT_LINE_NUM");
+            entity.Property(e => e.OutLprStatus)
+                .HasMaxLength(255)
+                .HasComment("출차 LPR 상태")
+                .HasColumnName("OUT_LPR_STATUS");
+            entity.Property(e => e.OutLprStatusNm)
+                .HasMaxLength(255)
+                .HasComment("출차 LPR 상태 명칭")
+                .HasColumnName("OUT_LPR_STATUS_NM");
             entity.Property(e => e.OutTicketTp)
                 .HasMaxLength(255)
                 .HasComment("출차 차량 구분")
@@ -263,6 +317,14 @@ public partial class AptContext : DbContext
                 .HasComment("주차 시간")
                 .HasColumnType("int(11)")
                 .HasColumnName("PARKING_DURATION");
+            entity.Property(e => e.RegDtm)
+                .HasMaxLength(255)
+                .HasComment("블랙리스트 등록일시")
+                .HasColumnName("REG_DTM");
+            entity.Property(e => e.VisitTime)
+                .HasComment("방문 시간 (방문포인트 사용 시간)")
+                .HasColumnType("int(11)")
+                .HasColumnName("VISIT_TIME");
         });
 
         modelBuilder.Entity<PatrolLogTblist>(entity =>

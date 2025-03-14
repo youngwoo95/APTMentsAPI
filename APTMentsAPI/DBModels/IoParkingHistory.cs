@@ -108,7 +108,7 @@ public partial class IoParkingHistory
     /// <summary>
     /// 블랙리스트 등록 일시
     /// </summary>
-    public DateTime? RegDtm { get; set; }
+    public string? RegDtm { get; set; }
 
     /// <summary>
     /// 이미지 경로

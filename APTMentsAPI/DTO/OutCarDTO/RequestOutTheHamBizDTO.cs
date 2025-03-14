@@ -97,6 +97,15 @@
         /// </summary>
         public string? ETC { get; set; }
 
+        /// <summary>
+        /// 주차 시간
+        /// </summary>
+        public int PARK_DURATION { get; set; }
+
+        /// <summary>
+        /// 방문 시간 (방문포인트 사용 시간)
+        /// </summary>
+        public int VISIT_TIME { get; set; }
     }
 
     public class RequestOutBlackListInfoDTO
