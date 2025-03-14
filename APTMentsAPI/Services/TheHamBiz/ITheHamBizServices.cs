@@ -1,5 +1,6 @@
 ﻿using APTMentsAPI.DTO.InCarDTO;
 using APTMentsAPI.DTO.OutCarDTO;
+using APTMentsAPI.DTO.PatrolDTO;
 
 namespace APTMentsAPI.Services.TheHamBizService
 {
@@ -18,6 +19,13 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// <param name="dto"></param>
         /// <returns></returns>
         public Task<int> AddOutCarService(RequestOutTheHamBizDTO dto);
+
+        /// <summary>
+        /// 순찰 등록
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        public Task<int> AddPatrolService(RequestPadTheHamBizDTO dto);
 
     }
 }

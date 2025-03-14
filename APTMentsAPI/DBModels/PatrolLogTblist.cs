@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace APTMentsAPI.DBModels;
 
-public partial class PatrolLogTblist
+public partial class Patrollogtblist
 {
     public int Pid { get; set; }
 
@@ -47,5 +47,5 @@ public partial class PatrolLogTblist
     /// </summary>
     public int SPid { get; set; }
 
-    public virtual PatrolPadLogTb SP { get; set; } = null!;
+    public virtual Patrolpadlogtb SP { get; set; } = null!;
 }

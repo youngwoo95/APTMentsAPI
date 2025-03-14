@@ -23,6 +23,11 @@
         public string? PATROL_START_DTM { get; set; }
 
         /// <summary>
+        /// 순찰 종료 일시 yyyy-MM-dd HH:mm:ss
+        /// </summary>
+        public string? PATROL_END_DTM { get; set; }
+
+        /// <summary>
         /// 전체 데이터 개수
         /// </summary>
         public int TOT_CNT { get; set; }

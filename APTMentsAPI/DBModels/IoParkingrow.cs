@@ -6,7 +6,7 @@ namespace APTMentsAPI.DBModels;
 /// <summary>
 /// 더함비즈 API_입출차 기록 테이블
 /// </summary>
-public partial class IoParkingHistory
+public partial class IoParkingrow
 {
     public int Pid { get; set; }
 
@@ -145,10 +145,9 @@ public partial class IoParkingHistory
     /// </summary>
     public DateTime CreateDt { get; set; }
 
-    /// <summary>
-    /// IO_ParkingViewTB FK
-    /// </summary>
-    public int SPid { get; set; }
+    public string? Memo { get; set; }
 
-    public virtual IoParkingViewTb SP { get; set; } = null!;
+    public virtual ICollection<IoParkingviewtb> IoParkingviewtbInPs { get; set; } = new List<IoParkingviewtb>();
+
+    public virtual ICollection<IoParkingviewtb> IoParkingviewtbOutPs { get; set; } = new List<IoParkingviewtb>();
 }

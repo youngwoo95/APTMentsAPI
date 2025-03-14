@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace APTMentsAPI.DBModels;
 
-public partial class PatrolPadLogTb
+public partial class Patrolpadlogtb
 {
     public int Pid { get; set; }
 
@@ -25,12 +25,12 @@ public partial class PatrolPadLogTb
     /// <summary>
     /// 순찰 시작 일시
     /// </summary>
-    public DateTime PatrolStartDtm { get; set; }
+    public string PatrolStartDtm { get; set; } = null!;
 
     /// <summary>
     /// 순찰 종료 일시
     /// </summary>
-    public DateTime PatrolEndDtm { get; set; }
+    public string PatrolEndDtm { get; set; } = null!;
 
     /// <summary>
     /// 전체 데이터 개수
@@ -42,5 +42,5 @@ public partial class PatrolPadLogTb
     /// </summary>
     public DateTime CreateDt { get; set; }
 
-    public virtual ICollection<PatrolLogTblist> PatrolLogTblists { get; set; } = new List<PatrolLogTblist>();
+    public virtual ICollection<Patrollogtblist> Patrollogtblists { get; set; } = new List<Patrollogtblist>();
 }

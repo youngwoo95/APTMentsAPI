@@ -4,6 +4,7 @@ using APTMentsAPI.DTO.PatrolDTO;
 using APTMentsAPI.Services.Logger;
 using APTMentsAPI.Services.TheHamBizService;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace APTMentsAPI.Controllers.TheHanBizAPI
 {
@@ -44,6 +45,10 @@ namespace APTMentsAPI.Controllers.TheHanBizAPI
         {
             try
             {
+                var apiUrl = $"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}";
+                var serializedDto = JsonSerializer.Serialize(dto);
+                LoggerService.FileAPIMessage($"{apiUrl}>> [INFO] {serializedDto}");
+
                 var model = await TheHamBizServices.AddInCarSerivce(dto).ConfigureAwait(false);
                 if (model == 1)
                     return Ok(new ResponseDTO() { RES_CD = "1", RES_MSG = "요청이 정상처리되었습니다."});
@@ -56,6 +61,7 @@ namespace APTMentsAPI.Controllers.TheHanBizAPI
             }
             catch (Exception ex)
             {
+                LoggerService.FileAPIMessage($"[ERROR]_{ex.ToString()}");
                 LoggerService.FileLogMessage(ex.ToString());
                 return Ok(new ResponseDTO() { RES_CD = "-1", RES_MSG = "서버에서 요청을 처리하지 못하였습니다." });
             }
@@ -74,13 +80,23 @@ namespace APTMentsAPI.Controllers.TheHanBizAPI
         {
             try
             {
-                var model = await TheHamBizServices.AddOutCarService(dto).ConfigureAwait(false);
+                var apiUrl = $"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}";
+                var serializedDto = JsonSerializer.Serialize(dto);
+                LoggerService.FileAPIMessage($"{apiUrl}>> [INFO] {serializedDto}");
 
-                return Ok(dto);
-                //return Ok(new ResponseDTO() { RES_CD = "1", RES_MSG =  });
+                var model = await TheHamBizServices.AddOutCarService(dto).ConfigureAwait(false);
+                if (model == 1)
+                    return Ok(new ResponseDTO() { RES_CD = "1", RES_MSG = "요청이 정상처리되었습니다." });
+                else if (model == 0)
+                    return Ok(new ResponseDTO() { RES_CD = "0", RES_MSG = "잘못된 요청입니다." });
+                else if (model == 2)
+                    return Ok(new ResponseDTO() { RES_CD = "2", RES_MSG = "필수값이 누락되었습니다." });
+                else
+                    return Ok(new ResponseDTO() { RES_CD = "-1", RES_MSG = "서버에서 요청을 처리하지 못하였습니다." });
             }
             catch(Exception ex)
             {
+                LoggerService.FileAPIMessage($"[ERROR]_{ex.ToString()}");
                 LoggerService.FileLogMessage(ex.ToString());
                 return Ok(new ResponseDTO() { RES_CD = "2", RES_MSG = "서버에서 요청을 처리하지 못하였습니다." });
             }
@@ -93,14 +109,27 @@ namespace APTMentsAPI.Controllers.TheHanBizAPI
         /// <returns></returns>
         [HttpPost]
         [Route("patrol")]
-        public IActionResult PatrolPad([FromBody] RequestPadTheHamBizDTO dto)
+        public async Task<IActionResult> PatrolPad([FromBody] RequestPadTheHamBizDTO dto)
         {
             try
             {
-                return Ok(dto);
+                var apiUrl = $"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}";
+                var serializedDto = JsonSerializer.Serialize(dto);
+                LoggerService.FileAPIMessage($"{apiUrl}>> [INFO] {serializedDto}");
+
+                var model = await TheHamBizServices.AddPatrolService(dto).ConfigureAwait(false);
+                if (model == 1)
+                    return Ok(new ResponseDTO() { RES_CD = "1", RES_MSG = "요청이 정상처리되었습니다." });
+                else if (model == 0)
+                    return Ok(new ResponseDTO() { RES_CD = "0", RES_MSG = "잘못된 요청입니다." });
+                else if (model == 2)
+                    return Ok(new ResponseDTO() { RES_CD = "2", RES_MSG = "필수값이 누락되었습니다." });
+                else
+                    return Ok(new ResponseDTO() { RES_CD = "-1", RES_MSG = "서버에서 요청을 처리하지 못하였습니다." });
             }
             catch(Exception ex)
             {
+                LoggerService.FileAPIMessage($"[ERROR]_{ex.ToString()}");
                 LoggerService.FileLogMessage(ex.ToString());
                 return Ok(new ResponseDTO() { RES_CD = "2", RES_MSG = "서버에서 요청을 처리하지 못하였습니다." });
             }
