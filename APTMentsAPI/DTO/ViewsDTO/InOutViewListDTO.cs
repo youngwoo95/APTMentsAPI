@@ -88,5 +88,15 @@
         /// 출차 이미지
         /// </summary>
         public string? OUT_IMG_PATH { get; set; }
+
+        /// <summary>
+        /// 블랙리스트 여부
+        /// </summary>
+        public string? IS_BLACKLIST { get; set; }
+
+        /// <summary>
+        /// 블랙리스트 사유
+        /// </summary>
+        public string? BLACKLIST_REASON { get; set; }
     }
 }

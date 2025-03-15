@@ -179,6 +179,10 @@ public partial class AptContext : DbContext
             entity.Property(e => e.Pid)
                 .HasColumnType("int(11)")
                 .HasColumnName("PID");
+            entity.Property(e => e.BlackListReason)
+                .HasMaxLength(255)
+                .HasComment("블랙리스트 사유")
+                .HasColumnName("BLACK_LIST_REASON");
             entity.Property(e => e.CarNum)
                 .HasMaxLength(255)
                 .HasComment("차량번호")
@@ -202,6 +206,10 @@ public partial class AptContext : DbContext
             entity.Property(e => e.IoSeq)
                 .HasComment("입출차 일련번호")
                 .HasColumnName("IO_SEQ");
+            entity.Property(e => e.IsBlackList)
+                .HasMaxLength(255)
+                .HasComment("블랙리스트 여부")
+                .HasColumnName("IS_BLACK_LIST");
             entity.Property(e => e.Memo)
                 .HasMaxLength(255)
                 .HasColumnName("MEMO");
@@ -213,6 +221,10 @@ public partial class AptContext : DbContext
                 .HasComment("최종출차_PID")
                 .HasColumnType("int(11)")
                 .HasColumnName("OUT_PID");
+            entity.Property(e => e.ParingDuration)
+                .HasComment("주차시간")
+                .HasColumnType("int(11)")
+                .HasColumnName("PARING_DURATION");
 
             entity.HasOne(d => d.InP).WithMany(p => p.IoParkingviewtbInPs)
                 .HasForeignKey(d => d.InPid)

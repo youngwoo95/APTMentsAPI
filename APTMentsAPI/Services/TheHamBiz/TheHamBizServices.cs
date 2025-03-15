@@ -242,7 +242,7 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// 입-출차 리스트
         /// </summary>
         /// <returns></returns>
-        public async Task<ResponseUnit<PageNationDTO<InOutViewListDTO>?>> InOutViewListService(int pageNumber, int PageSize)
+        public async Task<ResponseUnit<PageNationDTO<InOutViewListDTO>?>> InOutViewListService(int pageNumber, int PageSize, DateTime? StartDate, DateTime? EndDate, string? CarNumber, string? Dong, string? Ho, int? PackingDuration)
         {
             try
             {
@@ -251,7 +251,7 @@ namespace APTMentsAPI.Services.TheHamBizService
                 if (PageSize == 0)
                     return new ResponseUnit<PageNationDTO<InOutViewListDTO>?>() { message = "필수값이 누락되었습니다.", data = null, code = 200 };
 
-                var model = await TheHamBizRepository.InOutViewListAsync(pageNumber, PageSize);
+                var model = await TheHamBizRepository.InOutViewListAsync(pageNumber, PageSize, StartDate, EndDate, CarNumber, Dong, Ho, PackingDuration);
                 return new ResponseUnit<PageNationDTO<InOutViewListDTO>?>()
                 {
                     message = "요청이 정상 처리되었습니다",

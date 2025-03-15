@@ -33,10 +33,10 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// 입-출차 리스트
         /// </summary>
         /// <returns></returns>
-        public Task<ResponseUnit<PageNationDTO<InOutViewListDTO>?>> InOutViewListService(int pageNumber, int pageSize);
+        //public Task<ResponseUnit<PageNationDTO<InOutViewListDTO>?>> InOutViewListService(int pageNumber, int pageSize);
+        public Task<ResponseUnit<PageNationDTO<InOutViewListDTO>?>> InOutViewListService(int pageNumber, int PageSize, DateTime? StartDate, DateTime? EndDate, string? CarNumber, string? Dong, string? Ho, int? PackingDuration);
 
-
-
+        
 
     }
 }

@@ -50,6 +50,21 @@ public partial class IoParkingviewtb
     /// </summary>
     public string? Ho { get; set; }
 
+    /// <summary>
+    /// 주차시간
+    /// </summary>
+    public int? ParingDuration { get; set; }
+
+    /// <summary>
+    /// 블랙리스트 여부
+    /// </summary>
+    public string? IsBlackList { get; set; }
+
+    /// <summary>
+    /// 블랙리스트 사유
+    /// </summary>
+    public string? BlackListReason { get; set; }
+
     public string? Memo { get; set; }
 
     public virtual IoParkingrow? InP { get; set; }

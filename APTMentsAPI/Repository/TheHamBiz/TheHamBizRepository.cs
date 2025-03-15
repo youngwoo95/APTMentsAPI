@@ -2,6 +2,7 @@
 using APTMentsAPI.DTO;
 using APTMentsAPI.DTO.ViewsDTO;
 using APTMentsAPI.Services.Logger;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -75,7 +76,9 @@ namespace APTMentsAPI.Repository.TheHamBiz
                                 InDtm = RowsTB.IoDtm, // 입차 시간
                                 CarNum = RowsTB.CarNum, // 차량 번호
                                 Dong = RowsTB.Dong, // 동
-                                Ho = RowsTB.Ho // 호
+                                Ho = RowsTB.Ho, // 호
+                                IsBlackList = RowsTB.IsBlackList, // 블랙 리스트 여부
+                                BlackListReason = RowsTB.BlackListReason // 블랙 리스트 사유
                             };
 
                             await Context.IoParkingviewtbs.AddAsync(ViewTB).ConfigureAwait(false);
@@ -99,7 +102,9 @@ namespace APTMentsAPI.Repository.TheHamBiz
                             ViewTableCheck.InDtm = RowsTB.IoDtm; // 최종 입차 시간
                             ViewTableCheck.CarNum = RowsTB.CarNum; // 차량 번호
                             ViewTableCheck.Dong = RowsTB.Dong; // 동
-                            ViewTableCheck.Ho = RowsTB.Ho;
+                            ViewTableCheck.Ho = RowsTB.Ho; // 호
+                            ViewTableCheck.IsBlackList = RowsTB.IsBlackList; // 블랙 리스트 여부
+                            ViewTableCheck.BlackListReason = RowsTB.BlackListReason; // 블랙리스트 사유
 
                             Context.IoParkingviewtbs.Update(ViewTableCheck);
                             result = await Context.SaveChangesAsync().ConfigureAwait(false);
@@ -158,6 +163,9 @@ namespace APTMentsAPI.Repository.TheHamBiz
                             CarNum = RowsTB.CarNum, // 차량 번호
                             Dong = RowsTB.Dong, // 동
                             Ho = RowsTB.Ho,
+                            ParingDuration = RowsTB.ParkDuration, // 주차 시간
+                            IsBlackList = RowsTB.IsBlackList, // 블랙리스트 여부
+                            BlackListReason = RowsTB.BlackListReason // 블랙리스트 사유
                         };
 
                         await Context.IoParkingviewtbs.AddAsync(ViewTB).ConfigureAwait(false);
@@ -177,6 +185,9 @@ namespace APTMentsAPI.Repository.TheHamBiz
                         ViewTableCheck.CarNum = RowsTB.CarNum; // 차량 번호
                         ViewTableCheck.Dong = RowsTB.Dong; // 동
                         ViewTableCheck.Ho = RowsTB.Ho; // 호
+                        ViewTableCheck.ParingDuration = RowsTB.ParkDuration; // 주차시간
+                        ViewTableCheck.IsBlackList = RowsTB.IsBlackList; // 블랙리스트 여부
+                        ViewTableCheck.BlackListReason = RowsTB.BlackListReason; // 블랙리스트 사유
 
                         Context.IoParkingviewtbs.Update(ViewTableCheck);
                         result = await Context.SaveChangesAsync().ConfigureAwait(false);
@@ -250,7 +261,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
         /// 입-출차 리스트 조회
         /// </summary>
         /// <returns></returns>
-        public async Task<PageNationDTO<InOutViewListDTO>?> InOutViewListAsync(int pageNumber, int pageSize)
+        public async Task<PageNationDTO<InOutViewListDTO>?> InOutViewListAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? EndDate, string? CarNumber, string? Dong, string? Ho, int? ParkingDuration)
         {
             try
             {
@@ -259,9 +270,43 @@ namespace APTMentsAPI.Repository.TheHamBiz
                 // 1. 전체 데이터 개수를 조회합니다.
                 int totalCount = await Context.IoParkingviewtbs.CountAsync();
 
-                var pageView = await Context.IoParkingviewtbs
-                .Include(v => v.InP)   // InPid에 해당하는 IoParkingrows 데이터
-                .Include(v => v.OutP)  // OutPid에 해당하는 IoParkingrows 데이터
+                var query = Context.IoParkingviewtbs
+                    .Include(v => v.InP)
+                    .Include(v => v.OutP)
+                    .AsQueryable();
+
+
+                if (startDate.HasValue)
+                {
+                    query = query.Where(m => m.InDtm >= startDate.Value);
+                }
+
+                if(EndDate.HasValue)
+                {
+                    query = query.Where(m => m.OutDtm <= EndDate.Value);
+                }
+
+                if (CarNumber is not null)
+                {
+                    query = query.Where(m => m.CarNum == CarNumber);
+                }
+
+                if(Dong is not null)
+                {
+                    query = query.Where(m => m.Dong == Dong);
+                }
+
+                if(Ho is not null)
+                {
+                    query = query.Where(m => m.Ho == Ho);
+                }
+
+                if (ParkingDuration.HasValue)
+                {
+                    query = query.Where(m => m.ParingDuration == ParkingDuration);
+                }
+
+                var pageView = await query
                 .OrderBy(x => x.Pid)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
@@ -270,8 +315,8 @@ namespace APTMentsAPI.Repository.TheHamBiz
                 List<InOutViewListDTO> model = pageView.Select(item => new InOutViewListDTO
                 {
                     IO_SEQ = item.InP!.IoSeq,
-                    IO_TICKET_TP = item.OutP?.IoTicketTp,
-                    IO_TICKET_TP_NM = item.OutP?.IoTicketTpNm,
+                    IO_TICKET_TP = item.OutP == null ? item.InP.IoTicketTp : item.OutP.IoTicketTp,
+                    IO_TICKET_TP_NM = item.OutP == null ? item.InP.IoTicketTpNm : item.OutP.IoTicketTpNm,
                     IO_STATUS_TP = item.OutP == null ? item.InP.IoStatusTp : item.OutP.IoStatusTp,
                     IO_STATUS_TP_NM = item.OutP == null ? item.InP.IoStatusTpNm : item.OutP.IoStatusTpNm,
                     CAR_NUM = item.CarNum,
@@ -285,8 +330,9 @@ namespace APTMentsAPI.Repository.TheHamBiz
                     DONG = item.Dong,
                     HO = item.Ho,
                     IN_IMG_PATH = item.InP?.ImgPath ?? string.Empty,
-                    OUT_IMG_PATH = item.OutP?.ImgPath ?? string.Empty
-                    // 이미지넣어야함
+                    OUT_IMG_PATH = item.OutP?.ImgPath ?? string.Empty,
+                    IS_BLACKLIST = item.IsBlackList,
+                    BLACKLIST_REASON = item.BlackListReason
                 }).ToList();
 
 
