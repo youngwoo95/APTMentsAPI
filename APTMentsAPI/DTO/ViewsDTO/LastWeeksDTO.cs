@@ -3,6 +3,11 @@
     public class LastWeeksDTO
     {
         /// <summary>
+        /// 시스템 ID
+        /// </summary>
+        public int pId { get; set; }
+
+        /// <summary>
         /// 입출차 구분
         /// </summary>
         public int ioGubun { get; set; }

@@ -283,6 +283,7 @@ namespace APTMentsAPI.Services.TheHamBizService
                 {
                     var detailViewList = model.Select(item => new DetailViewDTO
                     {
+                        pId = item.Pid,
                         ioGubun = item.IoGubun,
                         ioSeq = item.IoSeq,
                         parkId = item.ParkId,
@@ -342,6 +343,7 @@ namespace APTMentsAPI.Services.TheHamBizService
                 {
                     var LastViewList = model.Select(item => new LastWeeksDTO
                     {
+                        pId = item.Pid,
                         ioGubun = item.IoGubun,
                         ioSeq = item.IoSeq,
                         parkId = item.ParkId,

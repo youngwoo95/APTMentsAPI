@@ -3,6 +3,11 @@
     public class DetailViewDTO
     {
         /// <summary>
+        /// 시스템 PID
+        /// </summary>
+        public int pId { get; set; }
+
+        /// <summary>
         /// 입출차 구분
         /// </summary>
         public int ioGubun { get; set; }

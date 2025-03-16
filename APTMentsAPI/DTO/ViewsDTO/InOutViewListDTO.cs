@@ -3,6 +3,11 @@
     public class InOutViewListDTO
     {
         /// <summary>
+        /// 시스템 PID
+        /// </summary>
+        public int pId { get; set; }
+
+        /// <summary>
         /// 시퀀스
         /// </summary>
         public string? ioSeq { get; set; }

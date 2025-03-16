@@ -317,6 +317,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
 
                 List<InOutViewListDTO> model = pageView.Select(item => new InOutViewListDTO
                 {
+                    pId = item.Pid,
                     ioSeq = item.InP!.IoSeq,
                     ioTicketTp = item.OutP == null ? item.InP.IoTicketTp : item.OutP.IoTicketTp,
                     ioTicketTpNm = item.OutP == null ? item.InP.IoTicketTpNm : item.OutP.IoTicketTpNm,
