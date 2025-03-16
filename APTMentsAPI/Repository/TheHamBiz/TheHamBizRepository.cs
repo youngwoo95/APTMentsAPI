@@ -335,7 +335,8 @@ namespace APTMentsAPI.Repository.TheHamBiz
                     inImagePath = item.InP?.ImgPath ?? string.Empty,
                     outImagePath = item.OutP?.ImgPath ?? string.Empty,
                     isBlacklist = item.IsBlackList,
-                    blacklistReason = item.BlackListReason
+                    blacklistReason = item.BlackListReason,
+                    memo = item.Memo
                 }).ToList();
 
 

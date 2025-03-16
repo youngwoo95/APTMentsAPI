@@ -98,5 +98,10 @@
         /// 블랙리스트 사유
         /// </summary>
         public string? blacklistReason { get; set; }
+
+        /// <summary>
+        /// 메모
+        /// </summary>
+        public string? memo { get; set; }
     }
 }
