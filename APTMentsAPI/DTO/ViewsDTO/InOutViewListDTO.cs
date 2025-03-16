@@ -5,98 +5,98 @@
         /// <summary>
         /// 시퀀스
         /// </summary>
-        public string? IO_SEQ { get; set; }
+        public string? ioSeq { get; set; }
 
         /// <summary>
         /// 입출유형 구분
         /// 방문차량, 예약차량 - 2
         /// 정기차량 - 6
         /// </summary>
-        public string? IO_TICKET_TP { get; set; }
+        public string? ioTicketTp { get; set; }
 
         /// <summary>
         /// 입출유형 구분 명칭
         /// </summary>
-        public string? IO_TICKET_TP_NM { get; set; }
+        public string? ioTicketTpNm { get; set; }
 
         /// <summary>
         /// 입-출차 구분
         /// </summary>
-        public string? IO_STATUS_TP { get; set; }
+        public string? ioStatusTp { get; set; }
 
         /// <summary>
         /// 입-출차 구분 명칭
         /// </summary>
-        public string? IO_STATUS_TP_NM { get; set; }
+        public string? ioStatusTpNm { get; set; }
 
         /// <summary>
         /// 차량 번호
         /// </summary>
-        public string? CAR_NUM { get; set; }
+        public string? carNum { get; set; }
 
         /// <summary>
         /// 입차 시간
         /// </summary>
-        public DateTime? IN_DTM { get; set; }
+        public DateTime? inDtm { get; set; }
 
         /// <summary>
         /// 출차 시간
         /// </summary>
-        public DateTime? OUT_DTM { get; set; }
+        public DateTime? outDtm { get; set; }
 
         /// <summary>
         /// 주차 시간
         /// </summary>
-        public int ParkingDuration { get; set; }
+        public int parkingDuration { get; set; }
 
         /// <summary>
         /// 입차 게이트 구분
         /// </summary>
-        public string? IN_GATE_ID { get; set; }
+        public string? inGateId { get; set; }
 
         /// <summary>
         /// 입차 게이트 구분 명칭
         /// </summary>
-        public string? IN_GATE_NM { get; set; }
+        public string? inGateNm { get; set; }
 
         /// <summary>
         /// 출차 게이트 구분
         /// </summary>
-        public string? OUT_GATE_ID { get; set; }
+        public string? outGateId { get; set; }
 
         /// <summary>
         /// 출차 게이트 구분 명칭
         /// </summary>
-        public string? OUT_GATE_NM { get; set; }
+        public string? outGateNm { get; set; }
 
         /// <summary>
         /// 동
         /// </summary>
-        public string? DONG { get; set; }
+        public string? dong { get; set; }
 
         /// <summary>
         /// 호
         /// </summary>
-        public string? HO { get; set; }
+        public string? ho { get; set; }
 
         /// <summary>
         /// 입차 이미지
         /// </summary>
-        public string? IN_IMG_PATH { get; set; }
+        public string? inImagePath { get; set; }
 
         /// <summary>
         /// 출차 이미지
         /// </summary>
-        public string? OUT_IMG_PATH { get; set; }
+        public string? outImagePath { get; set; }
 
         /// <summary>
         /// 블랙리스트 여부
         /// </summary>
-        public string? IS_BLACKLIST { get; set; }
+        public string? isBlacklist { get; set; }
 
         /// <summary>
         /// 블랙리스트 사유
         /// </summary>
-        public string? BLACKLIST_REASON { get; set; }
+        public string? blacklistReason { get; set; }
     }
 }

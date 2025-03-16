@@ -6,6 +6,7 @@ using APTMentsAPI.DTO.PatrolDTO;
 using APTMentsAPI.DTO.ViewsDTO;
 using APTMentsAPI.Repository.TheHamBiz;
 using APTMentsAPI.Services.Logger;
+using System.Collections.Generic;
 
 namespace APTMentsAPI.Services.TheHamBizService
 {
@@ -84,7 +85,7 @@ namespace APTMentsAPI.Services.TheHamBizService
                  */
                
             
-                int result = await TheHamBizRepository.AddInCarAsnyc(ParkingRowTB);
+                int result = await TheHamBizRepository.AddInCarAsnyc(ParkingRowTB).ConfigureAwait(false);
                 if (result > 0)
                     return 1;
                 else if (result == 0)
@@ -160,7 +161,7 @@ namespace APTMentsAPI.Services.TheHamBizService
                 ParkingRowTB.ParkDuration = dto.PARK_DURATION; // 주차 시간
                 ParkingRowTB.VisitTime = dto.VISIT_TIME; // 방문 시간
 
-                int result = await TheHamBizRepository.AddOutCarAsync(ParkingRowTB);
+                int result = await TheHamBizRepository.AddOutCarAsync(ParkingRowTB).ConfigureAwait(false);
                 if (result > 0)
                     return 1;
                 else if (result == 0)
@@ -223,7 +224,7 @@ namespace APTMentsAPI.Services.TheHamBizService
                     });
                 }
 
-                int result = await TheHamBizRepository.AddPatrolAsync(PatrolTB, PatrolList);
+                int result = await TheHamBizRepository.AddPatrolAsync(PatrolTB, PatrolList).ConfigureAwait(false);
                 if (result > 0)
                     return 1;
                 else if (result == 0)
@@ -251,7 +252,7 @@ namespace APTMentsAPI.Services.TheHamBizService
                 if (PageSize == 0)
                     return new ResponseUnit<PageNationDTO<InOutViewListDTO>?>() { message = "필수값이 누락되었습니다.", data = null, code = 200 };
 
-                var model = await TheHamBizRepository.InOutViewListAsync(pageNumber, PageSize, StartDate, EndDate, CarNumber, Dong, Ho, PackingDuration);
+                var model = await TheHamBizRepository.InOutViewListAsync(pageNumber, PageSize, StartDate, EndDate, CarNumber, Dong, Ho, PackingDuration).ConfigureAwait(false);
                 return new ResponseUnit<PageNationDTO<InOutViewListDTO>?>()
                 {
                     message = "요청이 정상 처리되었습니다",
@@ -265,5 +266,121 @@ namespace APTMentsAPI.Services.TheHamBizService
             }
         }
 
+        /// <summary>
+        /// 시퀀스 상세 내역 조회
+        /// </summary>
+        /// <param name="ioSeq"></param>
+        /// <returns></returns>
+        public async Task<ResponseList<DetailViewDTO>?> DetailViewService(string ioSeq)
+        {
+            try
+            {
+                if (String.IsNullOrWhiteSpace(ioSeq))
+                    return new ResponseList<DetailViewDTO>() { message = "잘못된 요청입니다.", data = null, code = 200 };
+
+                var model = await TheHamBizRepository.DetailViewListAsync(ioSeq).ConfigureAwait(false);
+                if (model is not null)
+                {
+                    var detailViewList = model.Select(item => new DetailViewDTO
+                    {
+                        ioGubun = item.IoGubun,
+                        ioSeq = item.IoSeq,
+                        parkId = item.ParkId,
+                        carNum = item.CarNum,
+                        ioStatusTp = item.IoStatusTp,
+                        ioStatusTpNm = item.IoStatusTpNm,
+                        ioGateId = item.IoGateId,
+                        ioGateNm = item.IoGateNm,
+                        ioLineNum = item.IoLineNum,
+                        ioDtm = item.IoDtm,
+                        ioLprStatus = item.IoLprStatus,
+                        ioLprStatusNm = item.IoLprStatusNm,
+                        ioTicketTp = item.IoTicketTp,
+                        ioTicketTpNm = item.IoTicketTpNm,
+                        dong = item.Dong,
+                        ho = item.Ho,
+                        isReservation = item.IsReservation,
+                        isBlacklist = item.IsBlackList,
+                        blacklistReason = item.BlackListReason,
+                        regDtm = item.RegDtm,
+                        imgPath = item.ImgPath,
+                        isWait = item.IsWait,
+                        isWaitReason = item.IsWaitReason,
+                        parkDuration = item.ParkDuration,
+                        visitTime = item.VisitTime,
+                        etc = item.Etc,
+                        memo = item.Memo
+                    }).ToList();
+
+                    return new ResponseList<DetailViewDTO>() { message = "요청이 정상 처리되었습니다.", data = detailViewList, code = 200 };
+                }
+                else
+                    return new ResponseList<DetailViewDTO>() { message = "조회된 결과가 없습니다.", data = null, code = 200 };
+            }
+            catch(Exception ex)
+            {
+                LoggerService.FileLogMessage(ex.ToString());
+                return new ResponseList<DetailViewDTO>() { message = "서버에서 요청을 처리하지 못하였습니다.", data = null, code = 500 };
+            }
+        }
+
+        /// <summary>
+        /// 해당 차량 최근 7일치 조회
+        /// </summary>
+        /// <param name="carNum"></param>
+        /// <returns></returns>
+        public async Task<ResponseList<LastWeeksDTO>?> LastWeeksService(string carNum)
+        {
+            try
+            {
+                if (String.IsNullOrWhiteSpace(carNum))
+                    return new ResponseList<LastWeeksDTO>() { message = "잘못된 요청입니다.", data = null, code = 200 };
+
+                DateTime Today = DateTime.Now;
+                var model = await TheHamBizRepository.LastWeeksListAsync(carNum,Today).ConfigureAwait(false);
+                if (model is not null)
+                {
+                    var LastViewList = model.Select(item => new LastWeeksDTO
+                    {
+                        ioGubun = item.IoGubun,
+                        ioSeq = item.IoSeq,
+                        parkId = item.ParkId,
+                        carNum = item.CarNum,
+                        ioStatusTp = item.IoStatusTp,
+                        ioStatusTpNm = item.IoStatusTpNm,
+                        ioGateId = item.IoGateId,
+                        ioGateNm = item.IoGateNm,
+                        ioLineNum = item.IoLineNum,
+                        ioDtm = item.IoDtm,
+                        ioLprStatus = item.IoLprStatus,
+                        ioLprStatusNm = item.IoLprStatusNm,
+                        ioTicketTp = item.IoTicketTp,
+                        ioTicketTpNm = item.IoTicketTpNm,
+                        dong = item.Dong,
+                        ho = item.Ho,
+                        isReservation = item.IsReservation,
+                        isBlacklist = item.IsBlackList,
+                        blacklistReason = item.BlackListReason,
+                        regDtm = item.RegDtm,
+                        imgPath = item.ImgPath,
+                        isWait = item.IsWait,
+                        isWaitReason = item.IsWaitReason,
+                        parkDuration = item.ParkDuration,
+                        visitTime = item.VisitTime,
+                        etc = item.Etc,
+                        memo = item.Memo
+                    }).ToList();
+
+                    return new ResponseList<LastWeeksDTO>() { message = "요청이 정상 처리되었습니다.", data = LastViewList, code = 200 };
+                }
+                else
+                    return new ResponseList<LastWeeksDTO>() { message = "조회된 결과가 없습니다.", data = null, code = 200 };
+            }
+            catch(Exception ex)
+            {
+                LoggerService.FileLogMessage(ex.ToString());
+                return new ResponseList<LastWeeksDTO>() { message = "서버에서 요청을 처리하지 못하였습니다.", data = null, code = 500 };
+            }
+        }
     }
 }

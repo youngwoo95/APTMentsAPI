@@ -2,7 +2,6 @@
 using APTMentsAPI.DTO;
 using APTMentsAPI.DTO.ViewsDTO;
 using APTMentsAPI.Services.Logger;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -78,7 +77,8 @@ namespace APTMentsAPI.Repository.TheHamBiz
                                 Dong = RowsTB.Dong, // 동
                                 Ho = RowsTB.Ho, // 호
                                 IsBlackList = RowsTB.IsBlackList, // 블랙 리스트 여부
-                                BlackListReason = RowsTB.BlackListReason // 블랙 리스트 사유
+                                BlackListReason = RowsTB.BlackListReason, // 블랙 리스트 사유
+                                UpdateDt = RowsTB.CreateDt
                             };
 
                             await Context.IoParkingviewtbs.AddAsync(ViewTB).ConfigureAwait(false);
@@ -105,6 +105,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
                             ViewTableCheck.Ho = RowsTB.Ho; // 호
                             ViewTableCheck.IsBlackList = RowsTB.IsBlackList; // 블랙 리스트 여부
                             ViewTableCheck.BlackListReason = RowsTB.BlackListReason; // 블랙리스트 사유
+                            ViewTableCheck.UpdateDt = RowsTB.CreateDt;
 
                             Context.IoParkingviewtbs.Update(ViewTableCheck);
                             result = await Context.SaveChangesAsync().ConfigureAwait(false);
@@ -165,7 +166,8 @@ namespace APTMentsAPI.Repository.TheHamBiz
                             Ho = RowsTB.Ho,
                             ParingDuration = RowsTB.ParkDuration, // 주차 시간
                             IsBlackList = RowsTB.IsBlackList, // 블랙리스트 여부
-                            BlackListReason = RowsTB.BlackListReason // 블랙리스트 사유
+                            BlackListReason = RowsTB.BlackListReason, // 블랙리스트 사유
+                            UpdateDt = RowsTB.CreateDt,
                         };
 
                         await Context.IoParkingviewtbs.AddAsync(ViewTB).ConfigureAwait(false);
@@ -188,6 +190,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
                         ViewTableCheck.ParingDuration = RowsTB.ParkDuration; // 주차시간
                         ViewTableCheck.IsBlackList = RowsTB.IsBlackList; // 블랙리스트 여부
                         ViewTableCheck.BlackListReason = RowsTB.BlackListReason; // 블랙리스트 사유
+                        ViewTableCheck.UpdateDt = RowsTB.CreateDt; // 시스템 생성일자
 
                         Context.IoParkingviewtbs.Update(ViewTableCheck);
                         result = await Context.SaveChangesAsync().ConfigureAwait(false);
@@ -314,25 +317,25 @@ namespace APTMentsAPI.Repository.TheHamBiz
 
                 List<InOutViewListDTO> model = pageView.Select(item => new InOutViewListDTO
                 {
-                    IO_SEQ = item.InP!.IoSeq,
-                    IO_TICKET_TP = item.OutP == null ? item.InP.IoTicketTp : item.OutP.IoTicketTp,
-                    IO_TICKET_TP_NM = item.OutP == null ? item.InP.IoTicketTpNm : item.OutP.IoTicketTpNm,
-                    IO_STATUS_TP = item.OutP == null ? item.InP.IoStatusTp : item.OutP.IoStatusTp,
-                    IO_STATUS_TP_NM = item.OutP == null ? item.InP.IoStatusTpNm : item.OutP.IoStatusTpNm,
-                    CAR_NUM = item.CarNum,
-                    IN_DTM = item.InP.IoDtm,
-                    OUT_DTM = item.OutP?.IoDtm, // OutP가 없으면 null로 처리
-                    ParkingDuration = item.OutP?.ParkDuration ?? 0, // null이면 0 처리 (필요에 따라 조정)
-                    IN_GATE_ID = item.InP.IoGateId,
-                    IN_GATE_NM = item.InP.IoGateNm,
-                    OUT_GATE_ID = item.OutP?.IoGateId,
-                    OUT_GATE_NM = item.OutP?.IoGateNm,
-                    DONG = item.Dong,
-                    HO = item.Ho,
-                    IN_IMG_PATH = item.InP?.ImgPath ?? string.Empty,
-                    OUT_IMG_PATH = item.OutP?.ImgPath ?? string.Empty,
-                    IS_BLACKLIST = item.IsBlackList,
-                    BLACKLIST_REASON = item.BlackListReason
+                    ioSeq = item.InP!.IoSeq,
+                    ioTicketTp = item.OutP == null ? item.InP.IoTicketTp : item.OutP.IoTicketTp,
+                    ioTicketTpNm = item.OutP == null ? item.InP.IoTicketTpNm : item.OutP.IoTicketTpNm,
+                    ioStatusTp = item.OutP == null ? item.InP.IoStatusTp : item.OutP.IoStatusTp,
+                    ioStatusTpNm = item.OutP == null ? item.InP.IoStatusTpNm : item.OutP.IoStatusTpNm,
+                    carNum = item.CarNum,
+                    inDtm = item.InP.IoDtm,
+                    outDtm = item.OutP?.IoDtm, // OutP가 없으면 null로 처리
+                    parkingDuration = item.OutP?.ParkDuration ?? 0, // null이면 0 처리 (필요에 따라 조정)
+                    inGateId = item.InP.IoGateId,
+                    inGateNm = item.InP.IoGateNm,
+                    outGateId = item.OutP?.IoGateId,
+                    outGateNm = item.OutP?.IoGateNm,
+                    dong = item.Dong,
+                    ho = item.Ho,
+                    inImagePath = item.InP?.ImgPath ?? string.Empty,
+                    outImagePath = item.OutP?.ImgPath ?? string.Empty,
+                    isBlacklist = item.IsBlackList,
+                    blacklistReason = item.BlackListReason
                 }).ToList();
 
 
@@ -383,5 +386,71 @@ namespace APTMentsAPI.Repository.TheHamBiz
                 return null;
             }
         }
+
+        /// <summary>
+        /// 시퀀스 상세내역 조회
+        /// </summary>
+        /// <param name="ioSeq"></param>
+        /// <returns></returns>
+        public async Task<List<IoParkingrow>?> DetailViewListAsync(string ioSeq)
+        {
+            try
+            {
+                var model = await Context.IoParkingrows.Where(m => m.IoSeq == ioSeq).ToListAsync();
+                if (model is null)
+                    return new List<IoParkingrow>();
+                else
+                    return model;
+            }
+            catch(Exception ex)
+            {
+                LoggerService.FileLogMessage(ex.ToString());
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 지난 최근 7일 조회
+        /// </summary>
+        /// <param name="carNum"></param>
+        /// <param name="ThisTime"></param>
+        /// <returns></returns>
+      public async Task<List<IoParkingrow>?> LastWeeksListAsync(string carNum, DateTime ThisTime)
+        {
+            try
+            {
+                // ThisTime의 날짜 부분(자정)에서 7일 전 날짜를 구함.
+                DateTime SearchDate = ThisTime.Date.AddDays(-7);
+
+                // 조건에 맞는 IoParkingviewtb 데이터를 조회하며, 네비게이션 프로퍼티(InP, OutP)도 Include 함.
+                var viewList = await Context.IoParkingviewtbs
+                    .Where(m => m.CarNum == carNum && m.UpdateDt >= SearchDate)
+                    .Include(m => m.InP)
+                    .Include(m => m.OutP)
+                    .ToListAsync();
+
+                // 조회된 데이터가 없으면 빈 리스트 반환.
+                if (viewList == null || !viewList.Any())
+                    return new List<IoParkingrow>();
+
+                // InP와 OutP 데이터를 하나의 리스트에 합침.
+                List<IoParkingrow> result = new List<IoParkingrow>();
+                foreach (var view in viewList)
+                {
+                    if (view.InP != null)
+                        result.Add(view.InP);
+                    if (view.OutP != null)
+                        result.Add(view.OutP);
+                }
+                result = result.OrderBy(m => m.CreateDt).ToList();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                LoggerService.FileLogMessage(ex.ToString());
+                return null;
+            }
+        }
+    
     }
 }

@@ -67,6 +67,11 @@ public partial class IoParkingviewtb
 
     public string? Memo { get; set; }
 
+    /// <summary>
+    /// ROW Update 시간
+    /// </summary>
+    public DateTime UpdateDt { get; set; }
+
     public virtual IoParkingrow? InP { get; set; }
 
     public virtual IoParkingrow? OutP { get; set; }

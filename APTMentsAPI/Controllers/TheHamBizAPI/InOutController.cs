@@ -1,9 +1,6 @@
-﻿using APTMentsAPI.DTO.ViewsDTO;
-using APTMentsAPI.DTO;
-using APTMentsAPI.Services.Logger;
+﻿using APTMentsAPI.Services.Logger;
 using APTMentsAPI.Services.TheHamBizService;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection;
 
 namespace APTMentsAPI.Controllers.TheHamBizAPI
 {
@@ -60,6 +57,37 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
         }
 
         /// <summary>
+        /// 해당 Seq의 상세정보 조회
+        /// </summary>
+        /// <param name="ioSeq"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("DetailView")]
+        public async Task<IActionResult> DetailView([FromQuery] string ioSeq)
+        {
+            try
+            {
+                var apiUrl = $"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}";
+                LoggerService.FileAPIMessage($"[INFO] >> {apiUrl}");
+
+                var model = await TheHamBizServices.DetailViewService(ioSeq);
+                if (model is null)
+                    return BadRequest();
+
+                if (model.code == 200)
+                    return Ok(model);
+                else
+                    return Ok(model);
+            }
+            catch (Exception ex)
+            {
+                LoggerService.FileAPIMessage($"[ERROR]_{ex.ToString()}");
+                LoggerService.FileLogMessage(ex.ToString());
+                return Problem("서버에서 처리할 수 없는 요청 입니다.", statusCode: 500);
+            }
+        }
+
+        /// <summary>
         /// 차번으로 List 최근 7일 
         /// </summary>
         /// <returns></returns>
@@ -72,7 +100,14 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
                 var apiUrl = $"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}";
                 LoggerService.FileAPIMessage($"[INFO] >> {apiUrl}");
 
-                return Ok();
+                var model = await TheHamBizServices.LastWeeksService(carNumber);
+                if (model is null)
+                    return BadRequest();
+
+                if (model.code == 200)
+                    return Ok(model);
+                else
+                    return Ok(model);
             }
             catch(Exception ex)
             {
@@ -82,30 +117,7 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
             }
         }
 
-        /// <summary>
-        /// 해당 Seq의 상세정보 조회
-        /// </summary>
-        /// <param name="ioSeq"></param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("DatailView")]
-        public async Task<IActionResult> DetailView([FromQuery]string ioSeq)
-        {
-            try
-            {
-                var apiUrl = $"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}";
-                LoggerService.FileAPIMessage($"[INFO] >> {apiUrl}");
-
-                return Ok();
-
-            }
-            catch(Exception ex)
-            {
-                LoggerService.FileAPIMessage($"[ERROR]_{ex.ToString()}");
-                LoggerService.FileLogMessage(ex.ToString());
-                return Problem("서버에서 처리할 수 없는 요청 입니다.", statusCode: 500);
-            }
-        }
+      
 
     }
 }

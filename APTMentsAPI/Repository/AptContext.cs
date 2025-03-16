@@ -152,7 +152,6 @@ public partial class AptContext : DbContext
                 .HasColumnName("PARK_ID");
             entity.Property(e => e.RegDtm)
                 .HasMaxLength(255)
-                .IsFixedLength()
                 .HasComment("블랙리스트 등록 일시")
                 .HasColumnName("REG_DTM");
             entity.Property(e => e.VisitTime)
@@ -225,6 +224,11 @@ public partial class AptContext : DbContext
                 .HasComment("주차시간")
                 .HasColumnType("int(11)")
                 .HasColumnName("PARING_DURATION");
+            entity.Property(e => e.UpdateDt)
+                .HasDefaultValueSql("current_timestamp()")
+                .HasComment("ROW Update 시간")
+                .HasColumnType("datetime")
+                .HasColumnName("UPDATE_DT");
 
             entity.HasOne(d => d.InP).WithMany(p => p.IoParkingviewtbInPs)
                 .HasForeignKey(d => d.InPid)
