@@ -1,6 +1,7 @@
 
 using APTMentsAPI.Repository;
 using APTMentsAPI.Repository.TheHamBiz;
+using APTMentsAPI.Services.FileService;
 using APTMentsAPI.Services.Helpers;
 using APTMentsAPI.Services.Logger;
 using APTMentsAPI.Services.TheHamBizService;
@@ -80,6 +81,8 @@ namespace APTMentsAPI
             builder.Services.AddTransient<ILoggerService, LoggerService>();
 
             builder.Services.AddTransient<IRequestAPI, RequestAPI>();
+
+            builder.Services.AddTransient<IFileService, FileService>();
 
             builder.Services.AddTransient<ITheHamBizServices, TheHamBizServices>();
             builder.Services.AddTransient<ITheHamBizRepository, TheHamBizRepository>();

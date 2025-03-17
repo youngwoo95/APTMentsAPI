@@ -5,6 +5,7 @@ using APTMentsAPI.DTO.OutCarDTO;
 using APTMentsAPI.DTO.PatrolDTO;
 using APTMentsAPI.DTO.ViewsDTO;
 using APTMentsAPI.Repository.TheHamBiz;
+using APTMentsAPI.Services.FileService;
 using APTMentsAPI.Services.Logger;
 
 namespace APTMentsAPI.Services.TheHamBizService
@@ -13,12 +14,15 @@ namespace APTMentsAPI.Services.TheHamBizService
     {
         private readonly ILoggerService LoggerService;
         private readonly ITheHamBizRepository TheHamBizRepository;
+        private readonly IFileService FileService;
 
         public TheHamBizServices(ILoggerService _loggerservice,
-            ITheHamBizRepository _thehambizrepository)
+            ITheHamBizRepository _thehambizrepository,
+            IFileService _fileservice)
         {
             this.LoggerService = _loggerservice;
             this.TheHamBizRepository = _thehambizrepository;
+            this.FileService = _fileservice;
         }
 
         /// <summary>
@@ -280,7 +284,7 @@ namespace APTMentsAPI.Services.TheHamBizService
                 var model = await TheHamBizRepository.DetailViewListAsync(ioSeq).ConfigureAwait(false);
                 if (model is not null)
                 {
-                    var detailViewList = model.Select(item => new DetailViewDTO
+                    var detailViewTasks = model.Select(async item => new DetailViewDTO
                     {
                         pId = item.Pid,
                         ioGubun = item.IoGubun,
@@ -303,7 +307,8 @@ namespace APTMentsAPI.Services.TheHamBizService
                         isBlacklist = item.IsBlackList,
                         blacklistReason = item.BlackListReason,
                         regDtm = item.RegDtm,
-                        imgPath = item.ImgPath,
+                        //imgPath = item.ImgPath,
+                        imgPath = await FileService.GetImageFile(item.ImgPath,"InOutImages"),
                         isWait = item.IsWait,
                         isWaitReason = item.IsWaitReason,
                         parkDuration = item.ParkDuration,
@@ -312,7 +317,16 @@ namespace APTMentsAPI.Services.TheHamBizService
                         memo = item.Memo
                     }).ToList();
 
-                    return new ResponseList<DetailViewDTO>() { message = "요청이 정상 처리되었습니다.", data = detailViewList, code = 200 };
+                    // 모든 Task를 await 하고 결과를 리스트로 변환
+                    var detailViewList = (await Task.WhenAll(detailViewTasks)).ToList();
+
+                    return new ResponseList<DetailViewDTO>()
+                    {
+                        message = "요청이 정상 처리되었습니다.",
+                        data = detailViewList,
+                        code = 200
+                    };
+                    //return new ResponseList<DetailViewDTO>() { message = "요청이 정상 처리되었습니다.", data = detailViewList, code = 200 };
                 }
                 else
                     return new ResponseList<DetailViewDTO>() { message = "조회된 결과가 없습니다.", data = null, code = 200 };
@@ -469,5 +483,7 @@ namespace APTMentsAPI.Services.TheHamBizService
                 return new ResponseUnit<PageNationDTO<PatrolViewListDTO>?>() { message = "서버에서 요청을 처리하지 못하였습니다.", data = null, code = 500 };
             }
         }
+
+   
     }
 }

@@ -87,12 +87,14 @@
         /// <summary>
         /// 입차 이미지
         /// </summary>
-        public string? inImagePath { get; set; }
+        //public string? inImagePath { get; set; }
+        public byte[]? inImagePath { get; set; }
 
         /// <summary>
         /// 출차 이미지
         /// </summary>
-        public string? outImagePath { get; set; }
+        //public string? outImagePath { get; set; }
+        public byte[]? outImagePath { get; set; }
 
         /// <summary>
         /// 블랙리스트 여부

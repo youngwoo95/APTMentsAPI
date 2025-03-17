@@ -110,7 +110,7 @@
         /// <summary>
         /// 이미지 경로
         /// </summary>
-        public string? imgPath { get; set; }
+        public byte[]? imgPath { get; set; }
 
         /// <summary>
         /// 해당차량을 입차처리할건지 대기할건지

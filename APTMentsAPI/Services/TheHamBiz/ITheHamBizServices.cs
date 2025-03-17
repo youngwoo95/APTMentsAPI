@@ -76,5 +76,7 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// <returns></returns>
         public Task<ResponseUnit<PageNationDTO<PatrolViewListDTO>?>> PatrolViewListService(int pageNumber, int PageSize);
         #endregion
+
+
     }
 }

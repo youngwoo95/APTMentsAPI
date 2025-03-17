@@ -2,6 +2,7 @@
 using APTMentsAPI.DTO;
 using APTMentsAPI.DTO.PatrolDTO;
 using APTMentsAPI.DTO.ViewsDTO;
+using APTMentsAPI.Services.FileService;
 using APTMentsAPI.Services.Logger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -12,12 +13,16 @@ namespace APTMentsAPI.Repository.TheHamBiz
     public class TheHamBizRepository : ITheHamBizRepository
     {
         private readonly ILoggerService LoggerService;
+        private readonly IFileService FileService;
         private readonly AptContext Context;
 
-        public TheHamBizRepository(AptContext _context, ILoggerService _loggerservice)
+        public TheHamBizRepository(AptContext _context,
+            ILoggerService _loggerservice,
+            IFileService _fileservice)
         {
             this.Context = _context;
             this.LoggerService = _loggerservice;
+            this.FileService = _fileservice;
         }
 
         /// <summary>
@@ -123,8 +128,19 @@ namespace APTMentsAPI.Repository.TheHamBiz
                             }
                         }
                     }
-                    await transaction.CommitAsync().ConfigureAwait(false);
-                    return 1;
+
+                    // 여기서 파일 저장해야할것같네.
+                    bool? fileSave = await FileService.AddImageFile(RowsTB.ImgPath, "InOutImages");
+                    if (fileSave == true)
+                    {
+                        await transaction.CommitAsync().ConfigureAwait(false);
+                        return 1;
+                    }
+                    else
+                    {
+                        await transaction.RollbackAsync().ConfigureAwait(false);
+                        return 0;
+                    }
                 }
             }
             catch(Exception ex)
@@ -212,8 +228,18 @@ namespace APTMentsAPI.Repository.TheHamBiz
                         }
                     }
 
-                    await transaction.CommitAsync().ConfigureAwait(false);
-                    return 1;
+                    // 여기서 파일 저장해야할것같네.
+                    bool? fileSave = await FileService.AddImageFile(RowsTB.ImgPath, "InOutImages");
+                    if (fileSave == true)
+                    {
+                        await transaction.CommitAsync().ConfigureAwait(false);
+                        return 1;
+                    }
+                    else
+                    {
+                        await transaction.RollbackAsync().ConfigureAwait(false);
+                        return 0;
+                    }
                 }
             }catch(Exception ex)
             {
@@ -259,8 +285,20 @@ namespace APTMentsAPI.Repository.TheHamBiz
                         return -1;
                     }
 
+                    // 여기왔을때 PatrolLogList의 Image들 저장해야함.
+                    foreach(var item in PatrolLogList)
+                    {
+                        //item.PatrolImg
+                        if (!String.IsNullOrWhiteSpace(item.PatrolImg)) 
+                        {
+                            bool fileSave = await FileService.AddImageFile(item.PatrolImg, "PatrolImages");
+                            if (!fileSave)
+                                return 0;
+                        }
+                    }
                     await transaction.CommitAsync().ConfigureAwait(false);
                     return 1;
+                   
                 }
             }
             catch(Exception ex)
@@ -331,7 +369,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
                 .ToListAsync()
                 .ConfigureAwait(false);
 
-                List<InOutViewListDTO> model = pageView.Select(item => new InOutViewListDTO
+                var detailViewTasks = pageView.Select(async item => new InOutViewListDTO
                 {
                     pId = item.Pid,
                     ioSeq = item.InP!.IoSeq,
@@ -351,13 +389,15 @@ namespace APTMentsAPI.Repository.TheHamBiz
                     outGateNm = item.OutP?.IoGateNm,
                     dong = item.Dong,
                     ho = item.Ho,
-                    inImagePath = item.InP?.ImgPath ?? string.Empty,
-                    outImagePath = item.OutP?.ImgPath ?? string.Empty,
+                    //inImagePath = item.InP?.ImgPath ?? string.Empty,
+                    inImagePath = await FileService.GetImageFile(item.InP?.ImgPath ?? string.Empty, "InOutImages"),
+                    outImagePath = await FileService.GetImageFile(item.OutP?.ImgPath ?? string.Empty, "InOutImages"),
                     isBlacklist = item.IsBlackList,
                     blacklistReason = item.BlackListReason,
                     memo = item.Memo
                 }).ToList();
 
+                var model = (await Task.WhenAll(detailViewTasks)).ToList();
 
                 #region REGACY
                 //var pageView = await Context.IoParkingviewtbs
@@ -599,7 +639,15 @@ namespace APTMentsAPI.Repository.TheHamBiz
                         subitem.patrolCode = logs.PatrolCode; // 순찰 상태 코드
                         subitem.patrolName = logs.PatrolName; // 순찰 상태명
                         subitem.carNum = logs.CarNum; // 차량 번호
-                        subitem.patrolImg = logs.PatrolImg; // 순찰 이미지
+                        //subitem.patrolImg = logs.PatrolImg; // 순찰 이미지
+                        if (!String.IsNullOrWhiteSpace(logs.PatrolImg))
+                        {
+                            subitem.patrolImg = await FileService.GetImageFile(logs.PatrolImg, "PatrolImages");
+                        }
+                        else
+                        {
+                            subitem.patrolImg = null;
+                        }
                         subitem.patrolRemark = logs.PatrolRemark; // 순찰 비고
                         item.lowList.Add(subitem);
                     }
