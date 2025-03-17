@@ -16,6 +16,16 @@ public partial class IoParkingviewtb
     public string IoSeq { get; set; } = null!;
 
     /// <summary>
+    /// 입출 상태
+    /// </summary>
+    public string InStatusTp { get; set; } = null!;
+
+    /// <summary>
+    /// 입출 상태 명
+    /// </summary>
+    public string InStatusTpNm { get; set; } = null!;
+
+    /// <summary>
     /// 최종입차_PID
     /// </summary>
     public int? InPid { get; set; }

@@ -1,4 +1,6 @@
-﻿using APTMentsAPI.Services.Logger;
+﻿using APTMentsAPI.DTO.ViewsDTO;
+using APTMentsAPI.Services.Helpers;
+using APTMentsAPI.Services.Logger;
 using APTMentsAPI.Services.TheHamBizService;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,12 +10,15 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
     [ApiController]
     public class InOutController : ControllerBase
     {
-        private ILoggerService LoggerService;
-        private ITheHamBizServices TheHamBizServices;
+        private readonly IRequestAPI RequestAPIHelpers;
+        private readonly ILoggerService LoggerService;
+        private readonly ITheHamBizServices TheHamBizServices;
 
         public InOutController(ILoggerService _loggerservice, 
+            IRequestAPI _requestapihelpers,
             ITheHamBizServices _thehambizservices)
         {
+            this.RequestAPIHelpers = _requestapihelpers;
             this.LoggerService = _loggerservice;
             this.TheHamBizServices = _thehambizservices;
         }
@@ -31,15 +36,14 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
         /// <param name="PackingDuration"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("ViewList")]
-        public async Task<IActionResult> ViewList([FromQuery]int pageNumber, [FromQuery]int pageSize, [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate, [FromQuery]string? carNumber, [FromQuery]string? dong, [FromQuery]string? ho, [FromQuery]int? packingDuration)
+        [Route("v1/ViewList")]
+        public async Task<IActionResult> ViewList([FromQuery]int pageNumber, [FromQuery]int pageSize, [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate, [FromQuery]string? inStatusTp, [FromQuery]string? carNumber, [FromQuery]string? dong, [FromQuery]string? ho, [FromQuery]int? parkingDuration)
         {
             try
             {
-                var apiUrl = $"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}";
-                LoggerService.FileAPIMessage($"[INFO] >> {apiUrl}");
+                RequestAPIHelpers.RequestMessage(Request);
 
-                var model = await TheHamBizServices.InOutViewListService(pageNumber,pageSize, startDate, endDate, carNumber, dong, ho, packingDuration);
+                var model = await TheHamBizServices.InOutViewListService(pageNumber,pageSize, startDate, endDate, inStatusTp, carNumber, dong, ho, parkingDuration);
                 if (model is null)
                     return BadRequest();
 
@@ -62,13 +66,12 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
         /// <param name="ioSeq"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("DetailView")]
+        [Route("v1/DetailView")]
         public async Task<IActionResult> DetailView([FromQuery] string ioSeq)
         {
             try
             {
-                var apiUrl = $"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}";
-                LoggerService.FileAPIMessage($"[INFO] >> {apiUrl}");
+                RequestAPIHelpers.RequestMessage(Request);
 
                 var model = await TheHamBizServices.DetailViewService(ioSeq);
                 if (model is null)
@@ -92,13 +95,12 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("ViewLastWeeks")]
+        [Route("v1/ViewLastWeeks")]
         public async Task<IActionResult> ViewLastWeeks([FromQuery]string carNumber)
         {
             try
             {
-                var apiUrl = $"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}";
-                LoggerService.FileAPIMessage($"[INFO] >> {apiUrl}");
+                RequestAPIHelpers.RequestMessage(Request);
 
                 var model = await TheHamBizServices.LastWeeksService(carNumber);
                 if (model is null)
@@ -117,7 +119,65 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
             }
         }
 
-      
+        [HttpPost]
+        [Route("v1/UpdateViewMemo")]
+        public async Task<IActionResult> UpdateViewMemo([FromBody]UpdateMemoDTO dto)
+        {
+            try
+            {
+                if (dto.pId == 0)
+                    return BadRequest();
+
+                RequestAPIHelpers.RequestMessage(Request);
+
+                var model = await TheHamBizServices.UpdateViewMemoService(dto);
+                if (model is null)
+                    return BadRequest();
+
+                if (model.code == 200)
+                    return Ok(model);
+                else if (model.code == 404)
+                    return BadRequest();
+                else
+                    return Problem("서버에서 처리할 수 없는 요청입니다.", statusCode: 500);
+            }
+            catch(Exception ex)
+            {
+                LoggerService.FileAPIMessage($"[ERROR]_{ex.ToString()}");
+                LoggerService.FileLogMessage(ex.ToString());
+                return Problem("서버에서 처리할 수 없는 요청입니다.", statusCode: 500);
+            }
+        }
+
+        [HttpPost]
+        [Route("v1/UpdateRowMemo")]
+        public async Task<IActionResult> UpdateRowsMemo([FromBody]UpdateMemoDTO dto)
+        {
+            try
+            {
+                if (dto.pId == 0)
+                    return BadRequest();
+
+                RequestAPIHelpers.RequestMessage(Request);
+
+                var model = await TheHamBizServices.UpdateRowsMemoService(dto);
+                if (model is null)
+                    return BadRequest();
+
+                if (model.code == 200)
+                    return Ok(model);
+                else if (model.code == 404)
+                    return BadRequest();
+                else
+                    return Problem("서버에서 처리할 수 없는 요청입니다.", statusCode: 500);
+            }
+            catch(Exception ex) 
+            {
+                LoggerService.FileAPIMessage($"[ERROR]_{ex.ToString()}");
+                LoggerService.FileLogMessage(ex.ToString());
+                return Problem("서버에서 처리할 수 없는 요청입니다.", statusCode: 500);
+            }
+        }
 
     }
 }

@@ -1,9 +1,11 @@
 ﻿using APTMentsAPI.DBModels;
 using APTMentsAPI.DTO;
+using APTMentsAPI.DTO.PatrolDTO;
 using APTMentsAPI.DTO.ViewsDTO;
 using APTMentsAPI.Services.Logger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace APTMentsAPI.Repository.TheHamBiz
 {
@@ -71,6 +73,8 @@ namespace APTMentsAPI.Repository.TheHamBiz
                             var ViewTB = new IoParkingviewtb
                             {
                                 IoSeq = RowsTB.IoSeq, // 시퀀스 번호
+                                InStatusTp = RowsTB.IoStatusTp, // 입출 상태
+                                InStatusTpNm = RowsTB.IoStatusTpNm, // 입출 상태명
                                 InPid = RowsTB.Pid, // 최종 입차 INDEX
                                 InDtm = RowsTB.IoDtm, // 입차 시간
                                 CarNum = RowsTB.CarNum, // 차량 번호
@@ -98,6 +102,8 @@ namespace APTMentsAPI.Repository.TheHamBiz
                         {
                             // 그것이 0 or 2 
                             // update - ViewTB의 입차 Index를 바꿔줘야한다.
+                            ViewTableCheck.InStatusTp = RowsTB.IoStatusTp; // 입출 상태
+                            ViewTableCheck.InStatusTpNm = RowsTB.IoStatusTpNm; // 입출 상태명
                             ViewTableCheck.InPid = RowsTB.Pid; // 최종 입차 INDEX
                             ViewTableCheck.InDtm = RowsTB.IoDtm; // 최종 입차 시간
                             ViewTableCheck.CarNum = RowsTB.CarNum; // 차량 번호
@@ -159,6 +165,8 @@ namespace APTMentsAPI.Repository.TheHamBiz
                         var ViewTB = new IoParkingviewtb
                         {
                             IoSeq = RowsTB.IoSeq, // 시퀀스 번호
+                            InStatusTp = RowsTB.IoStatusTp, // 입출 상태
+                            InStatusTpNm = RowsTB.IoStatusTpNm, // 입출 상태 명
                             OutPid = RowsTB.Pid, // 최종 출차 INDEX
                             OutDtm = RowsTB.IoDtm, // 출차 시간
                             CarNum = RowsTB.CarNum, // 차량 번호
@@ -182,6 +190,8 @@ namespace APTMentsAPI.Repository.TheHamBiz
                     else
                     {
                         // 내용이 있음 --> 업데이트
+                        ViewTableCheck.InStatusTp = RowsTB.IoStatusTp; // 입출 상태
+                        ViewTableCheck.InStatusTpNm = RowsTB.IoStatusTpNm; // 입출 상태명
                         ViewTableCheck.OutPid = RowsTB.Pid; // 최종 출차 INDEX
                         ViewTableCheck.OutDtm = RowsTB.IoDtm;// 최종 출차 시간
                         ViewTableCheck.CarNum = RowsTB.CarNum; // 차량 번호
@@ -264,7 +274,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
         /// 입-출차 리스트 조회
         /// </summary>
         /// <returns></returns>
-        public async Task<PageNationDTO<InOutViewListDTO>?> InOutViewListAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? EndDate, string? CarNumber, string? Dong, string? Ho, int? ParkingDuration)
+        public async Task<PageNationDTO<InOutViewListDTO>?> InOutViewListAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? EndDate, string? inStatusTp, string? CarNumber, string? Dong, string? Ho, int? ParkingDuration)
         {
             try
             {
@@ -287,6 +297,11 @@ namespace APTMentsAPI.Repository.TheHamBiz
                 if(EndDate.HasValue)
                 {
                     query = query.Where(m => m.OutDtm <= EndDate.Value);
+                }
+
+                if(inStatusTp is not null)
+                {
+                    query = query.Where(m => m.InStatusTp == inStatusTp);
                 }
 
                 if (CarNumber is not null)
@@ -313,7 +328,8 @@ namespace APTMentsAPI.Repository.TheHamBiz
                 .OrderBy(x => x.Pid)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
-                .ToListAsync();
+                .ToListAsync()
+                .ConfigureAwait(false);
 
                 List<InOutViewListDTO> model = pageView.Select(item => new InOutViewListDTO
                 {
@@ -321,8 +337,10 @@ namespace APTMentsAPI.Repository.TheHamBiz
                     ioSeq = item.InP!.IoSeq,
                     ioTicketTp = item.OutP == null ? item.InP.IoTicketTp : item.OutP.IoTicketTp,
                     ioTicketTpNm = item.OutP == null ? item.InP.IoTicketTpNm : item.OutP.IoTicketTpNm,
-                    ioStatusTp = item.OutP == null ? item.InP.IoStatusTp : item.OutP.IoStatusTp,
-                    ioStatusTpNm = item.OutP == null ? item.InP.IoStatusTpNm : item.OutP.IoStatusTpNm,
+                    ioStatusTp = item.InStatusTp,
+                    ioStatusTpNm = item.InStatusTpNm,
+                    //ioStatusTp = item.OutP == null ? item.InP.IoStatusTp : item.OutP.IoStatusTp,
+                    //ioStatusTpNm = item.OutP == null ? item.InP.IoStatusTpNm : item.OutP.IoStatusTpNm,
                     carNum = item.CarNum,
                     inDtm = item.InP.IoDtm,
                     outDtm = item.OutP?.IoDtm, // OutP가 없으면 null로 처리
@@ -375,9 +393,9 @@ namespace APTMentsAPI.Repository.TheHamBiz
                 var result = new PageNationDTO<InOutViewListDTO>
                 {
                     Items = model,
-                    PageNumber = pageNumber,
-                    PageSize = pageSize,
-                    TotalCount = totalCount
+                    pageNumber = pageNumber,
+                    pageSize = pageSize,
+                    totalCount = totalCount
                 };
 
                 return result;
@@ -398,7 +416,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
         {
             try
             {
-                var model = await Context.IoParkingrows.Where(m => m.IoSeq == ioSeq).ToListAsync();
+                var model = await Context.IoParkingrows.Where(m => m.IoSeq == ioSeq).ToListAsync().ConfigureAwait(false);
                 if (model is null)
                     return new List<IoParkingrow>();
                 else
@@ -429,7 +447,8 @@ namespace APTMentsAPI.Repository.TheHamBiz
                     .Where(m => m.CarNum == carNum && m.UpdateDt >= SearchDate)
                     .Include(m => m.InP)
                     .Include(m => m.OutP)
-                    .ToListAsync();
+                    .ToListAsync()
+                    .ConfigureAwait(false);
 
                 // 조회된 데이터가 없으면 빈 리스트 반환.
                 if (viewList == null || !viewList.Any())
@@ -453,6 +472,156 @@ namespace APTMentsAPI.Repository.TheHamBiz
                 return null;
             }
         }
-    
+
+        /// <summary>
+        /// View 테이블 Memo 컬럼 수정
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        public async Task<int> UpdateViewMemoAsync(UpdateMemoDTO dto)
+        {
+            try
+            {
+                using (IDbContextTransaction transaction = await Context.Database.BeginTransactionAsync().ConfigureAwait(false))
+                {
+                    var model = await Context.IoParkingviewtbs.FirstOrDefaultAsync(m => m.Pid == dto.pId).ConfigureAwait(false);
+                    if (model is not null)
+                    {
+                        model.Memo = dto.memo;
+                        model.UpdateDt = DateTime.Now;
+
+                        Context.IoParkingviewtbs.Update(model);
+                        int result = await Context.SaveChangesAsync().ConfigureAwait(false);
+                        if(result == 0)
+                        {
+                            await transaction.RollbackAsync().ConfigureAwait(false);
+                            return -1;
+                        }
+                        else
+                        {
+                            await transaction.CommitAsync().ConfigureAwait(false);
+                            return 1;
+                        }
+                    }
+                    else
+                        return 0;
+                }
+            }
+            catch(Exception ex)
+            {
+                LoggerService.FileLogMessage(ex.ToString());
+                return -1;
+            }
+        }
+
+        /// <summary>
+        /// Row 테이블 Memo 컬럼 수정
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        public async Task<int> UpdateRowMemoAsync(UpdateMemoDTO dto)
+        {
+            try
+            {
+                using (IDbContextTransaction transaction = await Context.Database.BeginTransactionAsync().ConfigureAwait(false))
+                {
+                    var model = await Context.IoParkingrows.FirstOrDefaultAsync(m => m.Pid == dto.pId).ConfigureAwait(false);
+                    if (model is not null)
+                    {
+                        model.Memo = dto.memo;
+                        model.CreateDt = DateTime.Now;
+
+                        Context.IoParkingrows.Update(model);
+                        int result = await Context.SaveChangesAsync().ConfigureAwait(false);
+                        if (result == 0)
+                        {
+                            await transaction.RollbackAsync().ConfigureAwait(false);
+                            return -1;
+                        }
+                        else
+                        {
+                            await transaction.CommitAsync().ConfigureAwait(false);
+                            return 1;
+                        }
+                    }
+                    else
+                        return 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerService.FileLogMessage(ex.ToString());
+                return -1;
+            }
+        }
+
+        /// <summary>
+        /// 순찰 List 조회
+        /// </summary>
+        /// <param name="pageNumber"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public async Task<PageNationDTO<PatrolViewListDTO>?> PatrolViewListAsync(int pageNumber, int pageSize)
+        {
+            try
+            {
+                int totalCount = await Context.Patrolpadlogtbs.CountAsync().ConfigureAwait(false);
+
+                var query = Context.Patrolpadlogtbs
+                    .Include(m => m.Patrollogtblists)
+                    .AsQueryable();
+
+                var pageView = await query
+                    .OrderBy(m => m.Pid)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+
+                List<PatrolViewListDTO> model = new List<PatrolViewListDTO>();
+                foreach (var views in pageView)
+                {
+                    var item = new PatrolViewListDTO();
+                    item.pId = views.Pid; // PID
+                    item.parkId = views.ParkId; // 주차장ID
+                    item.partolUserId = views.PatrolUserId; // 순찰 담당자ID
+                    item.patrolUserNm = views.PatrolUserNm; // 순찰 담당자 이름
+                    item.patrolStartDtm = views.PatrolStartDtm; // 순찰 시작 일시
+                    item.patrolEndDtm = views.PatrolEndDtm; // 순찰 종료 일시
+                    item.totCnt = views.TotCnt; // 전체 데이터 개수
+
+                    foreach (var logs in views.Patrollogtblists)
+                    {
+                        var subitem = new PatrolLowList();
+                        subitem.pId = logs.Pid; // PID
+                        subitem.patrolDtm = logs.PatrolDtm; // 순찰 일시
+                        subitem.patrolCode = logs.PatrolCode; // 순찰 상태 코드
+                        subitem.patrolName = logs.PatrolName; // 순찰 상태명
+                        subitem.carNum = logs.CarNum; // 차량 번호
+                        subitem.patrolImg = logs.PatrolImg; // 순찰 이미지
+                        subitem.patrolRemark = logs.PatrolRemark; // 순찰 비고
+                        item.lowList.Add(subitem);
+                    }
+                    model.Add(item);
+                }
+
+                // PageNationDTO에 데이터를 채워서 반환
+                var result = new PageNationDTO<PatrolViewListDTO>
+                {
+                    Items = model,
+                    pageNumber = pageNumber,
+                    pageSize = pageSize,
+                    totalCount = totalCount
+                };
+
+                return result;
+            }
+            catch(Exception ex)
+            {
+                LoggerService.FileLogMessage(ex.ToString());
+                return null;
+            }
+        }
     }
 }

@@ -26,7 +26,7 @@ public partial class AptContext : DbContext
     public virtual DbSet<Patrolpadlogtb> Patrolpadlogtbs { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseMySql("server=127.0.0.1;port=3306;database=AptmentWorks;user=root;password=rladyddn!!95", Microsoft.EntityFrameworkCore.ServerVersion.Parse("11.4.5-mariadb"));
+        => optionsBuilder.UseMySql("server=127.0.0.1;port=3306;database=AptmentWorks;user=root;password=rladyddn!!95", Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.6.21-mariadb"));
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -202,6 +202,14 @@ public partial class AptContext : DbContext
                 .HasComment("최종입차_PID")
                 .HasColumnType("int(11)")
                 .HasColumnName("IN_PID");
+            entity.Property(e => e.InStatusTp)
+                .HasMaxLength(255)
+                .HasComment("입출 상태")
+                .HasColumnName("IN_STATUS_TP");
+            entity.Property(e => e.InStatusTpNm)
+                .HasMaxLength(255)
+                .HasComment("입출 상태 명")
+                .HasColumnName("IN_STATUS_TP_NM");
             entity.Property(e => e.IoSeq)
                 .HasComment("입출차 일련번호")
                 .HasColumnName("IO_SEQ");

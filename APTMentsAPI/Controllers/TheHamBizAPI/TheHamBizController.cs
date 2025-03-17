@@ -1,8 +1,10 @@
 ﻿using APTMentsAPI.DTO.InCarDTO;
 using APTMentsAPI.DTO.OutCarDTO;
 using APTMentsAPI.DTO.PatrolDTO;
+using APTMentsAPI.Services.Helpers;
 using APTMentsAPI.Services.Logger;
 using APTMentsAPI.Services.TheHamBizService;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
@@ -10,14 +12,18 @@ namespace APTMentsAPI.Controllers.TheHanBizAPI
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("AllowAll")]
     public class TheHamBizController : ControllerBase
     {
-        private ILoggerService LoggerService;
-        private ITheHamBizServices TheHamBizServices;
+        private readonly IRequestAPI RequestAPIHelpers;
+        private readonly ILoggerService LoggerService;
+        private readonly ITheHamBizServices TheHamBizServices;
 
         public TheHamBizController(ILoggerService _loggerservice,
+            IRequestAPI _requestapihelpers,
             ITheHamBizServices _thehambizservices)
         {
+            this.RequestAPIHelpers = _requestapihelpers;
             this.LoggerService = _loggerservice;
             this.TheHamBizServices = _thehambizservices;
         }
@@ -43,11 +49,10 @@ namespace APTMentsAPI.Controllers.TheHanBizAPI
         {
             try
             {
-                var apiUrl = $"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}";
-                var serializedDto = JsonSerializer.Serialize(dto);
-                LoggerService.FileAPIMessage($"{apiUrl}>> [INFO] {serializedDto}");
+                RequestAPIHelpers.RequestMessage(Request, JsonSerializer.Serialize(dto));
 
                 var model = await TheHamBizServices.AddInCarSerivce(dto).ConfigureAwait(false);
+                
                 if (model == 1)
                     return Ok(new ResponseDTO() { RES_CD = "1", RES_MSG = "요청이 정상처리되었습니다."});
                 else if(model == 0)
@@ -78,9 +83,7 @@ namespace APTMentsAPI.Controllers.TheHanBizAPI
         {
             try
             {
-                var apiUrl = $"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}";
-                var serializedDto = JsonSerializer.Serialize(dto);
-                LoggerService.FileAPIMessage($"{apiUrl}>> [INFO] {serializedDto}");
+                RequestAPIHelpers.RequestMessage(Request, JsonSerializer.Serialize(dto));
 
                 var model = await TheHamBizServices.AddOutCarService(dto).ConfigureAwait(false);
                 if (model == 1)
@@ -111,9 +114,7 @@ namespace APTMentsAPI.Controllers.TheHanBizAPI
         {
             try
             {
-                var apiUrl = $"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}";
-                var serializedDto = JsonSerializer.Serialize(dto);
-                LoggerService.FileAPIMessage($"{apiUrl}>> [INFO] {serializedDto}");
+                RequestAPIHelpers.RequestMessage(Request, JsonSerializer.Serialize(dto));
 
                 var model = await TheHamBizServices.AddPatrolService(dto).ConfigureAwait(false);
                 if (model == 1)
@@ -148,6 +149,5 @@ namespace APTMentsAPI.Controllers.TheHanBizAPI
             /// </summary>
             public string? RES_MSG { get; set; }
         }
-
     }
 }

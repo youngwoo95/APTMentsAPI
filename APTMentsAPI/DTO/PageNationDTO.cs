@@ -10,22 +10,22 @@
         /// <summary>
         /// 요청한 페이지 번호
         /// </summary>
-        public int PageNumber { get; set; }
+        public int pageNumber { get; set; }
 
         /// <summary>
         /// 한 페이지당 항목 수
         /// </summary>
-        public int PageSize { get; set; }
+        public int pageSize { get; set; }
 
         /// <summary>
         /// 전체 데이터 수 
         /// </summary>
-        public int TotalCount { get; set; }
+        public int totalCount { get; set; }
 
         /// <summary>
         /// 전체 페이지 수
         /// </summary>
-        public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
+        public int totalPages => (int)Math.Ceiling((double)totalCount / pageSize);
 
     }
 }

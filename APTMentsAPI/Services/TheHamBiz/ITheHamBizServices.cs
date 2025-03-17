@@ -8,6 +8,7 @@ namespace APTMentsAPI.Services.TheHamBizService
 {
     public interface ITheHamBizServices
     {
+        #region 더함비즈 API 호출
         /// <summary>
         /// 입차 등록
         /// </summary>
@@ -28,13 +29,14 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// <param name="dto"></param>
         /// <returns></returns>
         public Task<int> AddPatrolService(RequestPadTheHamBizDTO dto);
-
+        #endregion
+        #region 입-출차
         /// <summary>
         /// 입-출차 리스트
         /// </summary>
         /// <returns></returns>
         //public Task<ResponseUnit<PageNationDTO<InOutViewListDTO>?>> InOutViewListService(int pageNumber, int pageSize);
-        public Task<ResponseUnit<PageNationDTO<InOutViewListDTO>?>> InOutViewListService(int pageNumber, int PageSize, DateTime? StartDate, DateTime? EndDate, string? CarNumber, string? Dong, string? Ho, int? PackingDuration);
+        public Task<ResponseUnit<PageNationDTO<InOutViewListDTO>?>> InOutViewListService(int pageNumber, int PageSize, DateTime? StartDate, DateTime? EndDate, string? inStatusTp, string? CarNumber, string? Dong, string? Ho, int? PackingDuration);
 
         /// <summary>
         /// 시퀀스 상세내역 조회
@@ -50,5 +52,29 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// <returns></returns>
         public Task<ResponseList<LastWeeksDTO>?> LastWeeksService(string carNum);
 
+        /// <summary>
+        /// View 테이블 Memo 컬럼 수정
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        public Task<ResponseUnit<bool>> UpdateViewMemoService(UpdateMemoDTO dto);
+
+        /// <summary>
+        /// Rows 테이블 Memo 컬럼 수정
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        public Task<ResponseUnit<bool>> UpdateRowsMemoService(UpdateMemoDTO dto);
+        #endregion
+
+        #region 순찰
+        /// <summary>
+        /// 순찰 리스트 조회
+        /// </summary>
+        /// <param name="pageNumber"></param>
+        /// <param name="PageSize"></param>
+        /// <returns></returns>
+        public Task<ResponseUnit<PageNationDTO<PatrolViewListDTO>?>> PatrolViewListService(int pageNumber, int PageSize);
+        #endregion
     }
 }

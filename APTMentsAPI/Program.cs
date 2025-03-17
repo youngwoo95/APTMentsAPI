@@ -1,6 +1,7 @@
 
 using APTMentsAPI.Repository;
 using APTMentsAPI.Repository.TheHamBiz;
+using APTMentsAPI.Services.Helpers;
 using APTMentsAPI.Services.Logger;
 using APTMentsAPI.Services.TheHamBizService;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -36,6 +37,37 @@ namespace APTMentsAPI
             });
             #endregion
 
+            #region CORS
+            var AllowCors = "AllowSpecificIP";
+            string[]? CorsArr = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+
+            if (CorsArr is [_, ..])
+            {
+                builder.Services.AddCors(options =>
+                {
+                    // 전역 정책: 특정 Origin만 허용
+                    options.AddPolicy(name: AllowCors, builder =>
+                    {
+                        builder.WithOrigins(CorsArr)
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+
+                    // 특정 컨트롤러에 사용할 정책: 모든 Origin 허용
+                    options.AddPolicy("AllowAll", builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+                });
+            }
+            else
+            {
+                throw new InvalidOperationException("'Cors' is null or empty");
+            }
+            #endregion
+
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -46,6 +78,8 @@ namespace APTMentsAPI
 
             #region DI
             builder.Services.AddTransient<ILoggerService, LoggerService>();
+
+            builder.Services.AddTransient<IRequestAPI, RequestAPI>();
 
             builder.Services.AddTransient<ITheHamBizServices, TheHamBizServices>();
             builder.Services.AddTransient<ITheHamBizRepository, TheHamBizRepository>();
@@ -70,6 +104,8 @@ namespace APTMentsAPI
                 throw new InvalidOperationException("Connection string 'DefaultConnection' is null or empty.");
 
             #endregion
+
+         
 
             var app = builder.Build();
 
@@ -124,7 +160,10 @@ namespace APTMentsAPI
                 }
             });
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
+
+            // 전역 정책 적용
+            app.UseCors(AllowCors);
 
             app.UseAuthorization();
 
