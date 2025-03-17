@@ -64,6 +64,7 @@ namespace APTMentsAPI.Services.FileService
             }
         }
 
+     
         /// <summary>
         /// 파일 읽기
         /// </summary>
@@ -186,6 +187,40 @@ namespace APTMentsAPI.Services.FileService
             }
 
         }
+
+        /// <summary>
+        /// 파일 삭제
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="targetfolder"></param>
+        /// <returns></returns>
+        public async Task<bool> DeleteImageFile(string filePath, string targetfolder)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(filePath))
+                    return false; // null 대신 false 반환
+
+                string fileFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "FileServer", targetfolder);
+                Uri uri = new Uri(filePath);
+                string fileName = Path.GetFileName(uri.AbsolutePath);
+                string search = Path.Combine(fileFolderPath, fileName);
+
+                if (File.Exists(search))
+                {
+                    File.Delete(search);
+                    return true;
+                }
+
+                return false; // 파일이 존재하지 않으면 false 반환
+            }
+            catch (Exception ex)
+            {
+                LoggerService.FileLogMessage(ex.ToString());
+                return false;
+            }
+        }
+
 
     }
 }

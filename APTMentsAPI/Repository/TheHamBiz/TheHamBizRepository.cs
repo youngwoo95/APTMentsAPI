@@ -6,7 +6,6 @@ using APTMentsAPI.Services.FileService;
 using APTMentsAPI.Services.Logger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace APTMentsAPI.Repository.TheHamBiz
 {
