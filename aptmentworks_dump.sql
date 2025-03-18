@@ -1,9 +1,9 @@
 /*M!999999\- enable the sandbox mode */ 
--- MariaDB dump 10.19-11.4.5-MariaDB, for Win64 (AMD64)
+-- MariaDB dump 10.19  Distrib 10.6.21-MariaDB, for Win64 (AMD64)
 --
--- Host: localhost    Database: aptmentworks
+-- Host: localhost    Database: AptmentWorks
 -- ------------------------------------------------------
--- Server version	11.4.5-MariaDB
+-- Server version	10.6.21-MariaDB
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,7 +14,7 @@
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*M!100616 SET @OLD_NOTE_VERBOSITY=@@NOTE_VERBOSITY, NOTE_VERBOSITY=0 */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
 -- Table structure for table `io_parkingrows`
@@ -54,7 +54,7 @@ CREATE TABLE `io_parkingrows` (
   `CREATE_DT` datetime NOT NULL DEFAULT current_timestamp() COMMENT '시스템 생성 일자',
   `MEMO` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`PID`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='더함비즈 API_입출차 기록 테이블';
+) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='더함비즈 API_입출차 기록 테이블';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -63,9 +63,7 @@ CREATE TABLE `io_parkingrows` (
 
 LOCK TABLES `io_parkingrows` WRITE;
 /*!40000 ALTER TABLE `io_parkingrows` DISABLE KEYS */;
-INSERT INTO `io_parkingrows` VALUES
-(49,1,'P2177010120240613082249851','2177','12가1234','10','입차','1','정문',1,'2024-06-13 05:38:07','0','','2','방문차량','101','1001','0','1','허위차량','2024-06-13 05:38:07','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','0','',NULL,NULL,'','2025-03-16 00:09:22',NULL),
-(50,0,'P2177010120240613082249851','2177','44거5555','20','출차','1','정문',2,'2024-06-13 05:38:07','0','','2','방문차량','101','1001','0','1','타단지 차량','2024-01-01 11:11:11','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg',NULL,NULL,36,36,'','2025-03-16 00:11:00',NULL);
+INSERT INTO `io_parkingrows` VALUES (64,0,'P2177010120240613082249851','2177','44거1010','20','출차','1','정문',2,'2024-06-13 05:38:07','0','','2','방문차량','101','1001','0','0','','','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg',NULL,NULL,36,36,'','2025-03-18 08:20:01',NULL),(65,1,'P2177010120240613082249851','2177','43가1414','10','입차','1','정문',1,'2024-06-13 05:38:07','0','','2','예약차량','101','1001','1','0','','','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','0','',NULL,NULL,'친구방문','2025-03-18 13:19:56',NULL),(66,1,'P2177010120240613082249851','2177','12가1234','10','입차','1','정문',1,'2024-06-13 05:38:07','0','','2','방문차량','101','1001','0','1','허위차량','2024-06-13 05:38:07','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','0','',NULL,NULL,'','2025-03-18 13:19:56',NULL),(67,1,'P2177010120240613082249851','2177','12가1234','10','입차','1','정문',1,'2024-06-13 05:38:07','0','','6','정기차량','101','1001','0','0','','','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','0','',NULL,NULL,'','2025-03-18 13:19:57',NULL),(68,1,'P2177010120240613082249851','2177','33마3434','10','입차','1','정문',1,'2024-06-13 05:38:07','0','','2','방문차량','101','1001','0','0','','','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','0','',NULL,NULL,'','2025-03-18 13:19:58',NULL),(69,1,'P2177010120240613082249851','2177','33마3434','10','입차','1','정문',1,'2024-06-13 05:38:07','0','','2','방문차량','101','1001','0','0','','','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','0','',NULL,NULL,'','2025-03-18 13:46:55',NULL),(70,0,'P2177010120240613082249851','2177','44거1010','20','출차','1','정문',2,'2024-06-13 05:38:07','0','','2','방문차량','101','1001','0','0','','','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg',NULL,NULL,36,36,'','2025-03-18 13:46:58',NULL);
 /*!40000 ALTER TABLE `io_parkingrows` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -79,11 +77,15 @@ DROP TABLE IF EXISTS `io_parkingviewtb`;
 CREATE TABLE `io_parkingviewtb` (
   `PID` int(11) NOT NULL AUTO_INCREMENT,
   `IO_SEQ` varchar(255) NOT NULL COMMENT '입출차 일련번호',
+  `IN_STATUS_TP` varchar(255) NOT NULL COMMENT '입출 상태',
+  `IN_STATUS_TP_NM` varchar(255) NOT NULL COMMENT '입출 상태 명',
   `IN_PID` int(11) DEFAULT NULL COMMENT '최종입차_PID',
   `IN_DTM` datetime DEFAULT NULL COMMENT '최종입차_DT',
   `OUT_PID` int(11) DEFAULT NULL COMMENT '최종출차_PID',
   `OUT_DTM` datetime DEFAULT NULL COMMENT '최종출차_DT',
   `CAR_NUM` varchar(255) DEFAULT NULL COMMENT '차량번호',
+  `IO_TICKET_TP` varchar(255) DEFAULT NULL COMMENT '입-출차 차량 구분 ID',
+  `IO_TICKET_TP_NM` varchar(255) DEFAULT NULL COMMENT '입-출차 차량 구분 명',
   `DONG` varchar(255) DEFAULT NULL COMMENT '동',
   `HO` varchar(255) DEFAULT NULL COMMENT '호',
   `PARING_DURATION` int(11) DEFAULT NULL COMMENT '주차시간',
@@ -97,7 +99,7 @@ CREATE TABLE `io_parkingviewtb` (
   KEY `OUT_PID_202503141526` (`OUT_PID`),
   CONSTRAINT `IN_PID_202503141525` FOREIGN KEY (`IN_PID`) REFERENCES `io_parkingrows` (`PID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `OUT_PID_202503141526` FOREIGN KEY (`OUT_PID`) REFERENCES `io_parkingrows` (`PID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='더함비즈 API_입출차 테이블';
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='더함비즈 API_입출차 테이블';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -106,8 +108,7 @@ CREATE TABLE `io_parkingviewtb` (
 
 LOCK TABLES `io_parkingviewtb` WRITE;
 /*!40000 ALTER TABLE `io_parkingviewtb` DISABLE KEYS */;
-INSERT INTO `io_parkingviewtb` VALUES
-(9,'P2177010120240613082249851',49,'2024-06-13 05:38:07',50,'2024-06-13 05:38:07','44거5555','101','1001',36,'1','타단지 차량',NULL,'2025-03-16 00:00:00');
+INSERT INTO `io_parkingviewtb` VALUES (12,'P2177010120240613082249851','20','출차',69,'2024-06-13 05:38:07',70,'2024-06-13 05:38:07','44거1010','2','방문차량','101','1001',36,'0','',NULL,'2025-03-18 13:46:58');
 /*!40000 ALTER TABLE `io_parkingviewtb` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -131,7 +132,7 @@ CREATE TABLE `patrollogtblist` (
   PRIMARY KEY (`PID`),
   KEY `PatrolPadLogTB_PID_202503131001` (`S_PID`),
   CONSTRAINT `PatrolPadLogTB_PID_202503131001` FOREIGN KEY (`S_PID`) REFERENCES `patrolpadlogtb` (`PID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -140,10 +141,7 @@ CREATE TABLE `patrollogtblist` (
 
 LOCK TABLES `patrollogtblist` WRITE;
 /*!40000 ALTER TABLE `patrollogtblist` DISABLE KEYS */;
-INSERT INTO `patrollogtblist` VALUES
-(1,'2025-11-22 22:22:22',0,'방문객','99버9999','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','친척방문','2025-03-14 23:40:00',1),
-(2,'2025-11-22 22:25:25',1,'입주민','33루3333','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','','2025-03-14 23:40:00',1),
-(3,'2025-11-22 22:30:34',0,'블랙리스트','88머8888','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','상습주차범','2025-03-14 23:40:00',1);
+INSERT INTO `patrollogtblist` VALUES (1,'2025-11-22 22:22:22',0,'방문객','99버9999','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','친척방문','2025-03-14 23:40:00',1),(2,'2025-11-22 22:25:25',1,'입주민','33루3333','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','','2025-03-14 23:40:00',1),(3,'2025-11-22 22:30:34',0,'블랙리스트','88머8888','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','상습주차범','2025-03-14 23:40:00',1),(4,'2025-11-22 22:22:22',0,'방문객','99버9999','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','친척방문','2025-03-17 10:11:09',2),(5,'2025-11-22 22:25:25',1,'입주민','33루3333','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','','2025-03-17 10:11:09',2),(6,'2025-11-22 22:30:34',0,'블랙리스트','88머8888','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','상습주차범','2025-03-17 10:11:09',2),(7,'2025-11-22 22:22:22',0,'방문객','99버9999','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','친척방문','2025-03-17 14:44:40',3),(8,'2025-11-22 22:25:25',1,'입주민','33루3333','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','','2025-03-17 14:44:40',3),(9,'2025-11-22 22:30:34',0,'블랙리스트','88머8888','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','상습주차범','2025-03-17 14:44:40',3);
 /*!40000 ALTER TABLE `patrollogtblist` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -164,7 +162,7 @@ CREATE TABLE `patrolpadlogtb` (
   `TOT_CNT` int(11) NOT NULL COMMENT '전체 데이터 개수',
   `CREATE_DT` datetime NOT NULL DEFAULT current_timestamp() COMMENT '시스템 생성시간',
   PRIMARY KEY (`PID`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -173,8 +171,7 @@ CREATE TABLE `patrolpadlogtb` (
 
 LOCK TABLES `patrolpadlogtb` WRITE;
 /*!40000 ALTER TABLE `patrolpadlogtb` DISABLE KEYS */;
-INSERT INTO `patrolpadlogtb` VALUES
-(1,'2177','33마3434',10,'입차','1',3,'2025-03-14 23:40:00');
+INSERT INTO `patrolpadlogtb` VALUES (1,'2177','33마3434',10,'입차','1',3,'2025-03-14 23:40:00'),(2,'2177','33마3434',10,'입차','1',3,'2025-03-17 10:11:09'),(3,'2177','33마3434',10,'입차','1',3,'2025-03-17 14:44:40');
 /*!40000 ALTER TABLE `patrolpadlogtb` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -185,6 +182,6 @@ UNLOCK TABLES;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-16 15:15:17
+-- Dump completed on 2025-03-18 14:16:32
