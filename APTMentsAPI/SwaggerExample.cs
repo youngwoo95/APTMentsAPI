@@ -2,156 +2,12 @@
 using APTMentsAPI.DTO.PatrolDTO;
 using APTMentsAPI.DTO.ViewsDTO;
 using Swashbuckle.AspNetCore.Filters;
+
 namespace APTMentsAPI
 {
-    public class PatrolListResponseExample : IExamplesProvider<ResponseUnit<PageNationDTO<PatrolViewListDTO>>>
-    {
-        public ResponseUnit<PageNationDTO<PatrolViewListDTO>> GetExamples()
-        {
-            // 첫 번째 순찰 항목
-            var patrolItem1 = new PatrolViewListDTO
-            {
-                pId = 1,
-                parkId = "2177",
-                partolUserId = "33마3434",
-                patrolUserNm = 10,
-                patrolStartDtm = "입차",
-                patrolEndDtm = "1",
-                totCnt = 3,
-                lowList = new List<PatrolLowList>
-                {
-                    new PatrolLowList {
-                        pId = 1,
-                        patrolDtm = DateTime.Parse("2025-11-22T22:22:22"),
-                        patrolCode = 0,
-                        patrolName = "방문객",
-                        carNum = "99버9999",
-                        patrolImg = "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg",
-                        patrolRemark = "친척방문"
-                    },
-                    new PatrolLowList {
-                        pId = 2,
-                        patrolDtm = DateTime.Parse("2025-11-22T22:25:25"),
-                        patrolCode = 1,
-                        patrolName = "입주민",
-                        carNum = "33루3333",
-                        patrolImg = "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg",
-                        patrolRemark = ""
-                    },
-                    new PatrolLowList {
-                        pId = 3,
-                        patrolDtm = DateTime.Parse("2025-11-22T22:30:34"),
-                        patrolCode = 0,
-                        patrolName = "블랙리스트",
-                        carNum = "88머8888",
-                        patrolImg = "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg",
-                        patrolRemark = "상습주차범"
-                    }
-                }
-            };
-
-            // 두 번째 순찰 항목
-            var patrolItem2 = new PatrolViewListDTO
-            {
-                pId = 2,
-                parkId = "2177",
-                partolUserId = "33마3434",
-                patrolUserNm = 10,
-                patrolStartDtm = "입차",
-                patrolEndDtm = "1",
-                totCnt = 3,
-                lowList = new List<PatrolLowList>
-                {
-                    new PatrolLowList {
-                        pId = 4,
-                        patrolDtm = DateTime.Parse("2025-11-22T22:22:22"),
-                        patrolCode = 0,
-                        patrolName = "방문객",
-                        carNum = "99버9999",
-                        patrolImg = "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg",
-                        patrolRemark = "친척방문"
-                    },
-                    new PatrolLowList {
-                        pId = 5,
-                        patrolDtm = DateTime.Parse("2025-11-22T22:25:25"),
-                        patrolCode = 1,
-                        patrolName = "입주민",
-                        carNum = "33루3333",
-                        patrolImg = "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg",
-                        patrolRemark = ""
-                    },
-                    new PatrolLowList {
-                        pId = 6,
-                        patrolDtm = DateTime.Parse("2025-11-22T22:30:34"),
-                        patrolCode = 0,
-                        patrolName = "블랙리스트",
-                        carNum = "88머8888",
-                        patrolImg = "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg",
-                        patrolRemark = "상습주차범"
-                    }
-                }
-            };
-
-            // 세 번째 순찰 항목
-            var patrolItem3 = new PatrolViewListDTO
-            {
-                pId = 3,
-                parkId = "2177",
-                partolUserId = "33마3434",
-                patrolUserNm = 10,
-                patrolStartDtm = "입차",
-                patrolEndDtm = "1",
-                totCnt = 3,
-                lowList = new List<PatrolLowList>
-                {
-                    new PatrolLowList {
-                        pId = 7,
-                        patrolDtm = DateTime.Parse("2025-11-22T22:22:22"),
-                        patrolCode = 0,
-                        patrolName = "방문객",
-                        carNum = "99버9999",
-                        patrolImg = "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg",
-                        patrolRemark = "친척방문"
-                    },
-                    new PatrolLowList {
-                        pId = 8,
-                        patrolDtm = DateTime.Parse("2025-11-22T22:25:25"),
-                        patrolCode = 1,
-                        patrolName = "입주민",
-                        carNum = "33루3333",
-                        patrolImg = "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg",
-                        patrolRemark = ""
-                    },
-                    new PatrolLowList {
-                        pId = 9,
-                        patrolDtm = DateTime.Parse("2025-11-22T22:30:34"),
-                        patrolCode = 0,
-                        patrolName = "블랙리스트",
-                        carNum = "88머8888",
-                        patrolImg = "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg",
-                        patrolRemark = "상습주차범"
-                    }
-                }
-            };
-
-            // 페이지네이션 DTO에 순찰 리스트 항목들을 할당합니다.
-            var pageNation = new PageNationDTO<PatrolViewListDTO>
-            {
-                Items = new List<PatrolViewListDTO> { patrolItem1, patrolItem2, patrolItem3 },
-                pageNumber = 1,
-                pageSize = 15,
-                totalCount = 3
-            };
-
-            return new ResponseUnit<PageNationDTO<PatrolViewListDTO>>
-            {
-                message = "요청이 정상 처리되었습니다.",
-                data = pageNation,
-                code = 200
-            };
-        }
-    }
-
+    /// <summary>
+    /// 전체 LIST Swagger 샘플
+    /// </summary>
     public class ViewListResponseExample : IExamplesProvider<ResponseUnit<PageNationDTO<InOutViewListDTO>>>
     {
         public ResponseUnit<PageNationDTO<InOutViewListDTO>> GetExamples()
@@ -204,7 +60,9 @@ namespace APTMentsAPI
         }
     }
 
-
+    /// <summary>
+    /// IoSeq 상세정보 조회 Swagger 샘플
+    /// </summary>
     public class DetailViewResponseExample : IExamplesProvider<ResponseList<DetailViewDTO>>
     {
         public ResponseList<DetailViewDTO> GetExamples()
@@ -279,6 +137,157 @@ namespace APTMentsAPI
                 },
                 code = 200
             };
+        }
+
+        /// <summary>
+        /// 순찰 패드 전체 List Swagger 샘플
+        /// </summary>
+        public class PatrolListResponseExample : IExamplesProvider<ResponseUnit<PageNationDTO<PatrolViewListDTO>>>
+        {
+            public ResponseUnit<PageNationDTO<PatrolViewListDTO>> GetExamples()
+            {
+                // 첫 번째 순찰 항목
+                var patrolItem1 = new PatrolViewListDTO
+                {
+                    pId = 1,
+                    parkId = "2177",
+                    partolUserId = "33마3434",
+                    patrolUserNm = 10,
+                    patrolStartDtm = "입차",
+                    patrolEndDtm = "1",
+                    totCnt = 3,
+                    lowList = new List<PatrolLowList>
+                {
+                    new PatrolLowList {
+                        pId = 1,
+                        patrolDtm = DateTime.Parse("2025-11-22T22:22:22"),
+                        patrolCode = 0,
+                        patrolName = "방문객",
+                        carNum = "99버9999",
+                        patrolImg = "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg",
+                        patrolRemark = "친척방문"
+                    },
+                    new PatrolLowList {
+                        pId = 2,
+                        patrolDtm = DateTime.Parse("2025-11-22T22:25:25"),
+                        patrolCode = 1,
+                        patrolName = "입주민",
+                        carNum = "33루3333",
+                        patrolImg = "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg",
+                        patrolRemark = ""
+                    },
+                    new PatrolLowList {
+                        pId = 3,
+                        patrolDtm = DateTime.Parse("2025-11-22T22:30:34"),
+                        patrolCode = 0,
+                        patrolName = "블랙리스트",
+                        carNum = "88머8888",
+                        patrolImg = "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg",
+                        patrolRemark = "상습주차범"
+                    }
+                }
+                };
+
+                // 두 번째 순찰 항목
+                var patrolItem2 = new PatrolViewListDTO
+                {
+                    pId = 2,
+                    parkId = "2177",
+                    partolUserId = "33마3434",
+                    patrolUserNm = 10,
+                    patrolStartDtm = "입차",
+                    patrolEndDtm = "1",
+                    totCnt = 3,
+                    lowList = new List<PatrolLowList>
+                {
+                    new PatrolLowList {
+                        pId = 4,
+                        patrolDtm = DateTime.Parse("2025-11-22T22:22:22"),
+                        patrolCode = 0,
+                        patrolName = "방문객",
+                        carNum = "99버9999",
+                        patrolImg = "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg",
+                        patrolRemark = "친척방문"
+                    },
+                    new PatrolLowList {
+                        pId = 5,
+                        patrolDtm = DateTime.Parse("2025-11-22T22:25:25"),
+                        patrolCode = 1,
+                        patrolName = "입주민",
+                        carNum = "33루3333",
+                        patrolImg = "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg",
+                        patrolRemark = ""
+                    },
+                    new PatrolLowList {
+                        pId = 6,
+                        patrolDtm = DateTime.Parse("2025-11-22T22:30:34"),
+                        patrolCode = 0,
+                        patrolName = "블랙리스트",
+                        carNum = "88머8888",
+                        patrolImg = "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg",
+                        patrolRemark = "상습주차범"
+                    }
+                }
+                };
+
+                // 세 번째 순찰 항목
+                var patrolItem3 = new PatrolViewListDTO
+                {
+                    pId = 3,
+                    parkId = "2177",
+                    partolUserId = "33마3434",
+                    patrolUserNm = 10,
+                    patrolStartDtm = "입차",
+                    patrolEndDtm = "1",
+                    totCnt = 3,
+                    lowList = new List<PatrolLowList>
+                {
+                    new PatrolLowList {
+                        pId = 7,
+                        patrolDtm = DateTime.Parse("2025-11-22T22:22:22"),
+                        patrolCode = 0,
+                        patrolName = "방문객",
+                        carNum = "99버9999",
+                        patrolImg = "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg",
+                        patrolRemark = "친척방문"
+                    },
+                    new PatrolLowList {
+                        pId = 8,
+                        patrolDtm = DateTime.Parse("2025-11-22T22:25:25"),
+                        patrolCode = 1,
+                        patrolName = "입주민",
+                        carNum = "33루3333",
+                        patrolImg = "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg",
+                        patrolRemark = ""
+                    },
+                    new PatrolLowList {
+                        pId = 9,
+                        patrolDtm = DateTime.Parse("2025-11-22T22:30:34"),
+                        patrolCode = 0,
+                        patrolName = "블랙리스트",
+                        carNum = "88머8888",
+                        patrolImg = "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg",
+                        patrolRemark = "상습주차범"
+                    }
+                }
+                };
+
+                // 페이지네이션 DTO에 순찰 리스트 항목들을 할당합니다.
+                var pageNation = new PageNationDTO<PatrolViewListDTO>
+                {
+                    Items = new List<PatrolViewListDTO> { patrolItem1, patrolItem2, patrolItem3 },
+                    pageNumber = 1,
+                    pageSize = 15,
+                    totalCount = 3
+                };
+
+                return new ResponseUnit<PageNationDTO<PatrolViewListDTO>>
+                {
+                    message = "요청이 정상 처리되었습니다.",
+                    data = pageNation,
+                    code = 200
+                };
+            }
         }
     }
 

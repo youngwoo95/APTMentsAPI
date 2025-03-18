@@ -5,6 +5,7 @@ using APTMentsAPI.Services.Helpers;
 using APTMentsAPI.Services.Logger;
 using APTMentsAPI.Services.TheHamBizService;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
@@ -24,9 +25,14 @@ namespace APTMentsAPI
             builder.WebHost.UseKestrel((context, options) =>
             {
                 options.Configure(context.Configuration.GetSection("Kestrel"));
+                options.Limits.RequestHeadersTimeout = TimeSpan.FromMinutes(1); // 서버가 요청 헤더를 수신하는 데 걸리는 최대 시간을 설정한다.
                 // Keep-Alive TimeOut 3분설정 keep-Alive 타임아웃: 일반적으로 2~5분, 너무 짧으면 연결이 자주 끊어질 수 있고, 너무 길면 리소스가 낭비될 수 있음.
                 options.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(3);
+
+                /* 클라이언트 연결 수 지정 */
+                //options.Limits.MaxConcurrentConnections = 100; // 최대 클라이언트 연결 수를 지정한다.
                 // 최대 동시 업그레이드 연결 수: 일반적으로 1000 ~ 5000 사이로 설정하는 것이 좋음
+                // 최대 열린, 업그레이드된 연결 수를 설정한다.
                 options.Limits.MaxConcurrentUpgradedConnections = 3000;
                 options.Limits.MaxResponseBufferSize = null; // 응답 크기 제한 해제
                 options.ConfigureEndpointDefaults(endpointOptions =>
@@ -38,15 +44,35 @@ namespace APTMentsAPI
             });
             #endregion
 
+            // 전달된 헤더의 미들웨어 순서
+            builder.Services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
+
+            builder.Services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+                options.Providers.Add<BrotliCompressionProvider>();
+                options.Providers.Add<GzipCompressionProvider>();
+                //options.Providers.Add<CustomCompressionProvider>();
+                options.MimeTypes =
+                ResponseCompressionDefaults.MimeTypes.Concat(
+                    new[] { "image/svg+xml" });
+            });
+
             #region CORS
+            // CORS 설정
             var AllowCors = "AllowSpecificIP";
             string[]? CorsArr = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
 
             if (CorsArr is [_, ..])
             {
+                
                 builder.Services.AddCors(options =>
                 {
-                    // 전역 정책: 특정 Origin만 허용
+                    // 전역 정책: S-TEC API 호출시
                     options.AddPolicy(name: AllowCors, builder =>
                     {
                         builder.WithOrigins(CorsArr)
@@ -54,7 +80,7 @@ namespace APTMentsAPI
                                .AllowAnyHeader();
                     });
 
-                    // 특정 컨트롤러에 사용할 정책: 모든 Origin 허용
+                    // 전체 허용 _ 특정컨트롤러에 따로지정 (더함비즈 API 호출시)
                     options.AddPolicy("AllowAll", builder =>
                     {
                         builder.AllowAnyOrigin()
@@ -82,10 +108,12 @@ namespace APTMentsAPI
             });
 #endif
 
+#if DEBUG
             // 예제 필터를 포함하는 어셈블리 등록
             builder.Services.AddSwaggerExamplesFromAssemblyOf<ViewListResponseExample>();
             builder.Services.AddSwaggerExamplesFromAssemblyOf<DetailViewResponseExample>();
             builder.Services.AddSwaggerExamplesFromAssemblyOf<PatrolListResponseExample>();
+#endif
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -122,8 +150,6 @@ namespace APTMentsAPI
 
             #endregion
 
-          
-
 
             var app = builder.Build();
 
@@ -132,8 +158,9 @@ namespace APTMentsAPI
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
-
             #endregion
+
+            app.UseResponseCompression(); // 응답 압축 미들웨어 추가
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -178,16 +205,10 @@ namespace APTMentsAPI
                 }
             });
 
-            //app.UseHttpsRedirection();
-
             // 전역 정책 적용
             app.UseCors(AllowCors);
-
             app.UseAuthorization();
-
-
             app.MapControllers();
-
             app.Run();
         }
     }
