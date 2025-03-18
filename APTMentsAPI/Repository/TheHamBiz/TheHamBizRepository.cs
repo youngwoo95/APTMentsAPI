@@ -79,6 +79,8 @@ namespace APTMentsAPI.Repository.TheHamBiz
                                 IoSeq = RowsTB.IoSeq, // 시퀀스 번호
                                 InStatusTp = RowsTB.IoStatusTp, // 입출 상태
                                 InStatusTpNm = RowsTB.IoStatusTpNm, // 입출 상태명
+                                IoTicketTp = RowsTB.IoTicketTp,
+                                IoTicketTpNm = RowsTB.IoTicketTpNm,
                                 InPid = RowsTB.Pid, // 최종 입차 INDEX
                                 InDtm = RowsTB.IoDtm, // 입차 시간
                                 CarNum = RowsTB.CarNum, // 차량 번호
@@ -108,6 +110,8 @@ namespace APTMentsAPI.Repository.TheHamBiz
                             // update - ViewTB의 입차 Index를 바꿔줘야한다.
                             ViewTableCheck.InStatusTp = RowsTB.IoStatusTp; // 입출 상태
                             ViewTableCheck.InStatusTpNm = RowsTB.IoStatusTpNm; // 입출 상태명
+                            ViewTableCheck.IoTicketTp = RowsTB.IoTicketTp;
+                            ViewTableCheck.IoTicketTpNm = RowsTB.IoTicketTpNm;
                             ViewTableCheck.InPid = RowsTB.Pid; // 최종 입차 INDEX
                             ViewTableCheck.InDtm = RowsTB.IoDtm; // 최종 입차 시간
                             ViewTableCheck.CarNum = RowsTB.CarNum; // 차량 번호
@@ -127,8 +131,10 @@ namespace APTMentsAPI.Repository.TheHamBiz
                             }
                         }
                     }
-
+                    await transaction.CommitAsync().ConfigureAwait(false);
+                    return 1;
                     // 여기서 파일 저장해야할것같네.
+                    /*
                     bool? fileSave = await FileService.AddImageFile(RowsTB.ImgPath, "InOutImages");
                     if (fileSave == true)
                     {
@@ -140,6 +146,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
                         await transaction.RollbackAsync().ConfigureAwait(false);
                         return 0;
                     }
+                    */
                 }
             }
             catch(Exception ex)
@@ -182,6 +189,8 @@ namespace APTMentsAPI.Repository.TheHamBiz
                             IoSeq = RowsTB.IoSeq, // 시퀀스 번호
                             InStatusTp = RowsTB.IoStatusTp, // 입출 상태
                             InStatusTpNm = RowsTB.IoStatusTpNm, // 입출 상태 명
+                            IoTicketTp = RowsTB.IoTicketTp,
+                            IoTicketTpNm = RowsTB.IoTicketTpNm,
                             OutPid = RowsTB.Pid, // 최종 출차 INDEX
                             OutDtm = RowsTB.IoDtm, // 출차 시간
                             CarNum = RowsTB.CarNum, // 차량 번호
@@ -207,6 +216,8 @@ namespace APTMentsAPI.Repository.TheHamBiz
                         // 내용이 있음 --> 업데이트
                         ViewTableCheck.InStatusTp = RowsTB.IoStatusTp; // 입출 상태
                         ViewTableCheck.InStatusTpNm = RowsTB.IoStatusTpNm; // 입출 상태명
+                        ViewTableCheck.IoTicketTp = RowsTB.IoTicketTp;
+                        ViewTableCheck.IoTicketTpNm = RowsTB.IoTicketTpNm;
                         ViewTableCheck.OutPid = RowsTB.Pid; // 최종 출차 INDEX
                         ViewTableCheck.OutDtm = RowsTB.IoDtm;// 최종 출차 시간
                         ViewTableCheck.CarNum = RowsTB.CarNum; // 차량 번호
@@ -226,8 +237,10 @@ namespace APTMentsAPI.Repository.TheHamBiz
                             return -1;
                         }
                     }
-
+                    await transaction.CommitAsync().ConfigureAwait(false);
+                    return 1;
                     // 여기서 파일 저장해야할것같네.
+                    /*
                     bool? fileSave = await FileService.AddImageFile(RowsTB.ImgPath, "InOutImages");
                     if (fileSave == true)
                     {
@@ -239,6 +252,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
                         await transaction.RollbackAsync().ConfigureAwait(false);
                         return 0;
                     }
+                    */
                 }
             }catch(Exception ex)
             {
@@ -285,6 +299,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
                     }
 
                     // 여기왔을때 PatrolLogList의 Image들 저장해야함.
+                    /*
                     foreach(var item in PatrolLogList)
                     {
                         //item.PatrolImg
@@ -295,6 +310,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
                                 return 0;
                         }
                     }
+                    */
                     await transaction.CommitAsync().ConfigureAwait(false);
                     return 1;
                    
@@ -311,7 +327,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
         /// 입-출차 리스트 조회
         /// </summary>
         /// <returns></returns>
-        public async Task<PageNationDTO<InOutViewListDTO>?> InOutViewListAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? EndDate, string? inStatusTp, string? CarNumber, string? Dong, string? Ho, int? ParkingDuration)
+        public async Task<PageNationDTO<InOutViewListDTO>?> InOutViewListAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? EndDate, string? inStatusTp, string? CarNumber, string? Dong, string? Ho, int? ParkingDuration, string? ioTicketTpNm)
         {
             try
             {
@@ -361,6 +377,11 @@ namespace APTMentsAPI.Repository.TheHamBiz
                     query = query.Where(m => m.ParingDuration == ParkingDuration);
                 }
 
+                if(ioTicketTpNm is not null)
+                {
+                    query = query.Where(m => m.IoTicketTpNm == ioTicketTpNm);
+                }
+
                 var pageView = await query
                 .OrderBy(x => x.Pid)
                 .Skip((pageNumber - 1) * pageSize)
@@ -372,8 +393,10 @@ namespace APTMentsAPI.Repository.TheHamBiz
                 {
                     pId = item.Pid,
                     ioSeq = item.InP!.IoSeq,
-                    ioTicketTp = item.OutP == null ? item.InP.IoTicketTp : item.OutP.IoTicketTp,
-                    ioTicketTpNm = item.OutP == null ? item.InP.IoTicketTpNm : item.OutP.IoTicketTpNm,
+                    ioTicketTp = item.IoTicketTp,
+                    ioTicketTpNm = item.IoTicketTpNm,
+                    //ioTicketTp = item.OutP == null ? item.InP.IoTicketTp : item.OutP.IoTicketTp,
+                    //ioTicketTpNm = item.OutP == null ? item.InP.IoTicketTpNm : item.OutP.IoTicketTpNm,
                     ioStatusTp = item.InStatusTp,
                     ioStatusTpNm = item.InStatusTpNm,
                     //ioStatusTp = item.OutP == null ? item.InP.IoStatusTp : item.OutP.IoStatusTp,
@@ -388,9 +411,10 @@ namespace APTMentsAPI.Repository.TheHamBiz
                     outGateNm = item.OutP?.IoGateNm,
                     dong = item.Dong,
                     ho = item.Ho,
-                    //inImagePath = item.InP?.ImgPath ?? string.Empty,
-                    inImagePath = await FileService.GetImageFile(item.InP?.ImgPath ?? string.Empty, "InOutImages"),
-                    outImagePath = await FileService.GetImageFile(item.OutP?.ImgPath ?? string.Empty, "InOutImages"),
+                    inImagePath = item.InP?.ImgPath ?? string.Empty,
+                    outImagePath = item.OutP?.ImgPath ?? string.Empty,
+                    //inImagePath = await FileService.GetImageFile(item.InP?.ImgPath ?? string.Empty, "InOutImages"),
+                    //outImagePath = await FileService.GetImageFile(item.OutP?.ImgPath ?? string.Empty, "InOutImages"),
                     isBlacklist = item.IsBlackList,
                     blacklistReason = item.BlackListReason,
                     memo = item.Memo
@@ -638,7 +662,8 @@ namespace APTMentsAPI.Repository.TheHamBiz
                         subitem.patrolCode = logs.PatrolCode; // 순찰 상태 코드
                         subitem.patrolName = logs.PatrolName; // 순찰 상태명
                         subitem.carNum = logs.CarNum; // 차량 번호
-                        //subitem.patrolImg = logs.PatrolImg; // 순찰 이미지
+                        subitem.patrolImg = logs.PatrolImg; // 순찰 이미지
+                        /*
                         if (!String.IsNullOrWhiteSpace(logs.PatrolImg))
                         {
                             subitem.patrolImg = await FileService.GetImageFile(logs.PatrolImg, "PatrolImages");
@@ -647,6 +672,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
                         {
                             subitem.patrolImg = null;
                         }
+                        */
                         subitem.patrolRemark = logs.PatrolRemark; // 순찰 비고
                         item.lowList.Add(subitem);
                     }

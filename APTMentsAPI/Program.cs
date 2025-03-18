@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
+using Swashbuckle.AspNetCore.Filters;
 using System.Data;
 
 namespace APTMentsAPI
@@ -71,7 +72,21 @@ namespace APTMentsAPI
             // Add services to the container.
 
             builder.Services.AddControllers();
-           
+
+            // Swagger 설정 추가
+#if DEBUG
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.EnableAnnotations();  // SwaggerResponse 어트리뷰트 사용 (옵션)
+                c.ExampleFilters(); // SwaggerResponse 어트리뷰트 사용
+            });
+#endif
+
+            // 예제 필터를 포함하는 어셈블리 등록
+            builder.Services.AddSwaggerExamplesFromAssemblyOf<ViewListResponseExample>();
+            builder.Services.AddSwaggerExamplesFromAssemblyOf<DetailViewResponseExample>();
+            builder.Services.AddSwaggerExamplesFromAssemblyOf<PatrolListResponseExample>();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -107,7 +122,8 @@ namespace APTMentsAPI
 
             #endregion
 
-         
+          
+
 
             var app = builder.Build();
 

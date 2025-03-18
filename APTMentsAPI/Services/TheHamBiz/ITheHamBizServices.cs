@@ -36,7 +36,7 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// </summary>
         /// <returns></returns>
         //public Task<ResponseUnit<PageNationDTO<InOutViewListDTO>?>> InOutViewListService(int pageNumber, int pageSize);
-        public Task<ResponseUnit<PageNationDTO<InOutViewListDTO>?>> InOutViewListService(int pageNumber, int PageSize, DateTime? StartDate, DateTime? EndDate, string? inStatusTp, string? CarNumber, string? Dong, string? Ho, int? PackingDuration);
+        public Task<ResponseUnit<PageNationDTO<InOutViewListDTO>?>> InOutViewListService(int pageNumber, int PageSize, DateTime? StartDate, DateTime? EndDate, string? inStatusTp, string? CarNumber, string? Dong, string? Ho, int? PackingDuration, string? ioTicketTpNm);
 
         /// <summary>
         /// 시퀀스 상세내역 조회

@@ -213,6 +213,14 @@ public partial class AptContext : DbContext
             entity.Property(e => e.IoSeq)
                 .HasComment("입출차 일련번호")
                 .HasColumnName("IO_SEQ");
+            entity.Property(e => e.IoTicketTp)
+                .HasMaxLength(255)
+                .HasComment("입-출차 차량 구분 ID")
+                .HasColumnName("IO_TICKET_TP");
+            entity.Property(e => e.IoTicketTpNm)
+                .HasMaxLength(255)
+                .HasComment("입-출차 차량 구분 명")
+                .HasColumnName("IO_TICKET_TP_NM");
             entity.Property(e => e.IsBlackList)
                 .HasMaxLength(255)
                 .HasComment("블랙리스트 여부")

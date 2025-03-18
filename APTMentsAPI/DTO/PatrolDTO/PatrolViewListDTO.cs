@@ -74,8 +74,8 @@
         /// <summary>
         /// 순찰 이미지
         /// </summary>
-        //public string? patrolImg { get; set; }
-        public byte[]? patrolImg { get; set; }
+        public string? patrolImg { get; set; }
+        //public byte[]? patrolImg { get; set; }
 
 
         /// <summary>

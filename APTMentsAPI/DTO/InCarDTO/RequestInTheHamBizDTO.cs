@@ -73,7 +73,7 @@
         /// <summary>
         /// 블랙리스트 정보
         /// </summary>
-        public RequestInBlackListInfoDTO BLACK_LIST_INFO { get; set; }
+        public RequestInBlackListInfoDTO? BLACK_LIST_INFO { get; set; }
 
         /// <summary>
         /// 이미지 경로 (HTTP 웹 경로)

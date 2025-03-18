@@ -51,6 +51,16 @@ public partial class IoParkingviewtb
     public string? CarNum { get; set; }
 
     /// <summary>
+    /// 입-출차 차량 구분 ID
+    /// </summary>
+    public string? IoTicketTp { get; set; }
+
+    /// <summary>
+    /// 입-출차 차량 구분 명
+    /// </summary>
+    public string? IoTicketTpNm { get; set; }
+
+    /// <summary>
     /// 동
     /// </summary>
     public string? Dong { get; set; }

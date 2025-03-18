@@ -1,8 +1,13 @@
-﻿using APTMentsAPI.Services.Helpers;
+﻿using APTMentsAPI.DTO;
+using APTMentsAPI.DTO.PatrolDTO;
+using APTMentsAPI.Services.Helpers;
 using APTMentsAPI.Services.Logger;
 using APTMentsAPI.Services.TheHamBizService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+using Swashbuckle.AspNetCore.Filters;
+using System.ComponentModel.DataAnnotations;
 
 namespace APTMentsAPI.Controllers.TheHamBizAPI
 {
@@ -25,7 +30,9 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
 
         [HttpGet]
         [Route("v1/ViewList")]
-        public async Task<IActionResult> PatrolViewList([FromQuery]int pageNumber, [FromQuery]int pageSize)
+        [SwaggerResponse(200, "성공", typeof(ResponseUnit<PageNationDTO<PatrolViewListDTO>>))]
+        [SwaggerResponseExample(200, typeof(PatrolListResponseExample))]
+        public async Task<IActionResult> PatrolViewList([FromQuery][Required] int pageNumber, [FromQuery][Required] int pageSize)
         {
             try
             {

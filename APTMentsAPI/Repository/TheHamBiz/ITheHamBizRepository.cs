@@ -37,7 +37,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
         /// <returns></returns>
         //Task<PageNationDTO<InOutViewListDTO>?> InOutViewListAsync();
         //Task<PageNationDTO<InOutViewListDTO>?> InOutViewListAsync(int pageNumber, int pageSize);
-        Task<PageNationDTO<InOutViewListDTO>?> InOutViewListAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? EndDate, string? inStatusTp, string? CarNumber, string? Dong, string? Ho, int? ParkingDuration);
+        Task<PageNationDTO<InOutViewListDTO>?> InOutViewListAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? EndDate, string? inStatusTp, string? CarNumber, string? Dong, string? Ho, int? ParkingDuration, string? ioTicketTpNm);
 
         /// <summary>
         /// 시퀀스 상세내역 조회

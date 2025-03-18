@@ -66,9 +66,9 @@ namespace APTMentsAPI.Services.TheHamBizService
                     Dong = dto.DONG, // 동
                     Ho = dto.HO, // 호
                     IsReservation = dto.IS_RESERVATION, // 예약차량여부
-                    IsBlackList = dto.BLACK_LIST_INFO.IS_BLACK_LIST, // 블랙리스트 여부
-                    BlackListReason = dto.BLACK_LIST_INFO.BLACK_LIST_REASON, // 블랙리스트 사유
-                    RegDtm = dto.BLACK_LIST_INFO.REG_DTM, // 블랙리스트 등록일자 처리 // 블랙리스트 등록일자
+                    IsBlackList = dto.BLACK_LIST_INFO?.IS_BLACK_LIST, // 블랙리스트 여부
+                    BlackListReason = dto.BLACK_LIST_INFO?.BLACK_LIST_REASON, // 블랙리스트 사유
+                    RegDtm = dto.BLACK_LIST_INFO?.REG_DTM, // 블랙리스트 등록일자 처리 // 블랙리스트 등록일자
                     ImgPath = dto.IMG_PATH, // 이미지경로 [NOT NULL]
                     IsWait = dto.IS_WAIT, // 입차 처리/대기 여부 (0, 1, 2) [NOT NULL]
                     IsWaitReason = dto.IS_WAIT_REASON, // 대기 걸린 차량의 이유
@@ -246,7 +246,7 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// 입-출차 리스트
         /// </summary>
         /// <returns></returns>
-        public async Task<ResponseUnit<PageNationDTO<InOutViewListDTO>?>> InOutViewListService(int pageNumber, int PageSize, DateTime? StartDate, DateTime? EndDate, string? inStatusTp, string? CarNumber, string? Dong, string? Ho, int? PackingDuration)
+        public async Task<ResponseUnit<PageNationDTO<InOutViewListDTO>?>> InOutViewListService(int pageNumber, int PageSize, DateTime? StartDate, DateTime? EndDate, string? inStatusTp, string? CarNumber, string? Dong, string? Ho, int? PackingDuration, string? ioTicketTpNm)
         {
             try
             {
@@ -255,7 +255,7 @@ namespace APTMentsAPI.Services.TheHamBizService
                 if (PageSize == 0)
                     return new ResponseUnit<PageNationDTO<InOutViewListDTO>?>() { message = "필수값이 누락되었습니다.", data = null, code = 200 };
 
-                var model = await TheHamBizRepository.InOutViewListAsync(pageNumber, PageSize, StartDate, EndDate, inStatusTp, CarNumber, Dong, Ho, PackingDuration).ConfigureAwait(false);
+                var model = await TheHamBizRepository.InOutViewListAsync(pageNumber, PageSize, StartDate, EndDate, inStatusTp, CarNumber, Dong, Ho, PackingDuration, ioTicketTpNm).ConfigureAwait(false);
                 return new ResponseUnit<PageNationDTO<InOutViewListDTO>?>()
                 {
                     message = "요청이 정상 처리되었습니다",
@@ -307,8 +307,8 @@ namespace APTMentsAPI.Services.TheHamBizService
                         isBlacklist = item.IsBlackList,
                         blacklistReason = item.BlackListReason,
                         regDtm = item.RegDtm,
-                        //imgPath = item.ImgPath,
-                        imgPath = await FileService.GetImageFile(item.ImgPath,"InOutImages"),
+                        imgPath = item.ImgPath,
+                        //imgPath = await FileService.GetImageFile(item.ImgPath,"InOutImages"),
                         isWait = item.IsWait,
                         isWaitReason = item.IsWaitReason,
                         parkDuration = item.ParkDuration,
