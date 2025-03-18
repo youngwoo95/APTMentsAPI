@@ -327,7 +327,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
         /// 입-출차 리스트 조회
         /// </summary>
         /// <returns></returns>
-        public async Task<PageNationDTO<InOutViewListDTO>?> InOutViewListAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? EndDate, string? inStatusTp, string? CarNumber, string? Dong, string? Ho, int? ParkingDuration, string? ioTicketTpNm)
+        public async Task<ResponsePage<PageNationDTO<InOutViewListDTO>>?> InOutViewListAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? EndDate, string? inStatusTp, string? CarNumber, string? Dong, string? Ho, int? ParkingDuration, string? ioTicketTpNm)
         {
             try
             {
@@ -422,46 +422,31 @@ namespace APTMentsAPI.Repository.TheHamBiz
 
                 var model = (await Task.WhenAll(detailViewTasks)).ToList();
 
-                #region REGACY
-                //var pageView = await Context.IoParkingviewtbs
-                //    .OrderBy(x => x.Pid)
-                //    .Skip((pageNumber - 1) * pageSize)
-                //    .Take(pageSize)
-                //    .ToListAsync();
-
-                //// 2. 페이지에 포함된 모든 InPid와 OutPid를 모읍니다. (null 제외)
-                //var pids = pageView
-                //    .SelectMany(x => new[] { x.InPid, x.OutPid })
-                //    .Where(pid => pid != null)
-                //    .Distinct()
-                //    .ToList();
-
-                //// 3. 해당 PID들을 가진 IoParkingrows 데이터를 가져옵니다.
-                //var parkingRows = await Context.IoParkingrows
-                //    .Where(row => pids.Contains(row.Pid))
-                //    .ToListAsync();
-
-                //// 4. 페이지네이션된 데이터와 IoParkingrows 데이터를 조인하여 결과 생성
-                //var result = pageView.Select(view => new
-                //{
-                //    ViewData = view,
-                //    // InPid에 해당하는 값이 없으면 null이 반환됩니다.
-                //    InData = parkingRows.FirstOrDefault(row => row.Pid == view.InPid),
-                //    // OutPid에 해당하는 값이 없으면 null이 반환됩니다.
-                //    OutData = parkingRows.FirstOrDefault(row => row.Pid == view.OutPid)
-                //}).ToList();
-                #endregion
-
-                // 4. PageNationDTO에 데이터를 채워서 반환합니다.
-                var result = new PageNationDTO<InOutViewListDTO>
+                if (model is not null)
                 {
-                    Items = model,
-                    pageNumber = pageNumber,
-                    pageSize = pageSize,
-                    totalCount = totalCount
-                };
 
-                return result;
+                    // ResponseList에 페이지네이션 DTO를 할당합니다.
+                    var result = new ResponsePage<PageNationDTO<InOutViewListDTO>>
+                    {
+                        // Metas는 별도의 페이지 정보가 필요하다면 사용(중복되는 정보일 수 있으므로 필요에 따라 제거)
+                        Metas = new Meta
+                        {
+                            pageNumber = pageNumber,
+                            pageSize = pageSize,
+                            totalCount = totalCount
+                        },
+                        data = new PageNationDTO<InOutViewListDTO>
+                        {
+                            Items = model
+                        },
+                        code = 200
+                    };
+                    return result;
+                }
+                else
+                {
+                    return new ResponsePage<PageNationDTO<InOutViewListDTO>>();
+                }
             }
             catch(Exception ex)
             {
@@ -624,7 +609,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
         /// <param name="pageNumber"></param>
         /// <param name="pageSize"></param>
         /// <returns></returns>
-        public async Task<PageNationDTO<PatrolViewListDTO>?> PatrolViewListAsync(int pageNumber, int pageSize)
+        public async Task<ResponsePage<PageNationDTO<PatrolViewListDTO>>?> PatrolViewListAsync(int pageNumber, int pageSize)
         {
             try
             {
@@ -679,16 +664,27 @@ namespace APTMentsAPI.Repository.TheHamBiz
                     model.Add(item);
                 }
 
-                // PageNationDTO에 데이터를 채워서 반환
-                var result = new PageNationDTO<PatrolViewListDTO>
+                if (model is not null)
                 {
-                    Items = model,
-                    pageNumber = pageNumber,
-                    pageSize = pageSize,
-                    totalCount = totalCount
-                };
-
-                return result;
+                    // PageNationDTO에 데이터를 채워서 반환
+                    var result = new ResponsePage<PageNationDTO<PatrolViewListDTO>>
+                    {
+                        Metas = new Meta
+                        {
+                            pageNumber = pageNumber,
+                            pageSize = pageSize,
+                            totalCount = totalCount
+                        },
+                        data = new PageNationDTO<PatrolViewListDTO>
+                        {
+                            Items = model
+                        },
+                        code = 200
+                    };
+                    return result;
+                }
+                else
+                    return new ResponsePage<PageNationDTO<PatrolViewListDTO>>();
             }
             catch(Exception ex)
             {

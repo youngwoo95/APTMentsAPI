@@ -36,21 +36,21 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// </summary>
         /// <returns></returns>
         //public Task<ResponseUnit<PageNationDTO<InOutViewListDTO>?>> InOutViewListService(int pageNumber, int pageSize);
-        public Task<ResponseUnit<PageNationDTO<InOutViewListDTO>?>> InOutViewListService(int pageNumber, int PageSize, DateTime? StartDate, DateTime? EndDate, string? inStatusTp, string? CarNumber, string? Dong, string? Ho, int? PackingDuration, string? ioTicketTpNm);
+        public Task<ResponsePage<PageNationDTO<InOutViewListDTO>>?> InOutViewListService(int pageNumber, int PageSize, DateTime? StartDate, DateTime? EndDate, string? inStatusTp, string? CarNumber, string? Dong, string? Ho, int? PackingDuration, string? ioTicketTpNm);
 
         /// <summary>
         /// 시퀀스 상세내역 조회
         /// </summary>
         /// <param name="ioSeq"></param>
         /// <returns></returns>
-        public Task<ResponseList<DetailViewDTO>?> DetailViewService(string ioSeq);
+        public Task<ResponsePage<List<DetailViewDTO>>?> DetailViewService(string ioSeq);
 
         /// <summary>
         /// 해당 차량 최근 7일치 조회
         /// </summary>
         /// <param name="carNum"></param>
         /// <returns></returns>
-        public Task<ResponseList<LastWeeksDTO>?> LastWeeksService(string carNum);
+        public Task<ResponsePage<LastWeeksDTO>?> LastWeeksService(string carNum);
 
         /// <summary>
         /// View 테이블 Memo 컬럼 수정
@@ -74,7 +74,7 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// <param name="pageNumber"></param>
         /// <param name="PageSize"></param>
         /// <returns></returns>
-        public Task<ResponseUnit<PageNationDTO<PatrolViewListDTO>?>> PatrolViewListService(int pageNumber, int PageSize);
+        public Task<ResponsePage<PageNationDTO<PatrolViewListDTO>>?> PatrolViewListService(int pageNumber, int PageSize);
         #endregion
 
 

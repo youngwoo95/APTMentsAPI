@@ -41,7 +41,7 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
         /// <returns></returns>
         [HttpGet]
         [Route("v1/ViewList")]
-        [SwaggerResponse(200, "성공", typeof(ResponseUnit<PageNationDTO<InOutViewListDTO>>))]
+        [SwaggerResponse(200, "성공", typeof(ResponsePage<PageNationDTO<InOutViewListDTO>>))]
         [SwaggerResponseExample(200, typeof(ViewListResponseExample))]
         public async Task<IActionResult> ViewList([FromQuery][Required] int pageNumber, [FromQuery][Required] int pageSize, [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate, [FromQuery]string? inStatusTp, [FromQuery]string? carNumber, [FromQuery]string? dong, [FromQuery]string? ho, [FromQuery]int? parkingDuration, [FromQuery]string? ioTicketTpNm)
         {
@@ -55,8 +55,10 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
 
                 if (model.code == 200)
                     return Ok(model);
+                else if(model.code == 400)
+                    return BadRequest();
                 else
-                    return Ok(model);
+                    return Problem("서버에서 처리할 수 없는 요청입니다.", statusCode: 500);
             }
             catch(Exception ex)
             {
@@ -73,7 +75,7 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
         /// <returns></returns>
         [HttpGet]
         [Route("v1/DetailView")]
-        [SwaggerResponse(200, "성공", typeof(ResponseList<DetailViewDTO>))]
+        [SwaggerResponse(200, "성공", typeof(ResponseUnit<List<DetailViewDTO>>))]
         [SwaggerResponseExample(200, typeof(DetailViewResponseExample))]
         public async Task<IActionResult> DetailView([FromQuery][Required] string ioSeq)
         {

@@ -37,7 +37,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
         /// <returns></returns>
         //Task<PageNationDTO<InOutViewListDTO>?> InOutViewListAsync();
         //Task<PageNationDTO<InOutViewListDTO>?> InOutViewListAsync(int pageNumber, int pageSize);
-        Task<PageNationDTO<InOutViewListDTO>?> InOutViewListAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? EndDate, string? inStatusTp, string? CarNumber, string? Dong, string? Ho, int? ParkingDuration, string? ioTicketTpNm);
+        Task<ResponsePage<PageNationDTO<InOutViewListDTO>>?> InOutViewListAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? EndDate, string? inStatusTp, string? CarNumber, string? Dong, string? Ho, int? ParkingDuration, string? ioTicketTpNm);
 
         /// <summary>
         /// 시퀀스 상세내역 조회
@@ -83,6 +83,6 @@ namespace APTMentsAPI.Repository.TheHamBiz
         /// <param name="pageNumber"></param>
         /// <param name="pageSize"></param>
         /// <returns></returns>
-        Task<PageNationDTO<PatrolViewListDTO>?> PatrolViewListAsync(int pageNumber, int pageSize);
+        Task<ResponsePage<PageNationDTO<PatrolViewListDTO>>?> PatrolViewListAsync(int pageNumber, int pageSize);
     }
 }

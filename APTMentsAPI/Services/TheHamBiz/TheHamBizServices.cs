@@ -246,26 +246,25 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// 입-출차 리스트
         /// </summary>
         /// <returns></returns>
-        public async Task<ResponseUnit<PageNationDTO<InOutViewListDTO>?>> InOutViewListService(int pageNumber, int PageSize, DateTime? StartDate, DateTime? EndDate, string? inStatusTp, string? CarNumber, string? Dong, string? Ho, int? PackingDuration, string? ioTicketTpNm)
+        public async Task<ResponsePage<PageNationDTO<InOutViewListDTO>>?> InOutViewListService(int pageNumber, int PageSize, DateTime? StartDate, DateTime? EndDate, string? inStatusTp, string? CarNumber, string? Dong, string? Ho, int? PackingDuration, string? ioTicketTpNm)
         {
             try
             {
                 if (pageNumber == 0)
-                    return new ResponseUnit<PageNationDTO<InOutViewListDTO>?>() { message = "필수값이 누락되었습니다.", data = null, code = 200 };
+                    return new ResponsePage<PageNationDTO<InOutViewListDTO>>() {data = null, code = 200 };
                 if (PageSize == 0)
-                    return new ResponseUnit<PageNationDTO<InOutViewListDTO>?>() { message = "필수값이 누락되었습니다.", data = null, code = 200 };
+                    return new ResponsePage<PageNationDTO<InOutViewListDTO>>() {data = null, code = 200 };
 
                 var model = await TheHamBizRepository.InOutViewListAsync(pageNumber, PageSize, StartDate, EndDate, inStatusTp, CarNumber, Dong, Ho, PackingDuration, ioTicketTpNm).ConfigureAwait(false);
-                return new ResponseUnit<PageNationDTO<InOutViewListDTO>?>()
-                {
-                    message = "요청이 정상 처리되었습니다",
-                    data = model,
-                    code = 200
-                };
-            }catch(Exception ex)
+                if (model is not null)
+                    return model;
+                else
+                    return new ResponsePage<PageNationDTO<InOutViewListDTO>>() { data = null, code = 400 };
+            }
+            catch(Exception ex)
             {
                 LoggerService.FileLogMessage(ex.ToString());
-                return new ResponseUnit<PageNationDTO<InOutViewListDTO>?>() { message = "서버에서 요청을 처리하지 못하였습니다.", data = null, code = 500 };
+                return new ResponsePage<PageNationDTO<InOutViewListDTO>>() { data = null, code = 500 };
             }
         }
 
@@ -274,12 +273,12 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// </summary>
         /// <param name="ioSeq"></param>
         /// <returns></returns>
-        public async Task<ResponseList<DetailViewDTO>?> DetailViewService(string ioSeq)
+        public async Task<ResponsePage<List<DetailViewDTO>>?> DetailViewService(string ioSeq)
         {
             try
             {
                 if (String.IsNullOrWhiteSpace(ioSeq))
-                    return new ResponseList<DetailViewDTO>() { message = "잘못된 요청입니다.", data = null, code = 200 };
+                    return new ResponsePage<List<DetailViewDTO>>() {data = null, code = 200 };
 
                 var model = await TheHamBizRepository.DetailViewListAsync(ioSeq).ConfigureAwait(false);
                 if (model is not null)
@@ -320,21 +319,19 @@ namespace APTMentsAPI.Services.TheHamBizService
                     // 모든 Task를 await 하고 결과를 리스트로 변환
                     var detailViewList = (await Task.WhenAll(detailViewTasks)).ToList();
 
-                    return new ResponseList<DetailViewDTO>()
+                    return new ResponsePage<List<DetailViewDTO>>()
                     {
-                        message = "요청이 정상 처리되었습니다.",
                         data = detailViewList,
                         code = 200
                     };
-                    //return new ResponseList<DetailViewDTO>() { message = "요청이 정상 처리되었습니다.", data = detailViewList, code = 200 };
                 }
                 else
-                    return new ResponseList<DetailViewDTO>() { message = "조회된 결과가 없습니다.", data = null, code = 200 };
+                    return new ResponsePage<List<DetailViewDTO>>() {data = null, code = 200 };
             }
             catch(Exception ex)
             {
                 LoggerService.FileLogMessage(ex.ToString());
-                return new ResponseList<DetailViewDTO>() { message = "서버에서 요청을 처리하지 못하였습니다.", data = null, code = 500 };
+                return new ResponsePage<List<DetailViewDTO>>() {data = null, code = 500 };
             }
         }
 
@@ -343,12 +340,13 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// </summary>
         /// <param name="carNum"></param>
         /// <returns></returns>
-        public async Task<ResponseList<LastWeeksDTO>?> LastWeeksService(string carNum)
+        public async Task<ResponsePage<LastWeeksDTO>?> LastWeeksService(string carNum)
         {
             try
             {
                 if (String.IsNullOrWhiteSpace(carNum))
-                    return new ResponseList<LastWeeksDTO>() { message = "잘못된 요청입니다.", data = null, code = 200 };
+                    return new ResponsePage<LastWeeksDTO>() { data = null, code = 200 };
+                //return new ResponseList<LastWeeksDTO>() { message = "잘못된 요청입니다.", data = null, code = 200 };
 
                 DateTime Today = DateTime.Now;
                 var model = await TheHamBizRepository.LastWeeksListAsync(carNum,Today).ConfigureAwait(false);
@@ -386,15 +384,15 @@ namespace APTMentsAPI.Services.TheHamBizService
                         memo = item.Memo
                     }).ToList();
 
-                    return new ResponseList<LastWeeksDTO>() { message = "요청이 정상 처리되었습니다.", data = LastViewList, code = 200 };
+                    return new ResponsePage<LastWeeksDTO>() { code = 200 };
                 }
                 else
-                    return new ResponseList<LastWeeksDTO>() { message = "조회된 결과가 없습니다.", data = null, code = 200 };
+                    return new ResponsePage<LastWeeksDTO>() { data = null, code = 200 };
             }
             catch(Exception ex)
             {
                 LoggerService.FileLogMessage(ex.ToString());
-                return new ResponseList<LastWeeksDTO>() { message = "서버에서 요청을 처리하지 못하였습니다.", data = null, code = 500 };
+                return new ResponsePage<LastWeeksDTO>() {data = null, code = 500 };
             }
         }
 
@@ -410,21 +408,21 @@ namespace APTMentsAPI.Services.TheHamBizService
                 var model = await TheHamBizRepository.UpdateViewMemoAsync(dto);
                 if(model > 0)
                 {
-                    return new ResponseUnit<bool>() { message = "요청이 정상 처리되었습니다.", data = true, code = 200 };
+                    return new ResponseUnit<bool>() {data = true, code = 200 };
                 }
                 else if(model == 0)
                 {
-                    return new ResponseUnit<bool>() { message = "잘못된 요청입니다.", data = false, code = 404 };
+                    return new ResponseUnit<bool>() { data = false, code = 404 };
                 }
                 else
                 {
-                    return new ResponseUnit<bool>() { message = "서버에서 요청을 처리하지 못하였습니다.", data = false, code = 500 };
+                    return new ResponseUnit<bool>() {  data = false, code = 500 };
                 }
             }
             catch(Exception ex)
             {
                 LoggerService.FileLogMessage(ex.ToString());
-                return new ResponseUnit<bool>() { message = "서버에서 요청을 처리하지 못하였습니다.", data = false, code = 500 };
+                return new ResponseUnit<bool>() {  data = false, code = 500 };
             }
         }
 
@@ -440,21 +438,21 @@ namespace APTMentsAPI.Services.TheHamBizService
                 var model = await TheHamBizRepository.UpdateRowMemoAsync(dto).ConfigureAwait(false);
                 if (model > 0)
                 {
-                    return new ResponseUnit<bool>() { message = "요청이 정상 처리되었습니다.", data = true, code = 200 };
+                    return new ResponseUnit<bool>() {  data = true, code = 200 };
                 }
                 else if (model == 0)
                 {
-                    return new ResponseUnit<bool>() { message = "잘못된 요청입니다.", data = false, code = 404 };
+                    return new ResponseUnit<bool>() { data = false, code = 404 };
                 }
                 else
                 {
-                    return new ResponseUnit<bool>() { message = "서버에서 요청을 처리하지 못하였습니다.", data = false, code = 500 };
+                    return new ResponseUnit<bool>() {  data = false, code = 500 };
                 }
             }
             catch(Exception ex)
             {
                 LoggerService.FileLogMessage(ex.ToString());
-                return new ResponseUnit<bool>() { message = "서버에서 요청을 처리하지 못하였습니다.", data = false, code = 500 };
+                return new ResponseUnit<bool>() {  data = false, code = 500 };
             }
         }
 
@@ -464,23 +462,25 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// <param name="pageNumber"></param>
         /// <param name="PageSize"></param>
         /// <returns></returns>
-        public async Task<ResponseUnit<PageNationDTO<PatrolViewListDTO>?>> PatrolViewListService(int pageNumber, int PageSize)
+        public async Task<ResponsePage<PageNationDTO<PatrolViewListDTO>>?> PatrolViewListService(int pageNumber, int PageSize)
         {
             try
             {
                 if (pageNumber == 0)
-                    return new ResponseUnit<PageNationDTO<PatrolViewListDTO>?>() { message = "필수값이 누락되었습니다.", data = null, code = 200 };
+                    return new ResponsePage<PageNationDTO<PatrolViewListDTO>>() {  data = null, code = 200 };
                 if (PageSize == 0)
-                    return new ResponseUnit<PageNationDTO<PatrolViewListDTO>?>() { message = "필수값이 누락되었습니다.", data = null, code = 200 };
+                    return new ResponsePage<PageNationDTO<PatrolViewListDTO>>() {  data = null, code = 200 };
                 
                 var model = await TheHamBizRepository.PatrolViewListAsync(pageNumber, PageSize);
-
-                return new ResponseUnit<PageNationDTO<PatrolViewListDTO>?>() { message = "요청이 정상 처리되었습니다.", data = model, code = 200 };
+                if (model is null)
+                    return new ResponsePage<PageNationDTO<PatrolViewListDTO>>() { data = null, code = 400 };
+                else
+                    return model;
             }
             catch(Exception ex)
             {
                 LoggerService.FileLogMessage(ex.ToString());
-                return new ResponseUnit<PageNationDTO<PatrolViewListDTO>?>() { message = "서버에서 요청을 처리하지 못하였습니다.", data = null, code = 500 };
+                return new ResponsePage<PageNationDTO<PatrolViewListDTO>>() { data = null, code = 500 };
             }
         }
 

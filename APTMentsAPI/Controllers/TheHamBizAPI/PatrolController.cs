@@ -30,7 +30,7 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
 
         [HttpGet]
         [Route("v1/ViewList")]
-        [SwaggerResponse(200, "성공", typeof(ResponseUnit<PageNationDTO<PatrolViewListDTO>>))]
+        [SwaggerResponse(200, "성공", typeof(ResponsePage<PageNationDTO<PatrolViewListDTO>>))]
         [SwaggerResponseExample(200, typeof(PatrolListResponseExample))]
         public async Task<IActionResult> PatrolViewList([FromQuery][Required] int pageNumber, [FromQuery][Required] int pageSize)
         {
@@ -44,8 +44,10 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
 
                 if (model.code == 200)
                     return Ok(model);
+                else if (model.code == 400)
+                    return BadRequest();
                 else
-                    return Ok(model);
+                    return Problem("서버에서 처리할 수 없는 요청입니다.", statusCode: 500);
             }
             catch(Exception ex)
             {
