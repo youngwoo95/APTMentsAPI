@@ -28,7 +28,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
         /// <param name="PatrolTB"></param>
         /// <param name="PatrolLogList"></param>
         /// <returns></returns>
-        Task<int> AddPatrolAsync(Patrolpadlogtb PatrolTB, List<Patrollogtblist> PatrolLogList);
+        Task<int> AddPatrolAsync(List<Patrolpadlogtb> PatrolTB);
         #endregion
         #region 입-출차 DB
         /// <summary>
@@ -83,6 +83,6 @@ namespace APTMentsAPI.Repository.TheHamBiz
         /// <param name="pageNumber"></param>
         /// <param name="pageSize"></param>
         /// <returns></returns>
-        Task<ResponsePage<PageNationDTO<PatrolViewListDTO>>?> PatrolViewListAsync(int pageNumber, int pageSize);
+        Task<ResponsePage<PageNationDTO<PatrolViewListDTO>>?> PatrolViewListAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? endDate, string? patrolNm, string? carNumber);
     }
 }

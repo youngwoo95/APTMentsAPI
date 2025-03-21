@@ -267,7 +267,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
         /// <param name="PatrolTB"></param>
         /// <param name="PatrolLogList"></param>
         /// <returns></returns>
-        public async Task<int> AddPatrolAsync(Patrolpadlogtb PatrolTB, List<Patrollogtblist> PatrolLogList)
+        public async Task<int> AddPatrolAsync(List<Patrolpadlogtb> PatrolTB)
         {
             try
             {
@@ -275,7 +275,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
                 {
                     int result = 0;
 
-                    await Context.Patrolpadlogtbs.AddAsync(PatrolTB).ConfigureAwait(false);
+                    await Context.Patrolpadlogtbs.AddRangeAsync(PatrolTB).ConfigureAwait(false);
                     result = await Context.SaveChangesAsync().ConfigureAwait(false);
 
                     if(result < 1)
@@ -284,36 +284,8 @@ namespace APTMentsAPI.Repository.TheHamBiz
                         return -1;
                     }
 
-                    for(int i=0;i<PatrolLogList.Count;i++)
-                    {
-                        PatrolLogList[i].SPid = PatrolTB.Pid;
-                    }
-
-                    await Context.Patrollogtblists.AddRangeAsync(PatrolLogList).ConfigureAwait(false);
-                    result = await Context.SaveChangesAsync().ConfigureAwait(false);
-
-                    if(result < 1)
-                    {
-                        await transaction.RollbackAsync().ConfigureAwait(false);
-                        return -1;
-                    }
-
-                    // 여기왔을때 PatrolLogList의 Image들 저장해야함.
-                    /*
-                    foreach(var item in PatrolLogList)
-                    {
-                        //item.PatrolImg
-                        if (!String.IsNullOrWhiteSpace(item.PatrolImg)) 
-                        {
-                            bool fileSave = await FileService.AddImageFile(item.PatrolImg, "PatrolImages");
-                            if (!fileSave)
-                                return 0;
-                        }
-                    }
-                    */
                     await transaction.CommitAsync().ConfigureAwait(false);
                     return 1;
-                   
                 }
             }
             catch(Exception ex)
@@ -635,15 +607,45 @@ namespace APTMentsAPI.Repository.TheHamBiz
         /// <param name="pageNumber"></param>
         /// <param name="pageSize"></param>
         /// <returns></returns>
-        public async Task<ResponsePage<PageNationDTO<PatrolViewListDTO>>?> PatrolViewListAsync(int pageNumber, int pageSize)
+        public async Task<ResponsePage<PageNationDTO<PatrolViewListDTO>>?> PatrolViewListAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? endDate, string? patrolNm, string? carNumber)
         {
             try
             {
                 int totalCount = await Context.Patrolpadlogtbs.CountAsync().ConfigureAwait(false);
 
                 var query = Context.Patrolpadlogtbs
-                    .Include(m => m.Patrollogtblists)
                     .AsQueryable();
+
+                if(startDate.HasValue)
+                {
+                    query = query.Where(m => m.PatrolDtm >= startDate.Value.Date); // 순찰일시 가 startDate보다 크거나 같은것.
+                }
+                if(endDate.HasValue)
+                {
+                    query = query.Where(m => m.PatrolDtm < endDate.Value.Date.AddDays(1)); // 순찰일시 가 endDate +1 보다 작은것 즉 - 23:59:59 보다 작은것
+                }
+
+                if(patrolNm == "정상")
+                {
+                    query = query.Where(m => m.PatrolName == "정상");
+                }
+                else if(patrolNm == "방문객")
+                {
+                    query = query.Where(m => m.PatrolName == "방문객");
+                }
+                else if(patrolNm == "순찰")
+                {
+                    query = query.Where(m => m.PatrolName == "순찰");
+                }
+                else if (patrolNm == "위반")
+                {
+                    query = query.Where(m => m.PatrolName == "위반");
+                }
+
+                if(carNumber is not null)
+                {
+                    query = query.Where(m => m.CarNum == carNumber);
+                }
 
                 var pageView = await query
                     .OrderBy(m => m.Pid)
@@ -657,36 +659,15 @@ namespace APTMentsAPI.Repository.TheHamBiz
                 foreach (var views in pageView)
                 {
                     var item = new PatrolViewListDTO();
-                    item.pId = views.Pid; // PID
-                    item.parkId = views.ParkId; // 주차장ID
-                    item.partolUserId = views.PatrolUserId; // 순찰 담당자ID
-                    item.patrolUserNm = views.PatrolUserNm; // 순찰 담당자 이름
-                    item.patrolStartDtm = views.PatrolStartDtm; // 순찰 시작 일시
-                    item.patrolEndDtm = views.PatrolEndDtm; // 순찰 종료 일시
-                    item.totCnt = views.TotCnt; // 전체 데이터 개수
-
-                    foreach (var logs in views.Patrollogtblists)
-                    {
-                        var subitem = new PatrolLowList();
-                        subitem.pId = logs.Pid; // PID
-                        subitem.patrolDtm = logs.PatrolDtm; // 순찰 일시
-                        subitem.patrolCode = logs.PatrolCode; // 순찰 상태 코드
-                        subitem.patrolName = logs.PatrolName; // 순찰 상태명
-                        subitem.carNum = logs.CarNum; // 차량 번호
-                        subitem.patrolImg = logs.PatrolImg; // 순찰 이미지
-                        /*
-                        if (!String.IsNullOrWhiteSpace(logs.PatrolImg))
-                        {
-                            subitem.patrolImg = await FileService.GetImageFile(logs.PatrolImg, "PatrolImages");
-                        }
-                        else
-                        {
-                            subitem.patrolImg = null;
-                        }
-                        */
-                        subitem.patrolRemark = logs.PatrolRemark; // 순찰 비고
-                        item.lowList.Add(subitem);
-                    }
+                    item.pId = views.Pid; // PID ( 필수)
+                    item.parkId = views.ParkId; // 주차장ID ( 필수)
+                    item.patrolUserNm = views.PatrolUserNm; // 순찰 담당자 이름 (필수)
+                    item.patrolDtm = views.PatrolDtm; // 순찰 일시(필수)
+                    item.patrolCode = views.PatrolCode; // 순찰 상태 코드
+                    item.patrolName = views.PatrolName; // 순찰 상태명
+                    item.carNum = views.CarNum; // 차량번호 (필수)
+                    item.patrolImg = views.PatrolImg; // 순찰 이미지 (필수아님)
+                    item.patrolRemark = views.PatrolRemark; // 비고 (필수아님)
                     model.Add(item);
                 }
 

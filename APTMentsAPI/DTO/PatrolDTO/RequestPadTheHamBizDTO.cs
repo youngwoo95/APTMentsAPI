@@ -10,12 +10,12 @@
         /// <summary>
         /// 순찰 담당자 ID
         /// </summary>
-        public string? PATROL_USER_ID { get; set; }
+        public int PATROL_USER_ID { get; set; }
 
         /// <summary>
         /// 순찰 담당자 이름
         /// </summary>
-        public int PATROL_USER_NM { get; set; }
+        public string? PATROL_USER_NM { get; set; }
 
         /// <summary>
         /// 순찰 일시 yyyy-MM-dd HH:mm:ss

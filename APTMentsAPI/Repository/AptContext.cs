@@ -21,8 +21,6 @@ public partial class AptContext : DbContext
 
     public virtual DbSet<IoParkingviewtb> IoParkingviewtbs { get; set; }
 
-    public virtual DbSet<Patrollogtblist> Patrollogtblists { get; set; }
-
     public virtual DbSet<Patrolpadlogtb> Patrolpadlogtbs { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -255,60 +253,6 @@ public partial class AptContext : DbContext
                 .HasConstraintName("OUT_PID_202503141526");
         });
 
-        modelBuilder.Entity<Patrollogtblist>(entity =>
-        {
-            entity.HasKey(e => e.Pid).HasName("PRIMARY");
-
-            entity
-                .ToTable("patrollogtblist")
-                .HasCharSet("utf8mb4")
-                .UseCollation("utf8mb4_general_ci");
-
-            entity.HasIndex(e => e.SPid, "PatrolPadLogTB_PID_202503131001");
-
-            entity.Property(e => e.Pid)
-                .HasColumnType("int(11)")
-                .HasColumnName("PID");
-            entity.Property(e => e.CarNum)
-                .HasMaxLength(255)
-                .HasComment("차량 번호")
-                .HasColumnName("CAR_NUM");
-            entity.Property(e => e.CreateDt)
-                .HasDefaultValueSql("current_timestamp()")
-                .HasComment("시스템 생성시간")
-                .HasColumnType("datetime")
-                .HasColumnName("CREATE_DT");
-            entity.Property(e => e.PatrolCode)
-                .HasComment("순찰 상태 코드 0: 정상(입주민), 1: 방문객, 2: 순찰, 3:위반(블랙리스트)")
-                .HasColumnType("int(11)")
-                .HasColumnName("PATROL_CODE");
-            entity.Property(e => e.PatrolDtm)
-                .HasComment("순찰 일시")
-                .HasColumnType("datetime")
-                .HasColumnName("PATROL_DTM");
-            entity.Property(e => e.PatrolImg)
-                .HasMaxLength(255)
-                .HasComment("순찰 이미지")
-                .HasColumnName("PATROL_IMG");
-            entity.Property(e => e.PatrolName)
-                .HasMaxLength(255)
-                .HasComment("순찰 상태 명")
-                .HasColumnName("PATROL_NAME");
-            entity.Property(e => e.PatrolRemark)
-                .HasMaxLength(255)
-                .HasComment("순찰 비고")
-                .HasColumnName("PATROL_REMARK");
-            entity.Property(e => e.SPid)
-                .HasComment("순찰정보 외래키")
-                .HasColumnType("int(11)")
-                .HasColumnName("S_PID");
-
-            entity.HasOne(d => d.SP).WithMany(p => p.Patrollogtblists)
-                .HasForeignKey(d => d.SPid)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("PatrolPadLogTB_PID_202503131001");
-        });
-
         modelBuilder.Entity<Patrolpadlogtb>(entity =>
         {
             entity.HasKey(e => e.Pid).HasName("PRIMARY");
@@ -321,6 +265,10 @@ public partial class AptContext : DbContext
             entity.Property(e => e.Pid)
                 .HasColumnType("int(11)")
                 .HasColumnName("PID");
+            entity.Property(e => e.CarNum)
+                .HasMaxLength(255)
+                .HasComment("차량번호")
+                .HasColumnName("CAR_NUM");
             entity.Property(e => e.CreateDt)
                 .HasDefaultValueSql("current_timestamp()")
                 .HasComment("시스템 생성시간")
@@ -330,26 +278,44 @@ public partial class AptContext : DbContext
                 .HasMaxLength(255)
                 .HasComment("주차장 ID")
                 .HasColumnName("PARK_ID");
+            entity.Property(e => e.PatrolCode)
+                .HasComment("순찰 상태 코드 0: 정상(입주민), 1: 방문객, 2: 순착, 3: 위반(블랙리스트)")
+                .HasColumnType("int(11)")
+                .HasColumnName("PATROL_CODE");
+            entity.Property(e => e.PatrolDtm)
+                .HasComment("순찰일시")
+                .HasColumnType("datetime")
+                .HasColumnName("PATROL_DTM");
             entity.Property(e => e.PatrolEndDtm)
-                .HasMaxLength(255)
-                .HasDefaultValueSql("''")
-                .HasComment("순찰 종료 일시")
+                .HasComment("순찰 종료 일시 (사용안함)")
+                .HasColumnType("datetime")
                 .HasColumnName("PATROL_END_DTM");
-            entity.Property(e => e.PatrolStartDtm)
+            entity.Property(e => e.PatrolImg)
                 .HasMaxLength(255)
-                .HasDefaultValueSql("''")
-                .HasComment("순찰 시작 일시")
+                .HasComment("순찰 이미지")
+                .HasColumnName("PATROL_IMG");
+            entity.Property(e => e.PatrolName)
+                .HasMaxLength(255)
+                .HasComment("순찰상태명")
+                .HasColumnName("PATROL_NAME");
+            entity.Property(e => e.PatrolRemark)
+                .HasMaxLength(255)
+                .HasComment("순찰비고")
+                .HasColumnName("PATROl_REMARK");
+            entity.Property(e => e.PatrolStartDtm)
+                .HasComment("순찰 시작 일시 (사용안함)")
+                .HasColumnType("datetime")
                 .HasColumnName("PATROL_START_DTM");
             entity.Property(e => e.PatrolUserId)
-                .HasMaxLength(255)
-                .HasComment("순찰 담당자 ID")
+                .HasComment("순찰 담당자 ID (사용안함)")
+                .HasColumnType("int(11)")
                 .HasColumnName("PATROL_USER_ID");
             entity.Property(e => e.PatrolUserNm)
+                .HasMaxLength(255)
                 .HasComment("순찰 담당자 이름")
-                .HasColumnType("int(11)")
                 .HasColumnName("PATROL_USER_NM");
             entity.Property(e => e.TotCnt)
-                .HasComment("전체 데이터 개수")
+                .HasComment("전체 데이터 개수 (사용안함)")
                 .HasColumnType("int(11)")
                 .HasColumnName("TOT_CNT");
         });

@@ -74,7 +74,7 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// <param name="pageNumber"></param>
         /// <param name="PageSize"></param>
         /// <returns></returns>
-        public Task<ResponsePage<PageNationDTO<PatrolViewListDTO>>?> PatrolViewListService(int pageNumber, int PageSize);
+        public Task<ResponsePage<PageNationDTO<PatrolViewListDTO>>?> PatrolViewListService(int pageNumber, int PageSize, DateTime? startDate, DateTime? endDate, string? patrolNm, string? carNumber);
         #endregion
 
 

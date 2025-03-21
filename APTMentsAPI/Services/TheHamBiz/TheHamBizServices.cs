@@ -188,7 +188,7 @@ namespace APTMentsAPI.Services.TheHamBizService
             try
             {
                 if (dto.PARK_ID is null ||
-                    dto.PATROL_USER_ID is null ||
+                    dto.PATROL_USER_NM is null ||
                     dto.PATROL_START_DTM is null ||
                     dto.PATROL_END_DTM is null ||
                     dto.PAY_LOAD is null)
@@ -196,37 +196,38 @@ namespace APTMentsAPI.Services.TheHamBizService
 
                 foreach(var requiredCheck in dto.PAY_LOAD)
                 {
-                    if (requiredCheck.CAR_NUM is null)
+                    if (requiredCheck.PATROL_DTM is null || requiredCheck.CAR_NUM is null)
                         return 2; // 필수값 누락
                 }
 
                 DateTime NowDate = DateTime.Now;
 
-                var PatrolTB = new Patrolpadlogtb();
-                PatrolTB.ParkId = dto.PARK_ID; // 주차장 ID  ex)샘플 데이터  "2177"
-                PatrolTB.PatrolUserId = dto.PATROL_USER_ID; // 순찰 담당자 ID  ex)샘플 데이터  "33마 3434"
-                PatrolTB.PatrolUserNm = dto.PATROL_USER_NM; // 순찰 담당자 이름 ex) "10"
-                PatrolTB.PatrolStartDtm = dto.PATROL_START_DTM;// 순찰 시작 일시 ex)샘플 데이터  "입차"
-                PatrolTB.PatrolEndDtm = dto.PATROL_END_DTM; // 순찰 종료 일시 ex)샘플 데이터  "1"
-                PatrolTB.TotCnt = dto.TOT_CNT; // 전체 데이터 개수 ex) 샘플데이터 3
-                PatrolTB.CreateDt = NowDate;
+                int loopCount = dto.PAY_LOAD.Count;
 
-                List<Patrollogtblist> PatrolList = new List<Patrollogtblist>();
-                foreach(var item in dto.PAY_LOAD)
+                List<Patrolpadlogtb> modellist = new List<Patrolpadlogtb>();
+
+                for (int i = 0; i < dto.PAY_LOAD.Count; i++)
                 {
-                    PatrolList.Add(new Patrollogtblist
+                    var model = new Patrolpadlogtb()
                     {
-                        PatrolDtm = Convert.ToDateTime(item.PATROL_DTM), // 순찰 일시 ex) 샘플데이터 "2025-11-22 22:22:22"
-                        PatrolCode = item.PATROL_CODE, // 순찰 상태 코드 ex) 샘플데이터 0
-                        PatrolName = item.PATROL_NAME, // 순찰 상태 명 ex) 샘플데이터 "방문객"
-                        CarNum = item.CAR_NUM ?? string.Empty, // 차량 번호 ex) 샘플데이터 "99버9999"
-                        PatrolImg = item.PATROL_IMG, // 순찰 이미지 ex) 샘플데이터 "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg"
-                        PatrolRemark = item.PATROL_REMARK, // 순찰 비고 ex) 샘플데이터 ""
-                        CreateDt = NowDate
-                    });
+                        ParkId = dto.PARK_ID, // (필수값) 주차장 ID
+                        PatrolUserId = dto.PATROL_USER_ID, // (필수값) 순찰 담당자 ID
+                        PatrolUserNm = dto.PATROL_USER_NM, // (필수값) 순찰 담당자 이름
+                        PatrolStartDtm = DateTime.Parse(dto.PATROL_START_DTM), // (필수값) 순찰 시작 일시
+                        PatrolEndDtm = DateTime.Parse(dto.PATROL_END_DTM), // (필수값) 순찰 종료 일시
+                        TotCnt = dto.TOT_CNT, // 전체 데이터 개수
+                        PatrolDtm = DateTime.Parse(dto.PAY_LOAD[i].PATROL_DTM!), // (필수값) 순찰 일시
+                        PatrolCode = dto.PAY_LOAD[i].PATROL_CODE, // (필수값) 순찰 상태 코드 0: 정상(입주민), 1: 방문객, 2: 순찰, 3: 위반(블랙리스트)
+                        PatrolName = dto.PAY_LOAD[i].PATROL_NAME, // 순찰 상태 명
+                        CarNum = dto.PAY_LOAD[i].CAR_NUM!, //  (필수값) 차량 번호
+                        PatrolImg = dto.PAY_LOAD[i].PATROL_IMG, // 순찰 이미지
+                        PatrolRemark = dto.PAY_LOAD[i].PATROL_REMARK, // 순찰비고
+                    };
+                    modellist.Add(model);
                 }
 
-                int result = await TheHamBizRepository.AddPatrolAsync(PatrolTB, PatrolList).ConfigureAwait(false);
+
+                int result = await TheHamBizRepository.AddPatrolAsync(modellist).ConfigureAwait(false);
                 if (result > 0)
                     return 1;
                 else if (result == 0)
@@ -461,7 +462,7 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// <param name="pageNumber"></param>
         /// <param name="PageSize"></param>
         /// <returns></returns>
-        public async Task<ResponsePage<PageNationDTO<PatrolViewListDTO>>?> PatrolViewListService(int pageNumber, int PageSize)
+        public async Task<ResponsePage<PageNationDTO<PatrolViewListDTO>>?> PatrolViewListService(int pageNumber, int PageSize, DateTime? startDate, DateTime? endDate, string? patrolNm, string? carNumber)
         {
             try
             {
@@ -469,8 +470,8 @@ namespace APTMentsAPI.Services.TheHamBizService
                     return new ResponsePage<PageNationDTO<PatrolViewListDTO>>() {  data = null, code = 200 };
                 if (PageSize == 0)
                     return new ResponsePage<PageNationDTO<PatrolViewListDTO>>() {  data = null, code = 200 };
-                
-                var model = await TheHamBizRepository.PatrolViewListAsync(pageNumber, PageSize);
+
+                var model = await TheHamBizRepository.PatrolViewListAsync(pageNumber, PageSize, startDate, endDate, patrolNm, carNumber);
                 if (model is null)
                     return new ResponsePage<PageNationDTO<PatrolViewListDTO>>() { data = null, code = 400 };
                 else

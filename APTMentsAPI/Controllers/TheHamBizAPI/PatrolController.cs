@@ -32,13 +32,13 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
         [Route("v1/ViewList")]
         [SwaggerResponse(200, "성공", typeof(ResponsePage<PageNationDTO<PatrolViewListDTO>>))]
         [SwaggerResponseExample(200, typeof(PatrolListResponseExample))]
-        public async Task<IActionResult> PatrolViewList([FromQuery][Required] int pageNumber, [FromQuery][Required] int pageSize)
+        public async Task<IActionResult> PatrolViewList([FromQuery][Required] int pageNumber, [FromQuery][Required] int pageSize, DateTime? startDate, DateTime? endDate, string? patrolNm,string? carNumber)
         {
             try
             {
                 RequestAPIHelpers.RequestMessage(Request);
 
-                var model = await TheHamBizServices.PatrolViewListService(pageNumber, pageSize);
+                var model = await TheHamBizServices.PatrolViewListService(pageNumber, pageSize, startDate, endDate, patrolNm, carNumber);
                 if (model is null)
                     return BadRequest();
 

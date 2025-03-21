@@ -13,34 +13,62 @@ public partial class Patrolpadlogtb
     public string ParkId { get; set; } = null!;
 
     /// <summary>
-    /// 순찰 담당자 ID
+    /// 순찰 담당자 ID (사용안함)
     /// </summary>
-    public string PatrolUserId { get; set; } = null!;
+    public int PatrolUserId { get; set; }
 
     /// <summary>
     /// 순찰 담당자 이름
     /// </summary>
-    public int PatrolUserNm { get; set; }
+    public string PatrolUserNm { get; set; } = null!;
 
     /// <summary>
-    /// 순찰 시작 일시
+    /// 순찰 시작 일시 (사용안함)
     /// </summary>
-    public string PatrolStartDtm { get; set; } = null!;
+    public DateTime PatrolStartDtm { get; set; }
 
     /// <summary>
-    /// 순찰 종료 일시
+    /// 순찰 종료 일시 (사용안함)
     /// </summary>
-    public string PatrolEndDtm { get; set; } = null!;
+    public DateTime PatrolEndDtm { get; set; }
 
     /// <summary>
-    /// 전체 데이터 개수
+    /// 전체 데이터 개수 (사용안함)
     /// </summary>
     public int TotCnt { get; set; }
+
+    /// <summary>
+    /// 순찰일시
+    /// </summary>
+    public DateTime PatrolDtm { get; set; }
+
+    /// <summary>
+    /// 순찰 상태 코드 0: 정상(입주민), 1: 방문객, 2: 순착, 3: 위반(블랙리스트)
+    /// </summary>
+    public int PatrolCode { get; set; }
+
+    /// <summary>
+    /// 순찰상태명
+    /// </summary>
+    public string? PatrolName { get; set; }
+
+    /// <summary>
+    /// 차량번호
+    /// </summary>
+    public string CarNum { get; set; } = null!;
+
+    /// <summary>
+    /// 순찰 이미지
+    /// </summary>
+    public string? PatrolImg { get; set; }
+
+    /// <summary>
+    /// 순찰비고
+    /// </summary>
+    public string? PatrolRemark { get; set; }
 
     /// <summary>
     /// 시스템 생성시간
     /// </summary>
     public DateTime CreateDt { get; set; }
-
-    public virtual ICollection<Patrollogtblist> Patrollogtblists { get; set; } = new List<Patrollogtblist>();
 }
