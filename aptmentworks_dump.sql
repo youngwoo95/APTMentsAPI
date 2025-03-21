@@ -1,7 +1,7 @@
 /*M!999999\- enable the sandbox mode */ 
 -- MariaDB dump 10.19  Distrib 10.6.21-MariaDB, for Win64 (AMD64)
 --
--- Host: localhost    Database: AptmentWorks
+-- Host: localhost    Database: Aptmentworks
 -- ------------------------------------------------------
 -- Server version	10.6.21-MariaDB
 
@@ -63,7 +63,7 @@ CREATE TABLE `io_parkingrows` (
 
 LOCK TABLES `io_parkingrows` WRITE;
 /*!40000 ALTER TABLE `io_parkingrows` DISABLE KEYS */;
-INSERT INTO `io_parkingrows` VALUES (64,0,'P2177010120240613082249851','2177','44거1010','20','출차','1','정문',2,'2024-06-13 05:38:07','0','','2','방문차량','101','1001','0','0','','','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg',NULL,NULL,36,36,'','2025-03-18 08:20:01',NULL),(65,1,'P2177010120240613082249851','2177','43가1414','10','입차','1','정문',1,'2024-06-13 05:38:07','0','','2','예약차량','101','1001','1','0','','','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','0','',NULL,NULL,'친구방문','2025-03-18 13:19:56',NULL),(66,1,'P2177010120240613082249851','2177','12가1234','10','입차','1','정문',1,'2024-06-13 05:38:07','0','','2','방문차량','101','1001','0','1','허위차량','2024-06-13 05:38:07','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','0','',NULL,NULL,'','2025-03-18 13:19:56',NULL),(67,1,'P2177010120240613082249851','2177','12가1234','10','입차','1','정문',1,'2024-06-13 05:38:07','0','','6','정기차량','101','1001','0','0','','','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','0','',NULL,NULL,'','2025-03-18 13:19:57',NULL),(68,1,'P2177010120240613082249851','2177','33마3434','10','입차','1','정문',1,'2024-06-13 05:38:07','0','','2','방문차량','101','1001','0','0','','','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','0','',NULL,NULL,'','2025-03-18 13:19:58',NULL),(69,1,'P2177010120240613082249851','2177','33마3434','10','입차','1','정문',1,'2024-06-13 05:38:07','0','','2','방문차량','101','1001','0','0','','','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','0','',NULL,NULL,'','2025-03-18 13:46:55',NULL),(70,0,'P2177010120240613082249851','2177','44거1010','20','출차','1','정문',2,'2024-06-13 05:38:07','0','','2','방문차량','101','1001','0','0','','','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg',NULL,NULL,36,36,'','2025-03-18 13:46:58',NULL);
+INSERT INTO `io_parkingrows` VALUES (64,0,'P2177010120240613082249851','2177','44거1010','20','출차','1','정문',2,'2025-03-19 05:38:07','0','','2','방문차량','101','1001','0','0','','','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg',NULL,NULL,36,36,'','2025-03-18 08:20:01',NULL),(65,1,'P2177010120240613082249851','2177','43가1414','10','입차','1','정문',1,'2024-06-13 05:38:07','0','','2','예약차량','101','1001','1','0','','','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','0','',NULL,NULL,'친구방문','2025-03-18 13:19:56',NULL),(66,1,'P2177010120240613082249851','2177','12가1234','10','입차','1','정문',1,'2024-06-13 05:38:07','0','','2','방문차량','101','1001','0','1','허위차량','2024-06-13 05:38:07','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','0','',NULL,NULL,'','2025-03-18 13:19:56',NULL),(67,1,'P2177010120240613082249851','2177','12가1234','10','입차','1','정문',1,'2024-06-13 05:38:07','0','','6','정기차량','101','1001','0','0','','','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','0','',NULL,NULL,'','2025-03-18 13:19:57',NULL),(68,1,'P2177010120240613082249851','2177','33마3434','10','입차','1','정문',1,'2024-06-13 05:38:07','0','','2','방문차량','101','1001','0','0','','','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','0','',NULL,NULL,'','2025-03-18 13:19:58',NULL),(69,1,'P2177010120240613082249851','2177','33마3434','10','입차','1','정문',1,'2024-06-13 05:38:07','0','','2','방문차량','101','1001','0','0','','','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','0','',NULL,NULL,'','2025-03-18 13:46:55',NULL),(70,0,'P2177010120240613082249851','2177','44거1010','20','출차','1','정문',2,'2025-03-19 05:38:07','0','','2','방문차량','101','1001','0','0','','','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg',NULL,NULL,36,36,'','2025-03-18 13:46:58',NULL);
 /*!40000 ALTER TABLE `io_parkingrows` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -113,39 +113,6 @@ INSERT INTO `io_parkingviewtb` VALUES (12,'P2177010120240613082249851','20','출
 UNLOCK TABLES;
 
 --
--- Table structure for table `patrollogtblist`
---
-
-DROP TABLE IF EXISTS `patrollogtblist`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `patrollogtblist` (
-  `PID` int(11) NOT NULL AUTO_INCREMENT,
-  `PATROL_DTM` datetime NOT NULL COMMENT '순찰 일시',
-  `PATROL_CODE` int(11) NOT NULL COMMENT '순찰 상태 코드 0: 정상(입주민), 1: 방문객, 2: 순찰, 3:위반(블랙리스트)',
-  `PATROL_NAME` varchar(255) DEFAULT NULL COMMENT '순찰 상태 명',
-  `CAR_NUM` varchar(255) NOT NULL COMMENT '차량 번호',
-  `PATROL_IMG` varchar(255) DEFAULT NULL COMMENT '순찰 이미지',
-  `PATROL_REMARK` varchar(255) DEFAULT NULL COMMENT '순찰 비고',
-  `CREATE_DT` datetime DEFAULT current_timestamp() COMMENT '시스템 생성시간',
-  `S_PID` int(11) NOT NULL COMMENT '순찰정보 외래키',
-  PRIMARY KEY (`PID`),
-  KEY `PatrolPadLogTB_PID_202503131001` (`S_PID`),
-  CONSTRAINT `PatrolPadLogTB_PID_202503131001` FOREIGN KEY (`S_PID`) REFERENCES `patrolpadlogtb` (`PID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `patrollogtblist`
---
-
-LOCK TABLES `patrollogtblist` WRITE;
-/*!40000 ALTER TABLE `patrollogtblist` DISABLE KEYS */;
-INSERT INTO `patrollogtblist` VALUES (1,'2025-11-22 22:22:22',0,'방문객','99버9999','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','친척방문','2025-03-14 23:40:00',1),(2,'2025-11-22 22:25:25',1,'입주민','33루3333','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','','2025-03-14 23:40:00',1),(3,'2025-11-22 22:30:34',0,'블랙리스트','88머8888','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','상습주차범','2025-03-14 23:40:00',1),(4,'2025-11-22 22:22:22',0,'방문객','99버9999','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','친척방문','2025-03-17 10:11:09',2),(5,'2025-11-22 22:25:25',1,'입주민','33루3333','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','','2025-03-17 10:11:09',2),(6,'2025-11-22 22:30:34',0,'블랙리스트','88머8888','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','상습주차범','2025-03-17 10:11:09',2),(7,'2025-11-22 22:22:22',0,'방문객','99버9999','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','친척방문','2025-03-17 14:44:40',3),(8,'2025-11-22 22:25:25',1,'입주민','33루3333','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','','2025-03-17 14:44:40',3),(9,'2025-11-22 22:30:34',0,'블랙리스트','88머8888','http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg','상습주차범','2025-03-17 14:44:40',3);
-/*!40000 ALTER TABLE `patrollogtblist` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `patrolpadlogtb`
 --
 
@@ -155,14 +122,20 @@ DROP TABLE IF EXISTS `patrolpadlogtb`;
 CREATE TABLE `patrolpadlogtb` (
   `PID` int(11) NOT NULL AUTO_INCREMENT,
   `PARK_ID` varchar(255) NOT NULL COMMENT '주차장 ID',
-  `PATROL_USER_ID` varchar(255) NOT NULL COMMENT '순찰 담당자 ID',
-  `PATROL_USER_NM` int(11) NOT NULL COMMENT '순찰 담당자 이름',
-  `PATROL_START_DTM` varchar(255) NOT NULL DEFAULT '' COMMENT '순찰 시작 일시',
-  `PATROL_END_DTM` varchar(255) NOT NULL DEFAULT '' COMMENT '순찰 종료 일시',
-  `TOT_CNT` int(11) NOT NULL COMMENT '전체 데이터 개수',
+  `PATROL_USER_ID` int(11) NOT NULL COMMENT '순찰 담당자 ID (사용안함)',
+  `PATROL_USER_NM` varchar(255) NOT NULL COMMENT '순찰 담당자 이름',
+  `PATROL_START_DTM` datetime NOT NULL COMMENT '순찰 시작 일시 (사용안함)',
+  `PATROL_END_DTM` datetime NOT NULL COMMENT '순찰 종료 일시 (사용안함)',
+  `TOT_CNT` int(11) NOT NULL COMMENT '전체 데이터 개수 (사용안함)',
+  `PATROL_DTM` datetime NOT NULL COMMENT '순찰일시',
+  `PATROL_CODE` int(11) NOT NULL COMMENT '순찰 상태 코드 0: 정상(입주민), 1: 방문객, 2: 순착, 3: 위반(블랙리스트)',
+  `PATROL_NAME` varchar(255) DEFAULT NULL COMMENT '순찰상태명',
+  `CAR_NUM` varchar(255) NOT NULL COMMENT '차량번호',
+  `PATROL_IMG` varchar(255) DEFAULT NULL COMMENT '순찰 이미지',
+  `PATROl_REMARK` varchar(255) DEFAULT NULL COMMENT '순찰비고',
   `CREATE_DT` datetime NOT NULL DEFAULT current_timestamp() COMMENT '시스템 생성시간',
   PRIMARY KEY (`PID`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -171,7 +144,7 @@ CREATE TABLE `patrolpadlogtb` (
 
 LOCK TABLES `patrolpadlogtb` WRITE;
 /*!40000 ALTER TABLE `patrolpadlogtb` DISABLE KEYS */;
-INSERT INTO `patrolpadlogtb` VALUES (1,'2177','33마3434',10,'입차','1',3,'2025-03-14 23:40:00'),(2,'2177','33마3434',10,'입차','1',3,'2025-03-17 10:11:09'),(3,'2177','33마3434',10,'입차','1',3,'2025-03-17 14:44:40');
+INSERT INTO `patrolpadlogtb` VALUES (5,'P001',123,'홍길동','2025-03-21 09:00:00','2025-03-21 10:00:00',1,'2025-03-21 09:30:00',0,'정상','12가3456','http://thehambizp0002.iptime.org:8000/image/2025\\\\02\\\\28\\\\102\\\\20250228100533_228오1005.jpg','문제 없음','2025-03-21 15:54:35'),(6,'P001',123,'홍길동','2025-03-21 09:00:00','2025-03-21 10:00:00',2,'2025-03-21 09:30:00',0,'정상','12가3456','http://thehambizp0002.iptime.org:8000/image/2025\\\\02\\\\28\\\\102\\\\20250228100533_228오1005.jpg','문제 없음','2025-03-21 15:55:19'),(7,'P001',123,'홍길동','2025-03-21 09:00:00','2025-03-21 10:00:00',2,'2025-03-19 03:30:00',0,'정상','123가1234','http://thehambizp0002.iptime.org:8000/image/2025\\\\02\\\\28\\\\102\\\\20250228100533_228오1005.jpg','문제 없음','2025-03-21 15:55:19'),(8,'P001',123,'홍길동','2025-03-21 09:00:00','2025-03-21 10:00:00',2,'2025-03-21 09:30:00',0,'정상','12가3456','http://thehambizp0002.iptime.org:8000/image/2025\\\\02\\\\28\\\\102\\\\20250228100533_228오1005.jpg','문제 없음','2025-03-21 15:58:24'),(9,'P001',123,'홍길동','2025-03-21 09:00:00','2025-03-21 10:00:00',2,'2025-03-19 03:30:00',0,'정상','123가1234','http://thehambizp0002.iptime.org:8000/image/2025\\\\02\\\\28\\\\102\\\\20250228100533_228오1005.jpg','문제 없음','2025-03-21 15:58:24'),(10,'P001',123,'홍길동','2025-03-21 09:00:00','2025-03-21 10:00:00',2,'2025-03-15 03:30:00',1,'방문객','456가2303','http://thehambizp0002.iptime.org:8000/image/2025\\\\02\\\\28\\\\102\\\\20250228100533_228오1005.jpg','문제 없음','2025-03-21 15:58:24'),(11,'P001',123,'홍길동','2025-03-21 09:00:00','2025-03-21 10:00:00',2,'2025-03-13 03:30:00',2,'순찰','333가2303','http://thehambizp0002.iptime.org:8000/image/2025\\\\02\\\\28\\\\102\\\\20250228100533_228오1005.jpg','문제 없음','2025-03-21 15:58:24'),(12,'P001',123,'홍길동','2025-03-21 09:00:00','2025-03-21 10:00:00',2,'2025-03-11 03:30:00',3,'위반','333가2303','http://thehambizp0002.iptime.org:8000/image/2025\\\\02\\\\28\\\\102\\\\20250228100533_228오1005.jpg','타단지 차량','2025-03-21 15:58:24');
 /*!40000 ALTER TABLE `patrolpadlogtb` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -184,4 +157,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-18 14:16:32
+-- Dump completed on 2025-03-21 16:45:12
