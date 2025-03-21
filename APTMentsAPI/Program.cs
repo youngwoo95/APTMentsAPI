@@ -4,6 +4,7 @@ using APTMentsAPI.Services.FileService;
 using APTMentsAPI.Services.Helpers;
 using APTMentsAPI.Services.Logger;
 using APTMentsAPI.Services.TheHamBizService;
+using APTMentsAPI.SignalRHub;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -112,6 +113,7 @@ namespace APTMentsAPI
             // 예제 필터를 포함하는 어셈블리 등록
             builder.Services.AddSwaggerExamplesFromAssemblyOf<ViewListResponseExample>();
             builder.Services.AddSwaggerExamplesFromAssemblyOf<DetailViewResponseExample>();
+            builder.Services.AddSwaggerExamplesFromAssemblyOf<LastViewListResponseExample>();
             builder.Services.AddSwaggerExamplesFromAssemblyOf<PatrolListResponseExample>();
 #endif
 
@@ -150,6 +152,18 @@ namespace APTMentsAPI
 
             #endregion
 
+            #region SIGNAL R 등록
+            builder.Services.AddSignalR().AddHubOptions<BroadcastHub>(options =>
+            {
+                options.EnableDetailedErrors = false; // 허브에서 오류가 발생할 때, 클라이언트에게 자세한 오류 정보를 전송한다. - 민감한 정보를 전송할 수 있으므로 false로 보통 설정
+                options.KeepAliveInterval = System.TimeSpan.FromSeconds(15); // 서버가 클라이언트로 주기적으로 핑을 보냄 (하트비트)
+                options.HandshakeTimeout = System.TimeSpan.FromSeconds(15); // 클라이언트가 연결 핸드세이크를 완료할 때 까지 기다리는 최대시간 넘어가면 에러처리.
+                options.ClientTimeoutInterval = System.TimeSpan.FromSeconds(30); // 클라이언트로부터 하트비트를 못받았을 때 서버가 30초동안 기다려준다.
+                //options.MaximumReceiveMessageSize = 32 * 1024; // 32KB 서버가 클라이언트로부터 수신할 수 있는 최대 메시지 크기를 바이트단위로 설정
+                //options.StreamBufferCapacity = 10; // 클라이언트와 서버 간 스트리밍 시 버퍼에 저장할 수 있는 아이템의 최대 수
+                // options.MaximumParallelInvocationsPerClient = 1; // 하나의 클라이언트가 동시에 수행할 수 있는 허브 메서드 호출의 최대 개수를 제한. -> 많아지면 서버 부하가 생기기때문
+            });
+            #endregion
 
             var app = builder.Build();
 
@@ -160,7 +174,7 @@ namespace APTMentsAPI
             });
             #endregion
 
-            app.UseResponseCompression(); // 응답 압축 미들웨어 추가
+            
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -168,6 +182,8 @@ namespace APTMentsAPI
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseResponseCompression(); // 응답 압축 미들웨어 추가
+            app.MapHub<BroadcastHub>("/ParkingHub");
 
             /* 
                MIME 타입 및 압축 헤더 설정

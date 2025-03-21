@@ -134,6 +134,84 @@ namespace APTMentsAPI
         }
     }
 
+    public class LastViewListResponseExample : IExamplesProvider<ResponseUnit<List<LastWeeksDTO>>>
+    {
+        public ResponseUnit<List<LastWeeksDTO>> GetExamples()
+        {
+            var item1 = new LastWeeksDTO()
+            {
+                pId = 69,
+                ioGubun = 1,
+                ioSeq = "P2177010120240613082249851",
+                parkId = "2177",
+                carNum = "33마3434",
+                ioStatusTp = "10",
+                ioStatusTpNm = "입차",
+                ioGateId = "1",
+                ioGateNm = "정문",
+                ioLineNum = 1,
+                ioDtm = DateTime.Now.AddDays(-7),
+                ioLprStatus = "0",
+                ioLprStatusNm = "",
+                ioTicketTp = "2",
+                ioTicketTpNm = "방문차량",
+                dong = "101",
+                ho = "1001",
+                isReservation = "0",
+                isBlacklist = "0",
+                blacklistReason = "",
+                regDtm = "",
+                imgPath = "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg",
+                isWait = "0",
+                isWaitReason = "",
+                parkDuration = null,
+                visitTime = null,
+                etc = "",
+                memo = null
+            };
+
+            var item2 = new LastWeeksDTO()
+            {
+                pId = 70,
+                ioGubun = 0,
+                ioSeq = "P2177010120240613082249851",
+                parkId = "2177",
+                carNum = "44거1010",
+                ioStatusTp = "20",
+                ioStatusTpNm = "출차",
+                ioGateId = "1",
+                ioGateNm = "정문",
+                ioLineNum = 2,
+                ioDtm = DateTime.Now,
+                ioLprStatus = "0",
+                ioLprStatusNm = "",
+                ioTicketTp = "2",
+                ioTicketTpNm = "방문차량",
+                dong = "101",
+                ho = "1001",
+                isReservation = "0",
+                isBlacklist = "0",
+                blacklistReason = "",
+                regDtm = "",
+                imgPath = "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg",
+                isWait = null,
+                isWaitReason = null,
+                parkDuration = 36,
+                visitTime = 36,
+                etc = "",
+                memo = null
+            };
+
+            // 페이지네이션 DTO에 순찰 리스트 항목들을 할당합니다.
+            var result = new ResponseUnit<List<LastWeeksDTO>>
+            {
+                data = new List<LastWeeksDTO> { item1,item2},
+                code = 200
+            };
+            return result;
+        }
+    }
+
     /// <summary>
     /// 순찰 패드 전체 List Swagger 샘플
     /// </summary>

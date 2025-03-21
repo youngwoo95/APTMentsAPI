@@ -87,7 +87,6 @@ namespace APTMentsAPI.Services.TheHamBizService
                 - 예약차량인데 방문증을 뽑고 들어가는 현장: 1로 전송 후 2번 전송
                  */
                
-            
                 int result = await TheHamBizRepository.AddInCarAsnyc(ParkingRowTB).ConfigureAwait(false);
                 if (result > 0)
                     return 1;
@@ -246,7 +245,7 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// 입-출차 리스트
         /// </summary>
         /// <returns></returns>
-        public async Task<ResponsePage<PageNationDTO<InOutViewListDTO>>?> InOutViewListService(int pageNumber, int PageSize, DateTime? StartDate, DateTime? EndDate, string? inStatusTp, string? CarNumber, string? Dong, string? Ho, int? PackingDuration, string? ioTicketTpNm)
+        public async Task<ResponsePage<PageNationDTO<InOutViewListDTO>>?> InOutViewListService(int pageNumber, int PageSize, DateTime? StartDate, DateTime? EndDate, string? inStatusTpNm, string? CarNumber, string? Dong, string? Ho, int? PackingDuration, string? ioTicketTpNm)
         {
             try
             {
@@ -255,7 +254,7 @@ namespace APTMentsAPI.Services.TheHamBizService
                 if (PageSize == 0)
                     return new ResponsePage<PageNationDTO<InOutViewListDTO>>() {data = null, code = 200 };
 
-                var model = await TheHamBizRepository.InOutViewListAsync(pageNumber, PageSize, StartDate, EndDate, inStatusTp, CarNumber, Dong, Ho, PackingDuration, ioTicketTpNm).ConfigureAwait(false);
+                var model = await TheHamBizRepository.InOutViewListAsync(pageNumber, PageSize, StartDate, EndDate, inStatusTpNm, CarNumber, Dong, Ho, PackingDuration, ioTicketTpNm).ConfigureAwait(false);
                 if (model is not null)
                     return model;
                 else
@@ -340,12 +339,12 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// </summary>
         /// <param name="carNum"></param>
         /// <returns></returns>
-        public async Task<ResponsePage<LastWeeksDTO>?> LastWeeksService(string carNum)
+        public async Task<ResponsePage<List<LastWeeksDTO>>?> LastWeeksService(string carNum)
         {
             try
             {
                 if (String.IsNullOrWhiteSpace(carNum))
-                    return new ResponsePage<LastWeeksDTO>() { data = null, code = 200 };
+                    return new ResponsePage<List<LastWeeksDTO>>() { data = null, code = 200 };
                 //return new ResponseList<LastWeeksDTO>() { message = "잘못된 요청입니다.", data = null, code = 200 };
 
                 DateTime Today = DateTime.Now;
@@ -384,15 +383,15 @@ namespace APTMentsAPI.Services.TheHamBizService
                         memo = item.Memo
                     }).ToList();
 
-                    return new ResponsePage<LastWeeksDTO>() { code = 200 };
+                    return new ResponsePage<List<LastWeeksDTO>>() { data = LastViewList, code = 200 };
                 }
                 else
-                    return new ResponsePage<LastWeeksDTO>() { data = null, code = 200 };
+                    return new ResponsePage<List<LastWeeksDTO>>() { data = null, code = 200 };
             }
             catch(Exception ex)
             {
                 LoggerService.FileLogMessage(ex.ToString());
-                return new ResponsePage<LastWeeksDTO>() {data = null, code = 500 };
+                return new ResponsePage<List<LastWeeksDTO>>() {data = null, code = 500 };
             }
         }
 

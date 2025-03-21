@@ -327,7 +327,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
         /// 입-출차 리스트 조회
         /// </summary>
         /// <returns></returns>
-        public async Task<ResponsePage<PageNationDTO<InOutViewListDTO>>?> InOutViewListAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? EndDate, string? inStatusTp, string? CarNumber, string? Dong, string? Ho, int? ParkingDuration, string? ioTicketTpNm)
+        public async Task<ResponsePage<PageNationDTO<InOutViewListDTO>>?> InOutViewListAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? EndDate, string? inStatusTpNm, string? CarNumber, string? Dong, string? Ho, int? ParkingDuration, string? ioTicketTpNm)
         {
             try
             {
@@ -341,20 +341,44 @@ namespace APTMentsAPI.Repository.TheHamBiz
                     .Include(v => v.OutP)
                     .AsQueryable();
 
-
-                if (startDate.HasValue)
+                if(inStatusTpNm == null) // 전체
                 {
-                    query = query.Where(m => m.InDtm >= startDate.Value);
+                    if (startDate.HasValue)
+                    {
+                        query = query.Where(m => m.InDtm >= startDate.Value.Date); // 입차 ~ 출차 (전체)
+                    }
+
+                    if (EndDate.HasValue)
+                    {
+                        query = query.Where(m => m.OutDtm < EndDate.Value.Date.AddDays(1));
+                    }
                 }
-
-                if(EndDate.HasValue)
+                else if(inStatusTpNm == "입차")
                 {
-                    query = query.Where(m => m.OutDtm <= EndDate.Value);
+                    query = query.Where(m => m.InStatusTpNm == "입차"); // 입차
+                    
+                    if (startDate.HasValue)
+                    {
+                        query = query.Where(m => m.InDtm >= startDate.Value.Date); // 입차시간이 ㅇㅇ 날 ~ ㅇㅇ 날
+                    }
+
+                    if (EndDate.HasValue)
+                    {
+                        query = query.Where(m => m.InDtm < EndDate.Value.Date.AddDays(1));
+                    }
                 }
-
-                if(inStatusTp is not null)
+                else if(inStatusTpNm == "출차")
                 {
-                    query = query.Where(m => m.InStatusTp == inStatusTp);
+                    query = query.Where(m => m.InStatusTpNm == "출차"); // 출차
+                    if (startDate.HasValue)
+                    {
+                        query = query.Where(m => m.OutDtm >= startDate.Value.Date); // 출차시간이 ㅇㅇ 날 ~ ㅇㅇ 날
+                    }
+
+                    if (EndDate.HasValue)
+                    {
+                        query = query.Where(m => m.OutDtm < EndDate.Value.Date.AddDays(1));
+                    }
                 }
 
                 if (CarNumber is not null)
@@ -392,7 +416,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
                 var detailViewTasks = pageView.Select(async item => new InOutViewListDTO
                 {
                     pId = item.Pid,
-                    ioSeq = item.InP!.IoSeq,
+                    ioSeq = item.IoSeq,
                     ioTicketTp = item.IoTicketTp,
                     ioTicketTpNm = item.IoTicketTpNm,
                     //ioTicketTp = item.OutP == null ? item.InP.IoTicketTp : item.OutP.IoTicketTp,
@@ -402,11 +426,13 @@ namespace APTMentsAPI.Repository.TheHamBiz
                     //ioStatusTp = item.OutP == null ? item.InP.IoStatusTp : item.OutP.IoStatusTp,
                     //ioStatusTpNm = item.OutP == null ? item.InP.IoStatusTpNm : item.OutP.IoStatusTpNm,
                     carNum = item.CarNum,
-                    inDtm = item.InP.IoDtm,
-                    outDtm = item.OutP?.IoDtm, // OutP가 없으면 null로 처리
+                    //inDtm = item.InP.IoDtm,
+                    inDtm = item.InDtm,
+                    //outDtm = item.OutP?.IoDtm, // OutP가 없으면 null로 처리
+                    outDtm = item.OutDtm,
                     parkingDuration = item.OutP?.ParkDuration ?? 0, // null이면 0 처리 (필요에 따라 조정)
-                    inGateId = item.InP.IoGateId,
-                    inGateNm = item.InP.IoGateNm,
+                    inGateId = item.InP?.IoGateId,
+                    inGateNm = item.InP?.IoGateNm,
                     outGateId = item.OutP?.IoGateId,
                     outGateNm = item.OutP?.IoGateNm,
                     dong = item.Dong,

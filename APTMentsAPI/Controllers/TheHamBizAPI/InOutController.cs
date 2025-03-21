@@ -3,7 +3,9 @@ using APTMentsAPI.DTO.ViewsDTO;
 using APTMentsAPI.Services.Helpers;
 using APTMentsAPI.Services.Logger;
 using APTMentsAPI.Services.TheHamBizService;
+using APTMentsAPI.SignalRHub;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
 using System.ComponentModel.DataAnnotations;
@@ -18,13 +20,26 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
         private readonly ILoggerService LoggerService;
         private readonly ITheHamBizServices TheHamBizServices;
 
+        private readonly IHubContext<BroadcastHub> HubContext;
+
         public InOutController(ILoggerService _loggerservice, 
             IRequestAPI _requestapihelpers,
-            ITheHamBizServices _thehambizservices)
+            ITheHamBizServices _thehambizservices,
+            IHubContext<BroadcastHub> _hubcontext)
         {
             this.RequestAPIHelpers = _requestapihelpers;
             this.LoggerService = _loggerservice;
             this.TheHamBizServices = _thehambizservices;
+
+            this.HubContext = _hubcontext;
+        }
+
+        [HttpGet]
+        [Route("v1/test")]
+        public async Task<IActionResult> Temp()
+        {
+            await HubContext.Clients.Group("RoomGroup1").SendAsync("ServerSend", "소켓안의 내용","보내는사람이름").ConfigureAwait(false);
+            return Ok();
         }
 
         /// <summary>
@@ -43,13 +58,13 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
         [Route("v1/ViewList")]
         [SwaggerResponse(200, "성공", typeof(ResponsePage<PageNationDTO<InOutViewListDTO>>))]
         [SwaggerResponseExample(200, typeof(ViewListResponseExample))]
-        public async Task<IActionResult> ViewList([FromQuery][Required] int pageNumber, [FromQuery][Required] int pageSize, [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate, [FromQuery]string? inStatusTp, [FromQuery]string? carNumber, [FromQuery]string? dong, [FromQuery]string? ho, [FromQuery]int? parkingDuration, [FromQuery]string? ioTicketTpNm)
+        public async Task<IActionResult> ViewList([FromQuery][Required] int pageNumber, [FromQuery][Required] int pageSize, [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate, [FromQuery]string? inStatusTpNm, [FromQuery]string? carNumber, [FromQuery]string? dong, [FromQuery]string? ho, [FromQuery]int? parkingDuration, [FromQuery]string? ioTicketTpNm)
         {
             try
             {
                 RequestAPIHelpers.RequestMessage(Request);
 
-                var model = await TheHamBizServices.InOutViewListService(pageNumber,pageSize, startDate, endDate, inStatusTp, carNumber, dong, ho, parkingDuration, ioTicketTpNm);
+                var model = await TheHamBizServices.InOutViewListService(pageNumber,pageSize, startDate, endDate, inStatusTpNm, carNumber, dong, ho, parkingDuration, ioTicketTpNm);
                 if (model is null)
                     return BadRequest();
 
@@ -104,10 +119,11 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
         /// 차번으로 List 최근 7일 
         /// </summary>
         /// <returns></returns>
-        /*
         [HttpGet]
         [Route("v1/ViewLastWeeks")]
-        public async Task<IActionResult> ViewLastWeeks([FromQuery]string carNumber)
+        [SwaggerResponse(200, "성공", typeof(ResponseUnit<List<LastWeeksDTO>>))]
+        [SwaggerResponseExample(200, typeof(LastViewListResponseExample))]
+        public async Task<IActionResult> ViewLastWeeks([FromQuery][Required]string carNumber)
         {
             try
             {
@@ -129,7 +145,7 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
                 return Problem("서버에서 처리할 수 없는 요청입니다.", statusCode: 500);
             }
         }
-        */
+        
         [HttpPost]
         [Route("v1/UpdateViewMemo")]
         public async Task<IActionResult> UpdateViewMemo([FromBody]UpdateMemoDTO dto)
