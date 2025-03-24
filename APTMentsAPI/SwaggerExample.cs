@@ -1,6 +1,7 @@
 ﻿using APTMentsAPI.DTO;
 using APTMentsAPI.DTO.PatrolDTO;
 using APTMentsAPI.DTO.ViewsDTO;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace APTMentsAPI
@@ -8,9 +9,9 @@ namespace APTMentsAPI
     /// <summary>
     /// 전체 LIST Swagger 샘플
     /// </summary>
-    public class ViewListResponseExample : IExamplesProvider<ResponsePage<PageNationDTO<InOutViewListDTO>>>
+    public class ViewListResponseExample : IExamplesProvider<ResponsePage<InOutViewListDTO>>
     {
-        public ResponsePage<PageNationDTO<InOutViewListDTO>> GetExamples()
+        public ResponsePage<InOutViewListDTO> GetExamples()
         {
             // InOutViewListDTO 예제 데이터를 리스트에 추가합니다.
             var items = new List<InOutViewListDTO>
@@ -41,7 +42,7 @@ namespace APTMentsAPI
                 }
             };
 
-            var result = new ResponsePage<PageNationDTO<InOutViewListDTO>>
+            var result = new ResponsePage<InOutViewListDTO>
             {
                 Metas = new Meta
                 {
@@ -49,10 +50,7 @@ namespace APTMentsAPI
                     pageSize = 15,
                     totalCount = 100
                 },
-                data = new PageNationDTO<InOutViewListDTO>
-                {
-                    Items = items
-                },
+                data = items,
                 code = 200
             };
 
@@ -63,9 +61,9 @@ namespace APTMentsAPI
     /// <summary>
     /// IoSeq 상세정보 조회 Swagger 샘플
     /// </summary>
-    public class DetailViewResponseExample : IExamplesProvider<ResponseUnit<List<DetailViewDTO>>>
+    public class DetailViewResponseExample : IExamplesProvider<ResponsePage<DetailViewDTO>>
     {
-        public ResponseUnit<List<DetailViewDTO>> GetExamples()
+        public ResponsePage<DetailViewDTO> GetExamples()
         {
             List<DetailViewDTO> item = new List<DetailViewDTO>();
             item.Add(new DetailViewDTO
@@ -130,13 +128,13 @@ namespace APTMentsAPI
                 etc = "",
                 memo = null
             });
-            return new ResponseUnit<List<DetailViewDTO>>() { data = item, code = 200 };
+            return new ResponsePage<DetailViewDTO>() { data = item, code = 200 };
         }
     }
 
-    public class LastViewListResponseExample : IExamplesProvider<ResponseUnit<List<LastWeeksDTO>>>
+    public class LastViewListResponseExample : IExamplesProvider<ResponsePage<LastWeeksDTO>>
     {
-        public ResponseUnit<List<LastWeeksDTO>> GetExamples()
+        public ResponsePage<LastWeeksDTO> GetExamples()
         {
             var item1 = new LastWeeksDTO()
             {
@@ -203,7 +201,7 @@ namespace APTMentsAPI
             };
 
             // 페이지네이션 DTO에 순찰 리스트 항목들을 할당합니다.
-            var result = new ResponseUnit<List<LastWeeksDTO>>
+            var result = new ResponsePage<LastWeeksDTO>
             {
                 data = new List<LastWeeksDTO> { item1,item2},
                 code = 200
@@ -215,9 +213,9 @@ namespace APTMentsAPI
     /// <summary>
     /// 순찰 패드 전체 List Swagger 샘플
     /// </summary>
-    public class PatrolListResponseExample : IExamplesProvider<ResponsePage<PageNationDTO<PatrolViewListDTO>>>
+    public class PatrolListResponseExample : IExamplesProvider<ResponsePage<PatrolViewListDTO>>
     {
-        public ResponsePage<PageNationDTO<PatrolViewListDTO>> GetExamples()
+        public ResponsePage<PatrolViewListDTO> GetExamples()
         {
             // 첫 번째 순찰 항목
             var patrolItem1 = new PatrolViewListDTO
@@ -225,12 +223,12 @@ namespace APTMentsAPI
                 pId = 1,
                 parkId = "P001",
                 patrolUserNm = "홍길동",
-                patrolCode = 0,
-                patrolName = "정상",
+                patrolCode = 1,
+                patrolName = "위반(블랙리스트)",
                 patrolDtm = DateTime.Now,
                 patrolImg = "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg",
                 carNum = "123가4567",
-                patrolRemark = ""
+                patrolRemark = "타단지 차량"
             };
 
             var patrolItem2 = new PatrolViewListDTO
@@ -238,8 +236,8 @@ namespace APTMentsAPI
                 pId = 1,
                 parkId = "P001",
                 patrolUserNm = "홍길동",
-                patrolCode = 1,
-                patrolName = "방문객",
+                patrolCode = 2,
+                patrolName = "정상(입주민)",
                 patrolDtm = DateTime.Now,
                 patrolImg = "http://thehambizp0002.iptime.org:8000/image/2025\\02\\28\\102\\20250228100533_228오1005.jpg",
                 carNum = "5678가4567",
@@ -247,7 +245,7 @@ namespace APTMentsAPI
             };
 
             // 페이지네이션 DTO에 순찰 리스트 항목들을 할당합니다.
-            var result = new ResponsePage<PageNationDTO<PatrolViewListDTO>>
+            var result = new ResponsePage<PatrolViewListDTO>
             {
                 Metas = new Meta
                 {
@@ -255,10 +253,7 @@ namespace APTMentsAPI
                     pageSize = 15,
                     totalCount = 100
                 },
-                data = new PageNationDTO<PatrolViewListDTO>
-                {
-                    Items = new List<PatrolViewListDTO> { patrolItem1, patrolItem2}
-                },
+                data = new List<PatrolViewListDTO> { patrolItem1, patrolItem2 },
                 code = 200
             };
 

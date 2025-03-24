@@ -20,20 +20,23 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
         private readonly ILoggerService LoggerService;
         private readonly ITheHamBizServices TheHamBizServices;
 
-        private readonly IHubContext<BroadcastHub> HubContext;
+        //private readonly IHubContext<BroadcastHub> HubContext;
 
         public InOutController(ILoggerService _loggerservice, 
             IRequestAPI _requestapihelpers,
-            ITheHamBizServices _thehambizservices,
-            IHubContext<BroadcastHub> _hubcontext)
+            ITheHamBizServices _thehambizservices
+            //,IHubContext<BroadcastHub> _hubcontext
+            )
         {
             this.RequestAPIHelpers = _requestapihelpers;
             this.LoggerService = _loggerservice;
             this.TheHamBizServices = _thehambizservices;
 
-            this.HubContext = _hubcontext;
+            //this.HubContext = _hubcontext;
         }
 
+        // Socket 테스트
+        /*
         [HttpGet]
         [Route("v1/test")]
         public async Task<IActionResult> Temp()
@@ -41,6 +44,7 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
             await HubContext.Clients.Group("RoomGroup1").SendAsync("ServerSend", "소켓안의 내용","보내는사람이름").ConfigureAwait(false);
             return Ok();
         }
+        */
 
         /// <summary>
         /// 전체 ViewList 조회
@@ -54,17 +58,25 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
         /// <param name="Ho"></param>
         /// <param name="PackingDuration"></param>
         /// <returns></returns>
+      
         [HttpGet]
         [Route("v1/ViewList")]
-        [SwaggerResponse(200, "성공", typeof(ResponsePage<PageNationDTO<InOutViewListDTO>>))]
-        [SwaggerResponseExample(200, typeof(ViewListResponseExample))]
-        public async Task<IActionResult> ViewList([FromQuery][Required] int pageNumber, [FromQuery][Required] int pageSize, [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate, [FromQuery]string? inStatusTpNm, [FromQuery]string? carNumber, [FromQuery]string? dong, [FromQuery]string? ho, [FromQuery]int? parkingDuration, [FromQuery]string? ioTicketTpNm)
+        [Produces("application/json")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(ResponsePage<InOutViewListDTO>))]
+        [SwaggerResponseExample(StatusCodes.Status200OK, typeof(ViewListResponseExample))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerOperation(
+        Summary = "입출차 전체 리스트 조회 (조건추가)",
+        Description = "필요한 조건을 넣어서 조회시 - 조건별 동작"
+        )]
+        public async Task<IActionResult> ViewList([FromQuery][Required] int pageNumber, [FromQuery][Required] int pageSize, [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate, [FromQuery]string? ioStatusTpNm, [FromQuery]string? carNumber, [FromQuery]string? dong, [FromQuery]string? ho, [FromQuery]int? parkingDuration, [FromQuery]string? ioTicketTpNm)
         {
             try
             {
                 RequestAPIHelpers.RequestMessage(Request);
 
-                var model = await TheHamBizServices.InOutViewListService(pageNumber,pageSize, startDate, endDate, inStatusTpNm, carNumber, dong, ho, parkingDuration, ioTicketTpNm);
+                var model = await TheHamBizServices.InOutViewListService(pageNumber,pageSize, startDate, endDate, ioStatusTpNm, carNumber, dong, ho, parkingDuration, ioTicketTpNm);
                 if (model is null)
                     return BadRequest();
 
@@ -73,13 +85,13 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
                 else if(model.code == 400)
                     return BadRequest();
                 else
-                    return Problem("서버에서 처리할 수 없는 요청입니다.", statusCode: 500);
+                    return Problem(statusCode: 500);
             }
             catch(Exception ex)
             {
                 LoggerService.FileAPIMessage($"[ERROR]_{ex.ToString()}");
                 LoggerService.FileLogMessage(ex.ToString());
-                return Problem("서버에서 처리할 수 없는 요청입니다.", statusCode: 500);
+                return Problem(statusCode: 500);
             }
         }
 
@@ -90,8 +102,15 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
         /// <returns></returns>
         [HttpGet]
         [Route("v1/DetailView")]
-        [SwaggerResponse(200, "성공", typeof(ResponseUnit<List<DetailViewDTO>>))]
-        [SwaggerResponseExample(200, typeof(DetailViewResponseExample))]
+        [Produces("application/json")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(ResponsePage<DetailViewDTO>))]
+        [SwaggerResponseExample(StatusCodes.Status200OK, typeof(DetailViewResponseExample))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerOperation(
+        Summary = "해당 시퀀스 상세정보 조회",
+        Description = "해당 시퀀스의 상세내역 조회"
+        )]
         public async Task<IActionResult> DetailView([FromQuery][Required] string ioSeq)
         {
             try
@@ -111,7 +130,7 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
             {
                 LoggerService.FileAPIMessage($"[ERROR]_{ex.ToString()}");
                 LoggerService.FileLogMessage(ex.ToString());
-                return Problem("서버에서 처리할 수 없는 요청 입니다.", statusCode: 500);
+                return Problem(statusCode: 500);
             }
         }
 
@@ -121,15 +140,22 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
         /// <returns></returns>
         [HttpGet]
         [Route("v1/ViewLastWeeks")]
-        [SwaggerResponse(200, "성공", typeof(ResponseUnit<List<LastWeeksDTO>>))]
-        [SwaggerResponseExample(200, typeof(LastViewListResponseExample))]
-        public async Task<IActionResult> ViewLastWeeks([FromQuery][Required]string carNumber)
+        [Produces("application/json")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(ResponsePage<LastWeeksDTO>))]
+        [SwaggerResponseExample(StatusCodes.Status200OK, typeof(LastViewListResponseExample))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerOperation(
+        Summary = "해당 차량의 지난 7일 상세정보 조회",
+        Description = "해당 차량의 지난 7일 상세정보 조회"
+        )]
+        public async Task<IActionResult> ViewLastWeeks([FromQuery][Required]string carNumber, [FromQuery][Required] DateTime searchDate)
         {
             try
             {
                 RequestAPIHelpers.RequestMessage(Request);
 
-                var model = await TheHamBizServices.LastWeeksService(carNumber);
+                var model = await TheHamBizServices.LastWeeksService(carNumber, searchDate);
                 if (model is null)
                     return BadRequest();
 
@@ -142,12 +168,21 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
             {
                 LoggerService.FileAPIMessage($"[ERROR]_{ex.ToString()}");
                 LoggerService.FileLogMessage(ex.ToString());
-                return Problem("서버에서 처리할 수 없는 요청입니다.", statusCode: 500);
+                return Problem(statusCode: 500);
             }
         }
         
         [HttpPost]
         [Route("v1/UpdateViewMemo")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerOperation(
+        Summary = "해당 입-출차 한쌍에 대한 메모건 입력",
+        Description = "해당 입-출차 한쌍에 대한 메모건 입력"
+        )]
         public async Task<IActionResult> UpdateViewMemo([FromBody]UpdateMemoDTO dto)
         {
             try
@@ -166,18 +201,27 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
                 else if (model.code == 404)
                     return BadRequest();
                 else
-                    return Problem("서버에서 처리할 수 없는 요청입니다.", statusCode: 500);
+                    return Problem(statusCode: 500);
             }
             catch(Exception ex)
             {
                 LoggerService.FileAPIMessage($"[ERROR]_{ex.ToString()}");
                 LoggerService.FileLogMessage(ex.ToString());
-                return Problem("서버에서 처리할 수 없는 요청입니다.", statusCode: 500);
+                return Problem(statusCode: 500);
             }
         }
 
         [HttpPost]
         [Route("v1/UpdateRowMemo")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerOperation(
+        Summary = "해당 입차 or 출차 건에 대한 메모 입력",
+        Description = "해당 입차 or 출차 건에 대한 메모 입력"
+        )]
         public async Task<IActionResult> UpdateRowsMemo([FromBody]UpdateMemoDTO dto)
         {
             try
@@ -196,15 +240,14 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
                 else if (model.code == 404)
                     return BadRequest();
                 else
-                    return Problem("서버에서 처리할 수 없는 요청입니다.", statusCode: 500);
+                    return Problem(statusCode: 500);
             }
             catch(Exception ex) 
             {
                 LoggerService.FileAPIMessage($"[ERROR]_{ex.ToString()}");
                 LoggerService.FileLogMessage(ex.ToString());
-                return Problem("서버에서 처리할 수 없는 요청입니다.", statusCode: 500);
+                return Problem(statusCode: 500);
             }
         }
-
     }
 }

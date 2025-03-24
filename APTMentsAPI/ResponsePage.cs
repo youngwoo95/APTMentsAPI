@@ -4,7 +4,7 @@
     {
         //public string? message { get; set; }
         public Meta? Metas { get; set; }
-        public T? data { get; set; }
+        public List<T>? data { get; set; }
         public int code { get; set; }
     }
 

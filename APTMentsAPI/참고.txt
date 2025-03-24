@@ -1,12 +1,14 @@
 ﻿[DB 스캐폴드]
 Scaffold-DbContext "Server=123.2.159.98;Port=3306;Database=AptmentWorks;User=root;Password=stecdev1234!;" Pomelo.EntityFrameworkCore.MySql -OutputDir DBModels -ContextDir Repository -Context AptContext -Force
 
-
 Scaffold-DbContext "Server=127.0.0.1;Port=3306;Database=AptmentWorks;User=root;Password=rladyddn!!95;" Pomelo.EntityFrameworkCore.MySql -OutputDir DBModels -ContextDir Repository -Context AptContext -Force
 
+[DB Dump] - 저장경로는 C:\root
 mysqldump -u [사용자이름] -p [데이터베이스이름] > [백업파일명].sql
 
+[DB Dump 적용]
 mysql -u [사용자명] -p [데이터베이스명] < [dump파일명].sql
 
+[DB Dump 적용 예시]
 C:\Users\kyw>mysql -h 127.0.0.1 -u root -p AptmentWorks < C:\Users\kyw\Documents\APTMentsAPI\aptmentworks_dump.sql
 Enter password: ****

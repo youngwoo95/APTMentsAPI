@@ -246,25 +246,25 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// 입-출차 리스트
         /// </summary>
         /// <returns></returns>
-        public async Task<ResponsePage<PageNationDTO<InOutViewListDTO>>?> InOutViewListService(int pageNumber, int PageSize, DateTime? StartDate, DateTime? EndDate, string? inStatusTpNm, string? CarNumber, string? Dong, string? Ho, int? PackingDuration, string? ioTicketTpNm)
+        public async Task<ResponsePage<InOutViewListDTO>?> InOutViewListService(int pageNumber, int PageSize, DateTime? StartDate, DateTime? EndDate, string? ioStatusTpNm, string? CarNumber, string? Dong, string? Ho, int? PackingDuration, string? ioTicketTpNm)
         {
             try
             {
                 if (pageNumber == 0)
-                    return new ResponsePage<PageNationDTO<InOutViewListDTO>>() {data = null, code = 200 };
+                    return new ResponsePage<InOutViewListDTO>() {data = null, code = 200 };
                 if (PageSize == 0)
-                    return new ResponsePage<PageNationDTO<InOutViewListDTO>>() {data = null, code = 200 };
+                    return new ResponsePage<InOutViewListDTO>() {data = null, code = 200 };
 
-                var model = await TheHamBizRepository.InOutViewListAsync(pageNumber, PageSize, StartDate, EndDate, inStatusTpNm, CarNumber, Dong, Ho, PackingDuration, ioTicketTpNm).ConfigureAwait(false);
+                var model = await TheHamBizRepository.InOutViewListAsync(pageNumber, PageSize, StartDate, EndDate, ioStatusTpNm, CarNumber, Dong, Ho, PackingDuration, ioTicketTpNm).ConfigureAwait(false);
                 if (model is not null)
                     return model;
                 else
-                    return new ResponsePage<PageNationDTO<InOutViewListDTO>>() { data = null, code = 400 };
+                    return new ResponsePage<InOutViewListDTO>() { data = null, code = 400 };
             }
             catch(Exception ex)
             {
                 LoggerService.FileLogMessage(ex.ToString());
-                return new ResponsePage<PageNationDTO<InOutViewListDTO>>() { data = null, code = 500 };
+                return new ResponsePage<InOutViewListDTO>() { data = null, code = 500 };
             }
         }
 
@@ -273,12 +273,12 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// </summary>
         /// <param name="ioSeq"></param>
         /// <returns></returns>
-        public async Task<ResponsePage<List<DetailViewDTO>>?> DetailViewService(string ioSeq)
+        public async Task<ResponsePage<DetailViewDTO>?> DetailViewService(string ioSeq)
         {
             try
             {
                 if (String.IsNullOrWhiteSpace(ioSeq))
-                    return new ResponsePage<List<DetailViewDTO>>() {data = null, code = 200 };
+                    return new ResponsePage<DetailViewDTO>() {data = null, code = 200 };
 
                 var model = await TheHamBizRepository.DetailViewListAsync(ioSeq).ConfigureAwait(false);
                 if (model is not null)
@@ -319,19 +319,21 @@ namespace APTMentsAPI.Services.TheHamBizService
                     // 모든 Task를 await 하고 결과를 리스트로 변환
                     var detailViewList = (await Task.WhenAll(detailViewTasks)).ToList();
 
-                    return new ResponsePage<List<DetailViewDTO>>()
+
+
+                    return new ResponsePage<DetailViewDTO>()
                     {
                         data = detailViewList,
                         code = 200
                     };
                 }
                 else
-                    return new ResponsePage<List<DetailViewDTO>>() {data = null, code = 200 };
+                    return new ResponsePage<DetailViewDTO>() {data = null, code = 200 };
             }
             catch(Exception ex)
             {
                 LoggerService.FileLogMessage(ex.ToString());
-                return new ResponsePage<List<DetailViewDTO>>() {data = null, code = 500 };
+                return new ResponsePage<DetailViewDTO>() {data = null, code = 500 };
             }
         }
 
@@ -340,16 +342,15 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// </summary>
         /// <param name="carNum"></param>
         /// <returns></returns>
-        public async Task<ResponsePage<List<LastWeeksDTO>>?> LastWeeksService(string carNum)
+        public async Task<ResponsePage<LastWeeksDTO>?> LastWeeksService(string carNum, DateTime searchDate)
         {
             try
             {
                 if (String.IsNullOrWhiteSpace(carNum))
-                    return new ResponsePage<List<LastWeeksDTO>>() { data = null, code = 200 };
-                //return new ResponseList<LastWeeksDTO>() { message = "잘못된 요청입니다.", data = null, code = 200 };
+                    return new ResponsePage<LastWeeksDTO>() { data = null, code = 200 };
 
-                DateTime Today = DateTime.Now;
-                var model = await TheHamBizRepository.LastWeeksListAsync(carNum,Today).ConfigureAwait(false);
+                //DateTime Today = DateTime.Now;
+                var model = await TheHamBizRepository.LastWeeksListAsync(carNum, searchDate).ConfigureAwait(false);
                 if (model is not null)
                 {
                     var LastViewList = model.Select(item => new LastWeeksDTO
@@ -384,15 +385,15 @@ namespace APTMentsAPI.Services.TheHamBizService
                         memo = item.Memo
                     }).ToList();
 
-                    return new ResponsePage<List<LastWeeksDTO>>() { data = LastViewList, code = 200 };
+                    return new ResponsePage<LastWeeksDTO>() { data = LastViewList, code = 200 };
                 }
                 else
-                    return new ResponsePage<List<LastWeeksDTO>>() { data = null, code = 200 };
+                    return new ResponsePage<LastWeeksDTO>() { data = null, code = 200 };
             }
             catch(Exception ex)
             {
                 LoggerService.FileLogMessage(ex.ToString());
-                return new ResponsePage<List<LastWeeksDTO>>() {data = null, code = 500 };
+                return new ResponsePage<LastWeeksDTO>() {data = null, code = 500 };
             }
         }
 
@@ -462,25 +463,25 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// <param name="pageNumber"></param>
         /// <param name="PageSize"></param>
         /// <returns></returns>
-        public async Task<ResponsePage<PageNationDTO<PatrolViewListDTO>>?> PatrolViewListService(int pageNumber, int PageSize, DateTime? startDate, DateTime? endDate, string? patrolNm, string? carNumber)
+        public async Task<ResponsePage<PatrolViewListDTO>?> PatrolViewListService(int pageNumber, int PageSize, DateTime? startDate, DateTime? endDate, string? patrolNm, string? carNumber)
         {
             try
             {
                 if (pageNumber == 0)
-                    return new ResponsePage<PageNationDTO<PatrolViewListDTO>>() {  data = null, code = 200 };
+                    return new ResponsePage<PatrolViewListDTO>() {  data = null, code = 200 };
                 if (PageSize == 0)
-                    return new ResponsePage<PageNationDTO<PatrolViewListDTO>>() {  data = null, code = 200 };
+                    return new ResponsePage<PatrolViewListDTO>() {  data = null, code = 200 };
 
                 var model = await TheHamBizRepository.PatrolViewListAsync(pageNumber, PageSize, startDate, endDate, patrolNm, carNumber);
                 if (model is null)
-                    return new ResponsePage<PageNationDTO<PatrolViewListDTO>>() { data = null, code = 400 };
+                    return new ResponsePage<PatrolViewListDTO>() { data = null, code = 400 };
                 else
                     return model;
             }
             catch(Exception ex)
             {
                 LoggerService.FileLogMessage(ex.ToString());
-                return new ResponsePage<PageNationDTO<PatrolViewListDTO>>() { data = null, code = 500 };
+                return new ResponsePage<PatrolViewListDTO>() { data = null, code = 500 };
             }
         }
 

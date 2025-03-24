@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using MySqlConnector;
 using Swashbuckle.AspNetCore.Filters;
 using System.Data;
@@ -106,6 +107,12 @@ namespace APTMentsAPI
             {
                 c.EnableAnnotations();  // SwaggerResponse 어트리뷰트 사용 (옵션)
                 c.ExampleFilters(); // SwaggerResponse 어트리뷰트 사용
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "아파트관리 프로그램",
+                    Description = "더함비즈 API 연동"
+                });
             });
 #endif
 

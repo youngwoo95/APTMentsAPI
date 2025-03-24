@@ -1,9 +1,7 @@
-﻿using APTMentsAPI.DTO;
-using APTMentsAPI.DTO.PatrolDTO;
+﻿using APTMentsAPI.DTO.PatrolDTO;
 using APTMentsAPI.Services.Helpers;
 using APTMentsAPI.Services.Logger;
 using APTMentsAPI.Services.TheHamBizService;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
@@ -30,8 +28,15 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
 
         [HttpGet]
         [Route("v1/ViewList")]
-        [SwaggerResponse(200, "성공", typeof(ResponsePage<PageNationDTO<PatrolViewListDTO>>))]
-        [SwaggerResponseExample(200, typeof(PatrolListResponseExample))]
+        [Produces("application/json")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(ResponsePage<PatrolViewListDTO>))]
+        [SwaggerResponseExample(StatusCodes.Status200OK, typeof(PatrolListResponseExample))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerOperation(
+        Summary = "순찰 전체 리스트 조회 (조건추가)",
+        Description = "필요한 조건을 넣어서 조회시 - 조건별 동작"
+        )]
         public async Task<IActionResult> PatrolViewList([FromQuery][Required] int pageNumber, [FromQuery][Required] int pageSize, DateTime? startDate, DateTime? endDate, string? patrolNm,string? carNumber)
         {
             try
@@ -47,13 +52,13 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
                 else if (model.code == 400)
                     return BadRequest();
                 else
-                    return Problem("서버에서 처리할 수 없는 요청입니다.", statusCode: 500);
+                    return Problem(statusCode: 500);
             }
             catch(Exception ex)
             {
                 LoggerService.FileAPIMessage($"[ERROR]_{ex.ToString()}");
                 LoggerService.FileLogMessage(ex.ToString());
-                return Problem("서버에서 처리할 수 없는 요청입니다.", statusCode: 500);
+                return Problem(statusCode: 500);
             }
         }
 

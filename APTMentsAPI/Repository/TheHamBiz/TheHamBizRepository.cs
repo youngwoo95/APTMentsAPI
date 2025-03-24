@@ -299,7 +299,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
         /// 입-출차 리스트 조회
         /// </summary>
         /// <returns></returns>
-        public async Task<ResponsePage<PageNationDTO<InOutViewListDTO>>?> InOutViewListAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? EndDate, string? inStatusTpNm, string? CarNumber, string? Dong, string? Ho, int? ParkingDuration, string? ioTicketTpNm)
+        public async Task<ResponsePage<InOutViewListDTO>?> InOutViewListAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? EndDate, string? ioStatusTpNm, string? CarNumber, string? Dong, string? Ho, int? ParkingDuration, string? ioTicketTpNm)
         {
             try
             {
@@ -313,7 +313,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
                     .Include(v => v.OutP)
                     .AsQueryable();
 
-                if(inStatusTpNm == null) // 전체
+                if(ioStatusTpNm == null) // 전체
                 {
                     if (startDate.HasValue)
                     {
@@ -325,7 +325,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
                         query = query.Where(m => m.OutDtm < EndDate.Value.Date.AddDays(1));
                     }
                 }
-                else if(inStatusTpNm == "입차")
+                else if(ioStatusTpNm == "입차")
                 {
                     query = query.Where(m => m.InStatusTpNm == "입차"); // 입차
                     
@@ -339,7 +339,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
                         query = query.Where(m => m.InDtm < EndDate.Value.Date.AddDays(1));
                     }
                 }
-                else if(inStatusTpNm == "출차")
+                else if(ioStatusTpNm == "출차")
                 {
                     query = query.Where(m => m.InStatusTpNm == "출차"); // 출차
                     if (startDate.HasValue)
@@ -355,7 +355,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
 
                 if (CarNumber is not null)
                 {
-                    query = query.Where(m => m.CarNum == CarNumber);
+                    query = query.Where(m => m.CarNum.Contains(CarNumber));
                 }
 
                 if(Dong is not null)
@@ -424,26 +424,23 @@ namespace APTMentsAPI.Repository.TheHamBiz
                 {
 
                     // ResponseList에 페이지네이션 DTO를 할당합니다.
-                    var result = new ResponsePage<PageNationDTO<InOutViewListDTO>>
+                    var result = new ResponsePage<InOutViewListDTO>
                     {
                         // Metas는 별도의 페이지 정보가 필요하다면 사용(중복되는 정보일 수 있으므로 필요에 따라 제거)
                         Metas = new Meta
                         {
                             pageNumber = pageNumber,
                             pageSize = pageSize,
-                            totalCount = totalCount
+                            totalCount = totalCount,
                         },
-                        data = new PageNationDTO<InOutViewListDTO>
-                        {
-                            Items = model
-                        },
+                        data = model,
                         code = 200
                     };
                     return result;
                 }
                 else
                 {
-                    return new ResponsePage<PageNationDTO<InOutViewListDTO>>();
+                    return new ResponsePage<InOutViewListDTO>();
                 }
             }
             catch(Exception ex)
@@ -490,7 +487,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
 
                 // 조건에 맞는 IoParkingviewtb 데이터를 조회하며, 네비게이션 프로퍼티(InP, OutP)도 Include 함.
                 var viewList = await Context.IoParkingviewtbs
-                    .Where(m => m.CarNum == carNum && m.UpdateDt >= SearchDate)
+                    .Where(m => m.CarNum == carNum && m.UpdateDt.Date < ThisTime.Date.AddDays(1) && m.UpdateDt >= SearchDate)
                     .Include(m => m.InP)
                     .Include(m => m.OutP)
                     .ToListAsync()
@@ -607,7 +604,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
         /// <param name="pageNumber"></param>
         /// <param name="pageSize"></param>
         /// <returns></returns>
-        public async Task<ResponsePage<PageNationDTO<PatrolViewListDTO>>?> PatrolViewListAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? endDate, string? patrolNm, string? carNumber)
+        public async Task<ResponsePage<PatrolViewListDTO>?> PatrolViewListAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? endDate, string? patrolNm, string? carNumber)
         {
             try
             {
@@ -625,21 +622,21 @@ namespace APTMentsAPI.Repository.TheHamBiz
                     query = query.Where(m => m.PatrolDtm < endDate.Value.Date.AddDays(1)); // 순찰일시 가 endDate +1 보다 작은것 즉 - 23:59:59 보다 작은것
                 }
 
-                if(patrolNm == "정상")
+                if(patrolNm == "위반(블랙리스트)")
                 {
-                    query = query.Where(m => m.PatrolName == "정상");
+                    query = query.Where(m => m.PatrolName == "위반(블랙리스트)");
                 }
-                else if(patrolNm == "방문객")
+                else if(patrolNm == "정상(입주민)")
                 {
-                    query = query.Where(m => m.PatrolName == "방문객");
+                    query = query.Where(m => m.PatrolName == "정상(입주민)");
                 }
-                else if(patrolNm == "순찰")
+                else if(patrolNm == "방문객(현장)")
                 {
-                    query = query.Where(m => m.PatrolName == "순찰");
+                    query = query.Where(m => m.PatrolName == "방문객(현장)");
                 }
-                else if (patrolNm == "위반")
+                else if (patrolNm == "방문객(예약)")
                 {
-                    query = query.Where(m => m.PatrolName == "위반");
+                    query = query.Where(m => m.PatrolName == "방문객(예약)");
                 }
 
                 if(carNumber is not null)
@@ -673,8 +670,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
 
                 if (model is not null)
                 {
-                    // PageNationDTO에 데이터를 채워서 반환
-                    var result = new ResponsePage<PageNationDTO<PatrolViewListDTO>>
+                    var result = new ResponsePage<PatrolViewListDTO>
                     {
                         Metas = new Meta
                         {
@@ -682,16 +678,13 @@ namespace APTMentsAPI.Repository.TheHamBiz
                             pageSize = pageSize,
                             totalCount = totalCount
                         },
-                        data = new PageNationDTO<PatrolViewListDTO>
-                        {
-                            Items = model
-                        },
+                        data = model,
                         code = 200
                     };
                     return result;
                 }
                 else
-                    return new ResponsePage<PageNationDTO<PatrolViewListDTO>>();
+                    return new ResponsePage<PatrolViewListDTO>();
             }
             catch(Exception ex)
             {
