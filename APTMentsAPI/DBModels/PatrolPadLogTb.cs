@@ -43,7 +43,7 @@ public partial class Patrolpadlogtb
     public DateTime PatrolDtm { get; set; }
 
     /// <summary>
-    /// 순찰 상태 코드 0: 정상(입주민), 1: 방문객, 2: 순착, 3: 위반(블랙리스트)
+    /// 순찰 상태 코드 1: 위반(블랙리스트), 2: 정상(입주민), 3: 방문객(현장), 4:방문객(예약)
     /// </summary>
     public int PatrolCode { get; set; }
 

@@ -3,6 +3,7 @@ using APTMentsAPI.Repository.TheHamBiz;
 using APTMentsAPI.Services.FileService;
 using APTMentsAPI.Services.Helpers;
 using APTMentsAPI.Services.Logger;
+using APTMentsAPI.Services.Names;
 using APTMentsAPI.Services.TheHamBizService;
 using APTMentsAPI.SignalRHub;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -26,7 +27,7 @@ namespace APTMentsAPI
             #region Kestrel 서버
             builder.WebHost.UseKestrel((context, options) =>
             {
-                options.Configure(context.Configuration.GetSection("Kestrel"));
+                //options.Configure(context.Configuration.GetSection("Kestrel"));
                 options.Limits.RequestHeadersTimeout = TimeSpan.FromMinutes(1); // 서버가 요청 헤더를 수신하는 데 걸리는 최대 시간을 설정한다.
                 // Keep-Alive TimeOut 3분설정 keep-Alive 타임아웃: 일반적으로 2~5분, 너무 짧으면 연결이 자주 끊어질 수 있고, 너무 길면 리소스가 낭비될 수 있음.
                 options.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(3);
@@ -43,6 +44,8 @@ namespace APTMentsAPI
                     // HTTP/2는 성능 향상과 효율적인 데이터 전송을 제공함.
                     endpointOptions.Protocols = HttpProtocols.Http1AndHttp2AndHttp3;
                 });
+                // 모든 네트워크 인터페이스(IPAddress.Any)에서 5000 포트로 리스닝
+                options.ListenAnyIP(5255);
             });
             #endregion
 
@@ -66,35 +69,45 @@ namespace APTMentsAPI
 
             #region CORS
             // CORS 설정
-            var AllowCors = "AllowSpecificIP";
-            string[]? CorsArr = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+            //var AllowCors = "AllowSpecificIP";
+            //string[]? CorsArr = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
 
-            if (CorsArr is [_, ..])
+            //if (CorsArr is [_, ..])
+            //{
+
+            //    builder.Services.AddCors(options =>
+            //    {
+            //        // 전역 정책: S-TEC API 호출시
+            //        options.AddPolicy(name: AllowCors, builder =>
+            //        {
+            //            builder.WithOrigins(CorsArr)
+            //                   .AllowAnyMethod()
+            //                   .AllowAnyHeader();
+            //        });
+
+            //        // 전체 허용 _ 특정컨트롤러에 따로지정 (더함비즈 API 호출시)
+            //        options.AddPolicy("AllowAll", builder =>
+            //        {
+            //            builder.AllowAnyOrigin()
+            //                   .AllowAnyMethod()
+            //                   .AllowAnyHeader();
+            //        });
+            //    });
+            //}
+            //else
+            //{
+            //    throw new InvalidOperationException("'Cors' is null or empty");
+            //}
+            builder.Services.AddCors(options =>
             {
-                
-                builder.Services.AddCors(options =>
+                options.AddPolicy("AllowAll", builder =>
                 {
-                    // 전역 정책: S-TEC API 호출시
-                    options.AddPolicy(name: AllowCors, builder =>
-                    {
-                        builder.WithOrigins(CorsArr)
-                               .AllowAnyMethod()
-                               .AllowAnyHeader();
-                    });
-
-                    // 전체 허용 _ 특정컨트롤러에 따로지정 (더함비즈 API 호출시)
-                    options.AddPolicy("AllowAll", builder =>
-                    {
-                        builder.AllowAnyOrigin()
-                               .AllowAnyMethod()
-                               .AllowAnyHeader();
-                    });
+                    builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
                 });
-            }
-            else
-            {
-                throw new InvalidOperationException("'Cors' is null or empty");
-            }
+            });
+
             #endregion
 
             // Add services to the container.
@@ -137,6 +150,7 @@ namespace APTMentsAPI
 
             builder.Services.AddTransient<ITheHamBizServices, TheHamBizServices>();
             builder.Services.AddTransient<ITheHamBizRepository, TheHamBizRepository>();
+            builder.Services.AddTransient<IAptNameService, AptNameService>();
             #endregion
 
             #region DB
@@ -229,7 +243,7 @@ namespace APTMentsAPI
             });
 
             // 전역 정책 적용
-            app.UseCors(AllowCors);
+            app.UseCors("AllowAll");
             app.UseAuthorization();
             app.MapControllers();
             app.Run();

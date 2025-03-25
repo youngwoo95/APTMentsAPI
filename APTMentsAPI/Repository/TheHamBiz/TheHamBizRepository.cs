@@ -1,11 +1,11 @@
 ﻿using APTMentsAPI.DBModels;
-using APTMentsAPI.DTO;
 using APTMentsAPI.DTO.PatrolDTO;
 using APTMentsAPI.DTO.ViewsDTO;
 using APTMentsAPI.Services.FileService;
 using APTMentsAPI.Services.Logger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using System.Net.WebSockets;
 
 namespace APTMentsAPI.Repository.TheHamBiz
 {
@@ -639,9 +639,9 @@ namespace APTMentsAPI.Repository.TheHamBiz
                     query = query.Where(m => m.PatrolName == "방문객(예약)");
                 }
 
-                if(carNumber is not null)
+                if (carNumber is not null)
                 {
-                    query = query.Where(m => m.CarNum == carNumber);
+                    query = query.Where(m => m.CarNum.Contains(carNumber));
                 }
 
                 var pageView = await query
@@ -690,6 +690,64 @@ namespace APTMentsAPI.Repository.TheHamBiz
             {
                 LoggerService.FileLogMessage(ex.ToString());
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// 아파트 명칭 가져오기
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Apartmentname?> GetAptNameInfoAsync()
+        {
+            try
+            {
+                var AptInfo = await Context.Apartmentnames.FirstOrDefaultAsync();
+                if (AptInfo is not null)
+                    return AptInfo;
+                else
+                    return null;
+            }
+            catch(Exception ex)
+            {
+                LoggerService.FileLogMessage(ex.ToString());
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 아파트 명칭 설정하기
+        /// </summary>
+        /// <returns></returns>
+        public async Task<int> SetAptNameInfoAsync(string aptName)
+        {
+            try
+            {
+                var AptInfo = await Context.Apartmentnames.FirstOrDefaultAsync();
+                if(AptInfo == null)
+                {
+                    // 처음이니까 ADD
+                    var model = new Apartmentname
+                    {
+                        Aptname = aptName
+                    };
+
+                    await Context.AddAsync(model);
+                    int result = await Context.SaveChangesAsync().ConfigureAwait(false);
+                    return result;
+                }
+                else
+                {
+                    // 처음 아니니깐 UPDATE
+                    AptInfo.Aptname = aptName;
+                    Context.Update(AptInfo);
+                    int result = await Context.SaveChangesAsync().ConfigureAwait(false);
+                    return result;
+                }
+            }
+            catch(Exception ex)
+            {
+                LoggerService.FileLogMessage(ex.ToString());
+                return -1;
             }
         }
     }

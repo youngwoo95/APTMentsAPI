@@ -12,7 +12,6 @@ namespace APTMentsAPI.Controllers.TheHanBizAPI
 {
     [Route("api/[controller]")]
     [ApiController]
-    [EnableCors("AllowAll")]
     public class TheHamBizController : ControllerBase
     {
         private readonly IRequestAPI RequestAPIHelpers;

@@ -1,5 +1,6 @@
 ﻿using APTMentsAPI.DBModels;
 using APTMentsAPI.DTO;
+using APTMentsAPI.DTO.APTDTO;
 using APTMentsAPI.DTO.PatrolDTO;
 using APTMentsAPI.DTO.ViewsDTO;
 
@@ -82,5 +83,17 @@ namespace APTMentsAPI.Repository.TheHamBiz
         /// <param name="pageSize"></param>
         /// <returns></returns>
         Task<ResponsePage<PatrolViewListDTO>?> PatrolViewListAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? endDate, string? patrolNm, string? carNumber);
+
+        /// <summary>
+        /// 아파트명칭 가져오기
+        /// </summary>
+        /// <returns></returns>
+        Task<Apartmentname?> GetAptNameInfoAsync();
+
+        /// <summary>
+        /// 아파트 명칭 설정하기
+        /// </summary>
+        /// <returns></returns>
+        Task<int> SetAptNameInfoAsync(string aptName);
     }
 }

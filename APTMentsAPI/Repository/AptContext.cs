@@ -17,6 +17,8 @@ public partial class AptContext : DbContext
     {
     }
 
+    public virtual DbSet<Apartmentname> Apartmentnames { get; set; }
+
     public virtual DbSet<IoParkingrow> IoParkingrows { get; set; }
 
     public virtual DbSet<IoParkingviewtb> IoParkingviewtbs { get; set; }
@@ -31,6 +33,22 @@ public partial class AptContext : DbContext
         modelBuilder
             .UseCollation("latin1_swedish_ci")
             .HasCharSet("latin1");
+
+        modelBuilder.Entity<Apartmentname>(entity =>
+        {
+            entity.HasKey(e => e.Pid).HasName("PRIMARY");
+
+            entity.ToTable("apartmentname");
+
+            entity.Property(e => e.Pid)
+                .HasColumnType("int(11)")
+                .HasColumnName("PID");
+            entity.Property(e => e.Aptname)
+                .HasMaxLength(255)
+                .HasColumnName("APTName")
+                .UseCollation("utf8mb4_general_ci")
+                .HasCharSet("utf8mb4");
+        });
 
         modelBuilder.Entity<IoParkingrow>(entity =>
         {
@@ -279,7 +297,7 @@ public partial class AptContext : DbContext
                 .HasComment("주차장 ID")
                 .HasColumnName("PARK_ID");
             entity.Property(e => e.PatrolCode)
-                .HasComment("순찰 상태 코드 0: 정상(입주민), 1: 방문객, 2: 순착, 3: 위반(블랙리스트)")
+                .HasComment("순찰 상태 코드 1: 위반(블랙리스트), 2: 정상(입주민), 3: 방문객(현장), 4:방문객(예약)")
                 .HasColumnType("int(11)")
                 .HasColumnName("PATROL_CODE");
             entity.Property(e => e.PatrolDtm)
