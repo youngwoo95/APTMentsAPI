@@ -62,5 +62,33 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
             }
         }
 
+        [HttpGet]
+        [Route("v1/AllList")]
+        [Produces("application/json")]
+        public async Task<IActionResult> PatrolAllList(DateTime? startDate, DateTime? endDate, string? patrolNm, string? carNumber)
+        {
+            try
+            {
+                RequestAPIHelpers.RequestMessage(Request);
+
+                var model = await TheHamBizServices.PatrolAllListService(startDate, endDate, patrolNm, carNumber);
+                if (model is null)
+                    return BadRequest();
+
+                if (model.code == 200)
+                    return Ok(model);
+                else if (model.code == 400)
+                    return BadRequest();
+                else
+                    return Problem(statusCode: 500);
+            }
+            catch (Exception ex)
+            {
+                LoggerService.FileAPIMessage($"[ERROR]_{ex.ToString()}");
+                LoggerService.FileLogMessage(ex.ToString());
+                return Problem(statusCode: 500);
+            }
+        }
+
     }
 }

@@ -36,7 +36,13 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// 입-출차 리스트
         /// </summary>
         /// <returns></returns>
-        public Task<ResponsePage<InOutViewListDTO>?> InOutViewListService(int pageNumber, int PageSize, DateTime? StartDate, DateTime? EndDate, string? ioStatusTpNm, string? CarNumber, string? Dong, string? Ho, int? PackingDuration, string? ioTicketTpNm);
+        public Task<ResponsePage<InOutViewListDTO>?> InOutViewListService(int pageNumber, int PageSize, DateTime? StartDate, DateTime? EndDate, string? ioStatusTpNm, string? CarNumber, string? Dong, string? Ho, int? ParkingDuration, string? ioTicketTpNm);
+
+        /// <summary>
+        /// 입-출차 전체리스트
+        /// </summary>
+        /// <returns></returns>
+        public Task<ResponsePage<InOutViewListDTO>?> InOutAllListService(DateTime? StartDate, DateTime? EndDate, string? ioStatusTpNm, string? CarNumber, string? Dong, string? Ho, int? ParkingDuration, string? ioTicketTpNm);
 
         /// <summary>
         /// 시퀀스 상세내역 조회
@@ -75,6 +81,18 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// <param name="PageSize"></param>
         /// <returns></returns>
         public Task<ResponsePage<PatrolViewListDTO>?> PatrolViewListService(int pageNumber, int PageSize, DateTime? startDate, DateTime? endDate, string? patrolNm, string? carNumber);
+
+        /// <summary>
+        /// 순찰 리스트 전체조회
+        /// </summary>
+        /// <param name="pageNumber"></param>
+        /// <param name="PageSize"></param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <param name="patrolNm"></param>
+        /// <param name="carNumber"></param>
+        /// <returns></returns>
+        public Task<ResponsePage<PatrolViewListDTO>?> PatrolAllListService(DateTime? startDate, DateTime? endDate, string? patrolNm, string? carNumber);
         #endregion
 
 

@@ -70,10 +70,13 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
         Summary = "입출차 전체 리스트 조회 (조건추가)",
         Description = "필요한 조건을 넣어서 조회시 - 조건별 동작"
         )]
-        public async Task<IActionResult> ViewList([FromQuery][Required] int pageNumber, [FromQuery][Required] int pageSize, [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate, [FromQuery]string? ioStatusTpNm, [FromQuery]string? carNumber, [FromQuery]string? dong, [FromQuery]string? ho, [FromQuery]int? parkingDuration, [FromQuery]string? ioTicketTpNm)
+        public async Task<IActionResult> ViewList([FromQuery][Required] int pageNumber, [FromQuery][Required] int pageSize, [FromQuery]DateTime? startDate, [FromQuery] DateTime? endDate, [FromQuery]string? ioStatusTpNm, [FromQuery]string? carNumber, [FromQuery]string? dong, [FromQuery]string? ho, [FromQuery]int? parkingDuration, [FromQuery]string? ioTicketTpNm)
         {
             try
             {
+                //DateTime startDate1 = DateTime.Parse(startDate);
+                //DateTime endDate1 = DateTime.Now;
+
                 RequestAPIHelpers.RequestMessage(Request);
 
                 var model = await TheHamBizServices.InOutViewListService(pageNumber,pageSize, startDate, endDate, ioStatusTpNm, carNumber, dong, ho, parkingDuration, ioTicketTpNm);
@@ -83,6 +86,38 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
                 if (model.code == 200)
                     return Ok(model);
                 else if(model.code == 400)
+                    return BadRequest();
+                else
+                    return Problem(statusCode: 500);
+            }
+            catch(Exception ex)
+            {
+                LoggerService.FileAPIMessage($"[ERROR]_{ex.ToString()}");
+                LoggerService.FileLogMessage(ex.ToString());
+                return Problem(statusCode: 500);
+            }
+        }
+
+        /// <summary>
+        /// 입-출차 전체리스트 반환
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("v1/AllList")]
+        [Produces("application/json")]
+        public async Task<IActionResult> AllList([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate, [FromQuery] string? ioStatusTpNm, [FromQuery] string? carNumber, [FromQuery] string? dong, [FromQuery] string? ho, [FromQuery] int? parkingDuration, [FromQuery] string? ioTicketTpNm)
+        {
+            try
+            {
+                RequestAPIHelpers.RequestMessage(Request);
+                
+                var model = await TheHamBizServices.InOutAllListService(startDate, endDate, ioStatusTpNm, carNumber,dong,ho,parkingDuration, ioTicketTpNm);
+                if (model is null)
+                    return BadRequest();
+
+                if (model.code == 200)
+                    return Ok(model);
+                else if (model.code == 400)
                     return BadRequest();
                 else
                     return Problem(statusCode: 500);

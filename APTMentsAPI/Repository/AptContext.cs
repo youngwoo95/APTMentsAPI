@@ -19,6 +19,8 @@ public partial class AptContext : DbContext
 
     public virtual DbSet<Apartmentname> Apartmentnames { get; set; }
 
+    public virtual DbSet<Efmigrationshistory> Efmigrationshistories { get; set; }
+
     public virtual DbSet<IoParkingrow> IoParkingrows { get; set; }
 
     public virtual DbSet<IoParkingviewtb> IoParkingviewtbs { get; set; }
@@ -26,7 +28,7 @@ public partial class AptContext : DbContext
     public virtual DbSet<Patrolpadlogtb> Patrolpadlogtbs { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseMySql("server=127.0.0.1;port=3306;database=AptmentWorks;user=root;password=rladyddn!!95", Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.6.21-mariadb"));
+        => optionsBuilder.UseMySql("server=127.0.0.1;port=3306;database=AptmentWorks;user=stec;password=stecdev1234!", Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.6.21-mariadb"));
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -48,6 +50,19 @@ public partial class AptContext : DbContext
                 .HasColumnName("APTName")
                 .UseCollation("utf8mb4_general_ci")
                 .HasCharSet("utf8mb4");
+        });
+
+        modelBuilder.Entity<Efmigrationshistory>(entity =>
+        {
+            entity.HasKey(e => e.MigrationId).HasName("PRIMARY");
+
+            entity
+                .ToTable("__efmigrationshistory")
+                .HasCharSet("utf8mb4")
+                .UseCollation("utf8mb4_general_ci");
+
+            entity.Property(e => e.MigrationId).HasMaxLength(150);
+            entity.Property(e => e.ProductVersion).HasMaxLength(32);
         });
 
         modelBuilder.Entity<IoParkingrow>(entity =>

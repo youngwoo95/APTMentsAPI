@@ -2,6 +2,8 @@
 {
     public class LoggerService : ILoggerService
     {
+        private static readonly object LogLock = new object();
+
         /// <summary>
         /// 에러 로그 메시지 저장
         /// </summary>
@@ -41,21 +43,25 @@
                 dir_path = Path.Combine(dir_path, $"{Today.Year}_{Today.Month}_{Today.Day}.txt");
 
                 // 일.txt + 로그내용
-                using (StreamWriter sw = new StreamWriter(dir_path, true))
+                lock (LogLock)
                 {
-                    System.Diagnostics.StackTrace objStackTrace = new System.Diagnostics.StackTrace(new System.Diagnostics.StackFrame(1));
-                    var s = objStackTrace.ToString(); // 호출한 함수 위치
-                    sw.Write($"[ERROR]_[{Today.ToString()}]\t{message}");
+                    using (var fs = new FileStream(dir_path, FileMode.Append, FileAccess.Write, FileShare.ReadWrite))
+                    using (StreamWriter sw = new StreamWriter(fs))
+                    {
+                        System.Diagnostics.StackTrace objStackTrace = new System.Diagnostics.StackTrace(new System.Diagnostics.StackFrame(1));
+                        var s = objStackTrace.ToString(); // 호출한 함수 위치
+                        sw.Write($"[ERROR]_[{Today.ToString()}]\t{message}");
 
 #if DEBUG
-                    Console.BackgroundColor = ConsoleColor.Black;
-                    Console.ForegroundColor = ConsoleColor.Red;
+                        Console.BackgroundColor = ConsoleColor.Black;
+                        Console.ForegroundColor = ConsoleColor.Red;
 
-                    // 로그 출력
-                    Console.WriteLine($"[ERROR] {message}");
+                        // 로그 출력
+                        Console.WriteLine($"[ERROR] {message}");
 
-                    Console.ResetColor();
+                        Console.ResetColor();
 #endif
+                    }
                 }
             }
             catch (Exception ex)
@@ -103,22 +109,26 @@
                 // 일
                 dir_path = Path.Combine(dir_path, $"{Today.Year}_{Today.Month}_{Today.Day}.txt");
 
-                // 일.txt + 로그내용
-                using (StreamWriter sw = new StreamWriter(dir_path, true))
+                lock (LogLock)
                 {
-                    System.Diagnostics.StackTrace objStackTrace = new System.Diagnostics.StackTrace(new System.Diagnostics.StackFrame(1));
-                    var s = objStackTrace.ToString(); // 호출한 함수 위치
-                    sw.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}]\t{message}");
+                    // 일.txt + 로그내용
+                    using (var fs = new FileStream(dir_path, FileMode.Append, FileAccess.Write, FileShare.ReadWrite))
+                    using (StreamWriter sw = new StreamWriter(fs))
+                    {
+                        System.Diagnostics.StackTrace objStackTrace = new System.Diagnostics.StackTrace(new System.Diagnostics.StackFrame(1));
+                        var s = objStackTrace.ToString(); // 호출한 함수 위치
+                        sw.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}]\t{message}");
 
 #if DEBUG
-                    Console.BackgroundColor = ConsoleColor.Black;
-                    Console.ForegroundColor = ConsoleColor.Green;
+                        Console.BackgroundColor = ConsoleColor.Black;
+                        Console.ForegroundColor = ConsoleColor.Green;
 
-                    // 로그 출력
-                    Console.WriteLine($"[INFO] {message}");
+                        // 로그 출력
+                        Console.WriteLine($"[INFO] {message}");
 
-                    Console.ResetColor();
+                        Console.ResetColor();
 #endif
+                    }
                 }
             }
             catch(Exception ex)

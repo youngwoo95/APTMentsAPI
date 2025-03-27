@@ -15,6 +15,8 @@ using Microsoft.OpenApi.Models;
 using MySqlConnector;
 using Swashbuckle.AspNetCore.Filters;
 using System.Data;
+using System.Net;
+
 
 namespace APTMentsAPI
 {
@@ -23,6 +25,9 @@ namespace APTMentsAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // 서비스로 동작해도 문제없도록 설정함.
+            builder.Host.UseWindowsService();
 
             #region Kestrel 서버
             builder.WebHost.UseKestrel((context, options) =>
@@ -44,8 +49,11 @@ namespace APTMentsAPI
                     // HTTP/2는 성능 향상과 효율적인 데이터 전송을 제공함.
                     endpointOptions.Protocols = HttpProtocols.Http1AndHttp2AndHttp3;
                 });
-                // 모든 네트워크 인터페이스(IPAddress.Any)에서 5000 포트로 리스닝
-                options.ListenAnyIP(5255);
+
+                options.Listen(IPAddress.Any, 5255, listenOptions =>
+                {
+                    listenOptions.Protocols = HttpProtocols.Http1;
+                });
             });
             #endregion
 
@@ -187,6 +195,18 @@ namespace APTMentsAPI
             #endregion
 
             var app = builder.Build();
+            // DB 없다면 마이그레이션
+            using (var scope = app.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<AptContext>();
+
+                // 데이터베이스 연결이 안된다면(즉, 데이터베이스가 없으면)
+                if (!context.Database.CanConnect())
+                {
+                    // 데이터베이스 생성 및 마이그레이션 적용
+                    context.Database.Migrate();
+                }
+            }
 
             #region 역방향 프록시 서버 사용
             app.UseForwardedHeaders(new ForwardedHeadersOptions

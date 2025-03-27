@@ -39,6 +39,12 @@ namespace APTMentsAPI.Repository.TheHamBiz
         Task<ResponsePage<InOutViewListDTO>?> InOutViewListAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? EndDate, string? ioStatusTpNm, string? CarNumber, string? Dong, string? Ho, int? ParkingDuration, string? ioTicketTpNm);
 
         /// <summary>
+        /// 입-출차 전체 리스트 조회
+        /// </summary>
+        /// <returns></returns>
+        Task<ResponsePage<InOutViewListDTO>?> InOutAllListAsync(DateTime? StartDate, DateTime? EndDate, string? ioStatusTpNm, string? CarNumber, string? Dong, string? Ho, int? ParkingDuration, string? ioTicketTpNm);
+
+        /// <summary>
         /// 시퀀스 상세내역 조회
         /// </summary>
         /// <param name="ioSeq"></param>
@@ -83,6 +89,17 @@ namespace APTMentsAPI.Repository.TheHamBiz
         /// <param name="pageSize"></param>
         /// <returns></returns>
         Task<ResponsePage<PatrolViewListDTO>?> PatrolViewListAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? endDate, string? patrolNm, string? carNumber);
+
+        /// <summary>
+        /// 순찰 전체 조회
+        /// </summary>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <param name="patrolNm"></param>
+        /// <param name="carNumber"></param>
+        /// <returns></returns>
+        Task<ResponsePage<PatrolViewListDTO>?> PatrolAllListAsync(DateTime? startDate, DateTime? endDate, string? patrolNm, string? carNumber);
+        
 
         /// <summary>
         /// 아파트명칭 가져오기

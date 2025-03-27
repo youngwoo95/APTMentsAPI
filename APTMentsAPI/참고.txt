@@ -12,3 +12,10 @@ mysql -u [사용자명] -p [데이터베이스명] < [dump파일명].sql
 [DB Dump 적용 예시]
 C:\Users\kyw>mysql -h 127.0.0.1 -u root -p AptmentWorks < C:\Users\kyw\Documents\APTMentsAPI\aptmentworks_dump.sql
 Enter password: ****
+
+
+[마이그레이션 추가]
+dotnet ef migrations add InitialCreate --project ".\APTmentsAPI\APTmentsAPI.csproj" --startup-project ".\APTmentsAPI\APTmentsAPI.csproj"
+
+[마이그레이션 업데이트]
+dotnet ef database update --project ".\APTmentsAPI\APTmentsAPI.csproj" --startup-project ".\APTmentsAPI\APTmentsAPI.csproj"

@@ -44,7 +44,7 @@ namespace APTMentsAPI
 
             var result = new ResponsePage<InOutViewListDTO>
             {
-                Metas = new Meta
+                Meta = new Meta
                 {
                     pageNumber = 1,
                     pageSize = 15,
@@ -247,7 +247,7 @@ namespace APTMentsAPI
             // 페이지네이션 DTO에 순찰 리스트 항목들을 할당합니다.
             var result = new ResponsePage<PatrolViewListDTO>
             {
-                Metas = new Meta
+                Meta = new Meta
                 {
                     pageNumber = 1,
                     pageSize = 15,

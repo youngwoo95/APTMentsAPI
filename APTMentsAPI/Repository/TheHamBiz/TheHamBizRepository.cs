@@ -306,7 +306,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
                 //int pageNumber = 1; // 첫번째 페이지
                 //int pageSize = 15; // 개수
                 // 1. 전체 데이터 개수를 조회합니다.
-                int totalCount = await Context.IoParkingviewtbs.CountAsync();
+                //int totalCount = await Context.IoParkingviewtbs.CountAsync();
 
                 var query = Context.IoParkingviewtbs
                     .Include(v => v.InP)
@@ -420,6 +420,11 @@ namespace APTMentsAPI.Repository.TheHamBiz
 
                 var model = (await Task.WhenAll(detailViewTasks)).ToList();
 
+                var totalCount = await query
+                .OrderBy(x => x.Pid)
+                .CountAsync()
+                .ConfigureAwait(false);
+
                 if (model is not null)
                 {
 
@@ -427,11 +432,11 @@ namespace APTMentsAPI.Repository.TheHamBiz
                     var result = new ResponsePage<InOutViewListDTO>
                     {
                         // Metas는 별도의 페이지 정보가 필요하다면 사용(중복되는 정보일 수 있으므로 필요에 따라 제거)
-                        Metas = new Meta
+                        Meta = new Meta
                         {
                             pageNumber = pageNumber,
                             pageSize = pageSize,
-                            totalCount = totalCount,
+                            totalCount = totalCount
                         },
                         data = model,
                         code = 200
@@ -444,6 +449,153 @@ namespace APTMentsAPI.Repository.TheHamBiz
                 }
             }
             catch(Exception ex)
+            {
+                LoggerService.FileLogMessage(ex.ToString());
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 입출차 전체 리스트 조회
+        /// </summary>
+        /// <returns></returns>
+        public async Task<ResponsePage<InOutViewListDTO>?> InOutAllListAsync(DateTime? StartDate, DateTime? EndDate, string? ioStatusTpNm, string? CarNumber, string? Dong, string? Ho, int? ParkingDuration, string? ioTicketTpNm)
+        {
+            try
+            {
+                //int pageNumber = 1; // 첫번째 페이지
+                //int pageSize = 15; // 개수
+                // 1. 전체 데이터 개수를 조회합니다.
+
+                var query = Context.IoParkingviewtbs
+                    .Include(v => v.InP)
+                    .Include(v => v.OutP)
+                    .AsQueryable();
+
+                if (ioStatusTpNm == null) // 전체
+                {
+                    if (StartDate.HasValue)
+                    {
+                        query = query.Where(m => m.InDtm >= StartDate.Value.Date); // 입차 ~ 출차 (전체)
+                    }
+
+                    if (EndDate.HasValue)
+                    {
+                        query = query.Where(m => m.OutDtm < EndDate.Value.Date.AddDays(1));
+                    }
+                }
+                else if (ioStatusTpNm == "입차")
+                {
+                    query = query.Where(m => m.InStatusTpNm == "입차"); // 입차
+
+                    if (StartDate.HasValue)
+                    {
+                        query = query.Where(m => m.InDtm >= StartDate.Value.Date); // 입차시간이 ㅇㅇ 날 ~ ㅇㅇ 날
+                    }
+
+                    if (EndDate.HasValue)
+                    {
+                        query = query.Where(m => m.InDtm < EndDate.Value.Date.AddDays(1));
+                    }
+                }
+                else if (ioStatusTpNm == "출차")
+                {
+                    query = query.Where(m => m.InStatusTpNm == "출차"); // 출차
+                    if (StartDate.HasValue)
+                    {
+                        query = query.Where(m => m.OutDtm >= StartDate.Value.Date); // 출차시간이 ㅇㅇ 날 ~ ㅇㅇ 날
+                    }
+
+                    if (EndDate.HasValue)
+                    {
+                        query = query.Where(m => m.OutDtm < EndDate.Value.Date.AddDays(1));
+                    }
+                }
+
+                if (CarNumber is not null)
+                {
+                    query = query.Where(m => m.CarNum.Contains(CarNumber));
+                }
+
+                if (Dong is not null)
+                {
+                    query = query.Where(m => m.Dong == Dong);
+                }
+
+                if (Ho is not null)
+                {
+                    query = query.Where(m => m.Ho == Ho);
+                }
+
+                if (ParkingDuration.HasValue)
+                {
+                    query = query.Where(m => m.ParingDuration == ParkingDuration);
+                }
+
+                if (ioTicketTpNm is not null)
+                {
+                    query = query.Where(m => m.IoTicketTpNm == ioTicketTpNm);
+                }
+
+
+                var pageView = await query
+                .OrderBy(x => x.Pid)
+                .ToListAsync()
+                .ConfigureAwait(false);
+
+                var detailViewTasks = pageView.Select(async item => new InOutViewListDTO
+                {
+                    pId = item.Pid,
+                    ioSeq = item.IoSeq,
+                    ioTicketTp = item.IoTicketTp,
+                    ioTicketTpNm = item.IoTicketTpNm,
+                    //ioTicketTp = item.OutP == null ? item.InP.IoTicketTp : item.OutP.IoTicketTp,
+                    //ioTicketTpNm = item.OutP == null ? item.InP.IoTicketTpNm : item.OutP.IoTicketTpNm,
+                    ioStatusTp = item.InStatusTp,
+                    ioStatusTpNm = item.InStatusTpNm,
+                    //ioStatusTp = item.OutP == null ? item.InP.IoStatusTp : item.OutP.IoStatusTp,
+                    //ioStatusTpNm = item.OutP == null ? item.InP.IoStatusTpNm : item.OutP.IoStatusTpNm,
+                    carNum = item.CarNum,
+                    //inDtm = item.InP.IoDtm,
+                    inDtm = item.InDtm,
+                    //outDtm = item.OutP?.IoDtm, // OutP가 없으면 null로 처리
+                    outDtm = item.OutDtm,
+                    parkingDuration = item.OutP?.ParkDuration ?? 0, // null이면 0 처리 (필요에 따라 조정)
+                    inGateId = item.InP?.IoGateId,
+                    inGateNm = item.InP?.IoGateNm,
+                    outGateId = item.OutP?.IoGateId,
+                    outGateNm = item.OutP?.IoGateNm,
+                    dong = item.Dong,
+                    ho = item.Ho,
+                    inImagePath = item.InP?.ImgPath ?? string.Empty,
+                    outImagePath = item.OutP?.ImgPath ?? string.Empty,
+                    //inImagePath = await FileService.GetImageFile(item.InP?.ImgPath ?? string.Empty, "InOutImages"),
+                    //outImagePath = await FileService.GetImageFile(item.OutP?.ImgPath ?? string.Empty, "InOutImages"),
+                    isBlacklist = item.IsBlackList,
+                    blacklistReason = item.BlackListReason,
+                    memo = item.Memo
+                }).ToList();
+
+                var model = (await Task.WhenAll(detailViewTasks)).ToList();
+
+                if (model is not null)
+                {
+
+                    // ResponseList에 페이지네이션 DTO를 할당합니다.
+                    var result = new ResponsePage<InOutViewListDTO>
+                    {
+                        // Metas는 별도의 페이지 정보가 필요하다면 사용(중복되는 정보일 수 있으므로 필요에 따라 제거)
+                        data = model,
+                        code = 200
+                    };
+                    return result;
+                }
+                else
+                {
+                    return new ResponsePage<InOutViewListDTO>();
+                }
+            }
+            catch (Exception ex)
             {
                 LoggerService.FileLogMessage(ex.ToString());
                 return null;
@@ -608,7 +760,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
         {
             try
             {
-                int totalCount = await Context.Patrolpadlogtbs.CountAsync().ConfigureAwait(false);
+                //int totalCount = await Context.Patrolpadlogtbs.CountAsync().ConfigureAwait(false);
 
                 var query = Context.Patrolpadlogtbs
                     .AsQueryable();
@@ -645,11 +797,11 @@ namespace APTMentsAPI.Repository.TheHamBiz
                 }
 
                 var pageView = await query
-                    .OrderBy(m => m.Pid)
-                    .Skip((pageNumber - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToListAsync()
-                    .ConfigureAwait(false);
+                .OrderBy(m => m.Pid)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync()
+                .ConfigureAwait(false);
 
 
                 List<PatrolViewListDTO> model = new List<PatrolViewListDTO>();
@@ -668,11 +820,18 @@ namespace APTMentsAPI.Repository.TheHamBiz
                     model.Add(item);
                 }
 
+            
+                // Regacy 전체개수 구하는 쿼리
+                var totalCount = await query
+                .OrderBy(m => m.Pid)
+                .CountAsync()
+                .ConfigureAwait(false);
+
                 if (model is not null)
                 {
                     var result = new ResponsePage<PatrolViewListDTO>
                     {
-                        Metas = new Meta
+                        Meta = new Meta
                         {
                             pageNumber = pageNumber,
                             pageSize = pageSize,
@@ -705,7 +864,11 @@ namespace APTMentsAPI.Repository.TheHamBiz
                 if (AptInfo is not null)
                     return AptInfo;
                 else
-                    return null;
+                    return new Apartmentname
+                    {
+                        Pid = -1,
+                        Aptname = "에스텍 시스템"
+                    };
             }
             catch(Exception ex)
             {
@@ -748,6 +911,95 @@ namespace APTMentsAPI.Repository.TheHamBiz
             {
                 LoggerService.FileLogMessage(ex.ToString());
                 return -1;
+            }
+        }
+
+        /// <summary>
+        /// 순찰 전체조회
+        /// </summary>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <param name="patrolNm"></param>
+        /// <param name="carNumber"></param>
+        /// <returns></returns>
+        public async Task<ResponsePage<PatrolViewListDTO>?> PatrolAllListAsync(DateTime? startDate, DateTime? endDate, string? patrolNm, string? carNumber)
+        {
+            try
+            {
+                int totalCount = await Context.Patrolpadlogtbs.CountAsync().ConfigureAwait(false);
+
+                var query = Context.Patrolpadlogtbs
+                    .AsQueryable();
+
+                if (startDate.HasValue)
+                {
+                    query = query.Where(m => m.PatrolDtm >= startDate.Value.Date); // 순찰일시 가 startDate보다 크거나 같은것.
+                }
+                if (endDate.HasValue)
+                {
+                    query = query.Where(m => m.PatrolDtm < endDate.Value.Date.AddDays(1)); // 순찰일시 가 endDate +1 보다 작은것 즉 - 23:59:59 보다 작은것
+                }
+
+                if (patrolNm == "위반(블랙리스트)")
+                {
+                    query = query.Where(m => m.PatrolName == "위반(블랙리스트)");
+                }
+                else if (patrolNm == "정상(입주민)")
+                {
+                    query = query.Where(m => m.PatrolName == "정상(입주민)");
+                }
+                else if (patrolNm == "방문객(현장)")
+                {
+                    query = query.Where(m => m.PatrolName == "방문객(현장)");
+                }
+                else if (patrolNm == "방문객(예약)")
+                {
+                    query = query.Where(m => m.PatrolName == "방문객(예약)");
+                }
+
+                if (carNumber is not null)
+                {
+                    query = query.Where(m => m.CarNum.Contains(carNumber));
+                }
+
+                var pageView = await query
+                    .OrderBy(m => m.Pid)
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+
+                List<PatrolViewListDTO> model = new List<PatrolViewListDTO>();
+                foreach (var views in pageView)
+                {
+                    var item = new PatrolViewListDTO();
+                    item.pId = views.Pid; // PID ( 필수)
+                    item.parkId = views.ParkId; // 주차장ID ( 필수)
+                    item.patrolUserNm = views.PatrolUserNm; // 순찰 담당자 이름 (필수)
+                    item.patrolDtm = views.PatrolDtm; // 순찰 일시(필수)
+                    item.patrolCode = views.PatrolCode; // 순찰 상태 코드
+                    item.patrolName = views.PatrolName; // 순찰 상태명
+                    item.carNum = views.CarNum; // 차량번호 (필수)
+                    item.patrolImg = views.PatrolImg; // 순찰 이미지 (필수아님)
+                    item.patrolRemark = views.PatrolRemark; // 비고 (필수아님)
+                    model.Add(item);
+                }
+
+                if (model is not null)
+                {
+                    var result = new ResponsePage<PatrolViewListDTO>
+                    {
+                        data = model,
+                        code = 200
+                    };
+                    return result;
+                }
+                else
+                    return new ResponsePage<PatrolViewListDTO>();
+            }
+            catch (Exception ex)
+            {
+                LoggerService.FileLogMessage(ex.ToString());
+                return null;
             }
         }
     }

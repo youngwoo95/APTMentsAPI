@@ -246,7 +246,7 @@ namespace APTMentsAPI.Services.TheHamBizService
         /// 입-출차 리스트
         /// </summary>
         /// <returns></returns>
-        public async Task<ResponsePage<InOutViewListDTO>?> InOutViewListService(int pageNumber, int PageSize, DateTime? StartDate, DateTime? EndDate, string? ioStatusTpNm, string? CarNumber, string? Dong, string? Ho, int? PackingDuration, string? ioTicketTpNm)
+        public async Task<ResponsePage<InOutViewListDTO>?> InOutViewListService(int pageNumber, int PageSize, DateTime? StartDate, DateTime? EndDate, string? ioStatusTpNm, string? CarNumber, string? Dong, string? Ho, int? ParkingDuration, string? ioTicketTpNm)
         {
             try
             {
@@ -255,7 +255,7 @@ namespace APTMentsAPI.Services.TheHamBizService
                 if (PageSize == 0)
                     return new ResponsePage<InOutViewListDTO>() {data = null, code = 200 };
 
-                var model = await TheHamBizRepository.InOutViewListAsync(pageNumber, PageSize, StartDate, EndDate, ioStatusTpNm, CarNumber, Dong, Ho, PackingDuration, ioTicketTpNm).ConfigureAwait(false);
+                var model = await TheHamBizRepository.InOutViewListAsync(pageNumber, PageSize, StartDate, EndDate, ioStatusTpNm, CarNumber, Dong, Ho, ParkingDuration, ioTicketTpNm).ConfigureAwait(false);
                 if (model is not null)
                     return model;
                 else
@@ -485,6 +485,38 @@ namespace APTMentsAPI.Services.TheHamBizService
             }
         }
 
-   
+        public async Task<ResponsePage<InOutViewListDTO>?> InOutAllListService(DateTime? StartDate, DateTime? EndDate, string? ioStatusTpNm, string? CarNumber, string? Dong, string? Ho, int? ParkingDuration, string? ioTicketTpNm)
+        {
+            try
+            {
+                var model = await TheHamBizRepository.InOutAllListAsync(StartDate, EndDate, ioStatusTpNm, CarNumber, Dong, Ho, ParkingDuration, ioTicketTpNm).ConfigureAwait(false);
+                if (model is not null)
+                    return model;
+                else
+                    return new ResponsePage<InOutViewListDTO>() { data = null, code = 400 };
+            }
+            catch(Exception ex)
+            {
+                LoggerService.FileLogMessage(ex.ToString());
+                return new ResponsePage<InOutViewListDTO>() { data = null, code = 500 };
+            }
+        }
+
+        public async Task<ResponsePage<PatrolViewListDTO>?> PatrolAllListService(DateTime? startDate, DateTime? endDate, string? patrolNm, string? carNumber)
+        {
+            try
+            {
+                var model = await TheHamBizRepository.PatrolAllListAsync(startDate, endDate, patrolNm, carNumber);
+                if (model is null)
+                    return new ResponsePage<PatrolViewListDTO>() { data = null, code = 400 };
+                else
+                    return model;
+            }
+            catch (Exception ex)
+            {
+                LoggerService.FileLogMessage(ex.ToString());
+                return new ResponsePage<PatrolViewListDTO>() { data = null, code = 500 };
+            }
+        }
     }
 }
