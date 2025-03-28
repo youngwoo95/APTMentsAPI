@@ -6,11 +6,14 @@ Scaffold-DbContext "Server=127.0.0.1;Port=3306;Database=AptmentWorks;User=root;P
 [DB Dump] - 저장경로는 C:\root
 mysqldump -u [사용자이름] -p [데이터베이스이름] > [백업파일명].sql
 
+[DB Dump] - 데이터는 빼고 테이블과 키같은 구조만 복사
+mysqldump -u root -p --no-data AptmentWorks > Aptmentworks_dump.sql
+
 [DB Dump 적용]
 mysql -u [사용자명] -p [데이터베이스명] < [dump파일명].sql
 
 [DB Dump 적용 예시]
-C:\Users\kyw>mysql -h 127.0.0.1 -u root -p AptmentWorks < C:\Users\kyw\Documents\APTMentsAPI\aptmentworks_dump.sql
+C:\Users\kyw>mysql -h 127.0.0.1 -u stec -p stecdev1234! AptmentWorks < C:\Users\kyw\Documents\APTMentsAPI\aptmentworks_dump.sql
 Enter password: ****
 
 
