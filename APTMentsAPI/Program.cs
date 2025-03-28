@@ -195,7 +195,9 @@ namespace APTMentsAPI
             #endregion
 
             var app = builder.Build();
+
             // DB 없다면 마이그레이션
+            /*
             using (var scope = app.Services.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<AptContext>();
@@ -207,6 +209,7 @@ namespace APTMentsAPI
                     context.Database.Migrate();
                 }
             }
+            */
 
             #region 역방향 프록시 서버 사용
             app.UseForwardedHeaders(new ForwardedHeadersOptions
