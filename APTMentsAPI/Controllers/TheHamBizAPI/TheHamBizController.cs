@@ -10,7 +10,7 @@ using System.Text.Json;
 
 namespace APTMentsAPI.Controllers.TheHanBizAPI
 {
-    [Route("api/[controller]")]
+    //[Route("api/[controller]")]
     [ApiController]
     public class TheHamBizController : ControllerBase
     {
@@ -43,7 +43,7 @@ namespace APTMentsAPI.Controllers.TheHanBizAPI
         /// <param name="dto"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("io/in")]
+        [Route("api/v1/io/in")]
         public async Task<IActionResult> InCar([FromBody] RequestInTheHamBizDTO dto)
         {
             try
@@ -77,7 +77,7 @@ namespace APTMentsAPI.Controllers.TheHanBizAPI
         /// <param name="dto"></param>
         /// <returns></returns>
         [HttpPatch]
-        [Route("io/out")]
+        [Route("api/v1/io/out")]
         public async Task<IActionResult> OutCar([FromBody] RequestOutTheHamBizDTO dto)
         {
             try
@@ -108,7 +108,7 @@ namespace APTMentsAPI.Controllers.TheHanBizAPI
         /// <param name="dto"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("patrol")]
+        [Route("api/v1/patrol")]
         public async Task<IActionResult> PatrolPad([FromBody] RequestPadTheHamBizDTO dto)
         {
             try

@@ -7,6 +7,7 @@ using APTMentsAPI.Services.Names;
 using APTMentsAPI.Services.TheHamBizService;
 using APTMentsAPI.SignalRHub;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.AspNetCore.StaticFiles;
@@ -120,7 +121,27 @@ namespace APTMentsAPI
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            //builder.Services.AddControllers();
+
+            /* 안되서 추가한부분 */
+            builder.Services
+              .AddControllers(options =>
+              {
+                  // System.Text.Json 기반 포맷터를 찾아서
+                  var jsonFormatter = options.InputFormatters
+                      .OfType<SystemTextJsonInputFormatter>()
+                      .First();
+
+                  // "application/json;charset=UTF-8" 도 허용 미디어 타입으로 추가
+                  jsonFormatter.SupportedMediaTypes
+                      .Add("application/json;charset=UTF-8");
+              })
+              .AddJsonOptions(opts =>
+              {
+                  // (선택) JSON 직렬화/역직렬화 옵션
+                  // 2. 대소문자 구분 없이 매핑
+                  opts.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+              });
 
             // Swagger 설정 추가
 #if DEBUG
