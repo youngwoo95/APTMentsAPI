@@ -44,7 +44,11 @@ namespace APTMentsAPI.Controllers.TheHanBizAPI
         /// <returns></returns>
         [HttpPost]
         [Route("api/v1/io/in")]
+<<<<<<< HEAD
         public async Task<IActionResult> InCar([FromBody] RequestInTheHamBizDTO? dto)
+=======
+        public async Task<IActionResult> InCar([FromBody] RequestInTheHamBizDTO dto)
+>>>>>>> origin/main
         {
             try
             {
@@ -79,7 +83,11 @@ namespace APTMentsAPI.Controllers.TheHanBizAPI
         /// <returns></returns>
         [HttpPatch]
         [Route("api/v1/io/out")]
+<<<<<<< HEAD
         public async Task<IActionResult> OutCar([FromBody] RequestOutTheHamBizDTO? dto)
+=======
+        public async Task<IActionResult> OutCar([FromBody] RequestOutTheHamBizDTO dto)
+>>>>>>> origin/main
         {
             try
             {
