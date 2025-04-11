@@ -379,7 +379,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
                 }
 
                 var pageView = await query
-                .OrderBy(x => x.Pid)
+                .OrderByDescending(x => x.Pid)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync()
@@ -421,7 +421,6 @@ namespace APTMentsAPI.Repository.TheHamBiz
                 var model = (await Task.WhenAll(detailViewTasks)).ToList();
 
                 var totalCount = await query
-                .OrderBy(x => x.Pid)
                 .CountAsync()
                 .ConfigureAwait(false);
 
@@ -539,7 +538,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
 
 
                 var pageView = await query
-                .OrderBy(x => x.Pid)
+                .OrderByDescending(x => x.Pid)
                 .ToListAsync()
                 .ConfigureAwait(false);
 
@@ -658,7 +657,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
                     if (view.OutP != null)
                         result.Add(view.OutP);
                 }
-                result = result.OrderBy(m => m.CreateDt).ToList();
+                result = result.OrderByDescending(m => m.CreateDt).ToList();
                 return result;
             }
             catch (Exception ex)
@@ -797,7 +796,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
                 }
 
                 var pageView = await query
-                .OrderBy(m => m.Pid)
+                .OrderByDescending(m => m.Pid)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync()
@@ -963,7 +962,7 @@ namespace APTMentsAPI.Repository.TheHamBiz
                 }
 
                 var pageView = await query
-                    .OrderBy(m => m.Pid)
+                    .OrderByDescending(m => m.Pid)
                     .ToListAsync()
                     .ConfigureAwait(false);
 
