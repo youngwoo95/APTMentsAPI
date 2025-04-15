@@ -1,6 +1,7 @@
 ﻿using APTMentsAPI.DBModels;
 using APTMentsAPI.DTO;
 using APTMentsAPI.DTO.APTDTO;
+using APTMentsAPI.DTO.IpDTO;
 using APTMentsAPI.DTO.PatrolDTO;
 using APTMentsAPI.DTO.ViewsDTO;
 
@@ -112,5 +113,18 @@ namespace APTMentsAPI.Repository.TheHamBiz
         /// </summary>
         /// <returns></returns>
         Task<int> SetAptNameInfoAsync(string aptName);
+
+        /// <summary>
+        /// IP 설정값 가져오기
+        /// </summary>
+        /// <returns></returns>
+        Task<Ipsetting?> GetIpAddressInfoAsync();
+
+        /// <summary>
+        /// IP 설정값 저장하기
+        /// </summary>
+        /// <param name="ipaddress"></param>
+        /// <returns></returns>
+        Task<int> SetIpAddressInfoAsync(string ipaddress);
     }
 }

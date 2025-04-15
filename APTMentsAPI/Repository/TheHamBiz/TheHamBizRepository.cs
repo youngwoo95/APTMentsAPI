@@ -1,4 +1,5 @@
 ﻿using APTMentsAPI.DBModels;
+using APTMentsAPI.DTO.IpDTO;
 using APTMentsAPI.DTO.PatrolDTO;
 using APTMentsAPI.DTO.ViewsDTO;
 using APTMentsAPI.Services.FileService;
@@ -1001,6 +1002,71 @@ namespace APTMentsAPI.Repository.TheHamBiz
                 LoggerService.FileLogMessage(ex.ToString());
                 return null;
             }
+        }
+
+        /// <summary>
+        /// IP 설정값 가져오기
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Ipsetting?> GetIpAddressInfoAsync()
+        {
+            try
+            {
+                var IpInfo = await Context.Ipsettings.FirstOrDefaultAsync();
+                if (IpInfo is not null)
+                    return IpInfo;
+                else
+                {
+                    return new Ipsetting
+                    {
+                        Pid = -1,
+                        IpAddress = "127.0.0.1"
+                    };
+                }
+            }
+            catch(Exception ex)
+            {
+                LoggerService.FileLogMessage(ex.ToString());
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// IP 설정하기
+        /// </summary>
+        /// <param name="ipaddress"></param>
+        /// <returns></returns>
+        public async Task<int> SetIpAddressInfoAsync(string ipaddress)
+        {
+            try
+            {
+                var IpInfo = await Context.Ipsettings.FirstOrDefaultAsync();
+                if(IpInfo == null)
+                {
+                    // 처음이니까 ADD
+                    var model = new Ipsetting
+                    {
+                        IpAddress = ipaddress
+                    };
+
+                    await Context.AddAsync(model);
+                    int result = await Context.SaveChangesAsync().ConfigureAwait(false);
+                    return result;
+                }
+                else
+                {
+                    // 처음 아니니깐 UPDATE
+                    IpInfo.IpAddress = ipaddress;
+                    Context.Update(IpInfo);
+                    int result = await Context.SaveChangesAsync().ConfigureAwait(false);
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerService.FileLogMessage(ex.ToString());
+                return -1;
+            } 
         }
     }
 }
