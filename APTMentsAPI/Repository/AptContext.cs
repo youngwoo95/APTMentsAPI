@@ -25,6 +25,8 @@ public partial class AptContext : DbContext
 
     public virtual DbSet<IoParkingviewtb> IoParkingviewtbs { get; set; }
 
+    public virtual DbSet<Ipsetting> Ipsettings { get; set; }
+
     public virtual DbSet<Patrolpadlogtb> Patrolpadlogtbs { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -286,6 +288,18 @@ public partial class AptContext : DbContext
                 .HasConstraintName("OUT_PID_202503141526");
         });
 
+        modelBuilder.Entity<Ipsetting>(entity =>
+        {
+            entity.HasKey(e => e.Pid).HasName("PRIMARY");
+
+            entity.ToTable("ipsetting");
+
+            entity.Property(e => e.Pid)
+                .HasColumnType("int(11)")
+                .HasColumnName("PID");
+            entity.Property(e => e.IpAddress).HasMaxLength(100);
+        });
+
         modelBuilder.Entity<Patrolpadlogtb>(entity =>
         {
             entity.HasKey(e => e.Pid).HasName("PRIMARY");
@@ -334,7 +348,7 @@ public partial class AptContext : DbContext
             entity.Property(e => e.PatrolRemark)
                 .HasMaxLength(255)
                 .HasComment("순찰비고")
-                .HasColumnName("PATROl_REMARK");
+                .HasColumnName("PATROL_REMARK");
             entity.Property(e => e.PatrolStartDtm)
                 .HasComment("순찰 시작 일시 (사용안함)")
                 .HasColumnType("datetime")
