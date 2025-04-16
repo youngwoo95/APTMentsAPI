@@ -2,6 +2,7 @@ using APTMentsAPI.Repository;
 using APTMentsAPI.Repository.TheHamBiz;
 using APTMentsAPI.Services.FileService;
 using APTMentsAPI.Services.Helpers;
+using APTMentsAPI.Services.IpSetting;
 using APTMentsAPI.Services.Logger;
 using APTMentsAPI.Services.Names;
 using APTMentsAPI.Services.TheHamBizService;
@@ -180,6 +181,7 @@ namespace APTMentsAPI
             builder.Services.AddTransient<ITheHamBizServices, TheHamBizServices>();
             builder.Services.AddTransient<ITheHamBizRepository, TheHamBizRepository>();
             builder.Services.AddTransient<IAptNameService, AptNameService>();
+            builder.Services.AddTransient<IIpSettingService, IpSettingService>();
             #endregion
 
             #region DB

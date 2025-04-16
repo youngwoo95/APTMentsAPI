@@ -53,7 +53,7 @@ namespace APTMentsAPI.Controllers.TheHamBizAPI
         // set
         [HttpPost]
         [Produces("application/json")]
-        [Route("v1/setIpAddress")]
+        [Route("v1/SetIpAddress")]
         public async Task<IActionResult> SetIpAddress([FromBody]IpSettingDTO dto)
         {
             try
