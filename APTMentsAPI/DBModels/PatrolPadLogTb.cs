@@ -15,7 +15,7 @@ public partial class Patrolpadlogtb
     /// <summary>
     /// 순찰 담당자 ID (사용안함)
     /// </summary>
-    public int PatrolUserId { get; set; }
+    public string PatrolUserId { get; set; } = null!;
 
     /// <summary>
     /// 순찰 담당자 이름

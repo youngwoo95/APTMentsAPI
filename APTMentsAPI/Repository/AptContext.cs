@@ -354,8 +354,9 @@ public partial class AptContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("PATROL_START_DTM");
             entity.Property(e => e.PatrolUserId)
+                .HasMaxLength(255)
+                .HasDefaultValueSql("''")
                 .HasComment("순찰 담당자 ID (사용안함)")
-                .HasColumnType("int(11)")
                 .HasColumnName("PATROL_USER_ID");
             entity.Property(e => e.PatrolUserNm)
                 .HasMaxLength(255)

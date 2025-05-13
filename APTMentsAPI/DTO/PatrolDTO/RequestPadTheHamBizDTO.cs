@@ -1,4 +1,6 @@
-﻿namespace APTMentsAPI.DTO.PatrolDTO
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace APTMentsAPI.DTO.PatrolDTO
 {
     public class RequestPadTheHamBizDTO
     {
@@ -10,7 +12,8 @@
         /// <summary>
         /// 순찰 담당자 ID
         /// </summary>
-        public int PATROL_USER_ID { get; set; }
+        [Required]
+        public string PATROL_USER_ID { get; set; } = null!;
 
         /// <summary>
         /// 순찰 담당자 이름
