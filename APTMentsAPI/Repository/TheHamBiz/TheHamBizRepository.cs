@@ -812,7 +812,8 @@ namespace APTMentsAPI.Repository.TheHamBiz
                     item.parkId = views.ParkId; // 주차장ID ( 필수)
                     item.patrolUserNm = views.PatrolUserNm; // 순찰 담당자 이름 (필수)
                     item.patrolDtm = views.PatrolDtm; // 순찰 일시(필수)
-                    item.patrolCode = views.PatrolCode; // 순찰 상태 코드
+                    item.IoTicketTP = views.IoTicketTp; // 차량 구분
+                    item.patrolCD = views.PatrolCd; // 순찰 상태 코드
                     item.patrolName = views.PatrolName; // 순찰 상태명
                     item.carNum = views.CarNum; // 차량번호 (필수)
                     item.patrolImg = views.PatrolImg; // 순찰 이미지 (필수아님)
@@ -976,7 +977,8 @@ namespace APTMentsAPI.Repository.TheHamBiz
                     item.parkId = views.ParkId; // 주차장ID ( 필수)
                     item.patrolUserNm = views.PatrolUserNm; // 순찰 담당자 이름 (필수)
                     item.patrolDtm = views.PatrolDtm; // 순찰 일시(필수)
-                    item.patrolCode = views.PatrolCode; // 순찰 상태 코드
+                    item.IoTicketTP = views.IoTicketTp; // 차량 구분
+                    item.patrolCD = views.PatrolCd; // 순찰 상태 코드
                     item.patrolName = views.PatrolName; // 순찰 상태명
                     item.carNum = views.CarNum; // 차량번호 (필수)
                     item.patrolImg = views.PatrolImg; // 순찰 이미지 (필수아님)

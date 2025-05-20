@@ -217,7 +217,8 @@ namespace APTMentsAPI.Services.TheHamBizService
                         PatrolEndDtm = DateTime.Parse(dto.PATROL_END_DTM), // (필수값) 순찰 종료 일시
                         TotCnt = dto.TOT_CNT, // 전체 데이터 개수
                         PatrolDtm = DateTime.Parse(dto.PAY_LOAD[i].PATROL_DTM!), // (필수값) 순찰 일시
-                        PatrolCode = dto.PAY_LOAD[i].PATROL_CODE, // (필수값) 순찰 상태 코드 0: 정상(입주민), 1: 방문객, 2: 순찰, 3: 위반(블랙리스트)
+                        IoTicketTp = dto.PAY_LOAD[i].IO_TICKET_TP, // (필수값) 차량 구분 2. 방문차량, 6. 정기차량
+                        PatrolCd = dto.PAY_LOAD[i].PATROL_CD, // (필수값) 1. 순찰, 2. 위반 (블랙리스트)
                         PatrolName = dto.PAY_LOAD[i].PATROL_NAME, // 순찰 상태 명
                         CarNum = dto.PAY_LOAD[i].CAR_NUM!, //  (필수값) 차량 번호
                         PatrolImg = dto.PAY_LOAD[i].PATROL_IMG, // 순찰 이미지

@@ -23,10 +23,16 @@
         public DateTime patrolDtm { get; set; }
 
         /// <summary>
-        /// 순찰 상태 코드 (필수)
-        /// 0: 정상(입주민), 1: 방문객, 2: 순찰, 3: 위반(블랙리스트)
+        /// 차량 구분
+        /// 2. 방문차량, 6. 정기차량
         /// </summary>
-        public int patrolCode { get; set; }
+        public string? IoTicketTP { get; set; }
+
+        /// <summary>
+        /// 순찰 상태 코드 (필수)
+        /// 1. 순찰, 2. 위반
+        /// </summary>
+        public int patrolCD { get; set; }
 
         /// <summary>
         /// 순찰 상태명 (필수아님)

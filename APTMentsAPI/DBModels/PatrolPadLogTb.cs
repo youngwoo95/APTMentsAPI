@@ -43,9 +43,14 @@ public partial class Patrolpadlogtb
     public DateTime PatrolDtm { get; set; }
 
     /// <summary>
-    /// 순찰 상태 코드 1: 위반(블랙리스트), 2: 정상(입주민), 3: 방문객(현장), 4:방문객(예약)
+    /// 차량 구분 2. 방문차량, 6. 정기차량
     /// </summary>
-    public int PatrolCode { get; set; }
+    public string IoTicketTp { get; set; } = null!;
+
+    /// <summary>
+    /// 순찰 코드 1. 순찰, 2.위반(블랙리스트)
+    /// </summary>
+    public int PatrolCd { get; set; }
 
     /// <summary>
     /// 순찰상태명

@@ -48,9 +48,14 @@ namespace APTMentsAPI.DTO.PatrolDTO
         public string? PATROL_DTM { get; set; }
 
         /// <summary>
-        /// 순찰 상태 코드 0: 정상(입주민), 1: 방문객, 2: 순착, 3:위반 (블랙리스트)
+        /// 차량 구분 2. 방문차량 6. 정기차량
         /// </summary>
-        public int PATROL_CODE { get; set; }
+        public string IO_TICKET_TP { get; set; } = null!;
+
+        /// <summary>
+        /// 순찰 코드 1. 순찰, 2. 위반(블랙리스트)
+        /// </summary>
+        public int PATROL_CD { get; set; }
 
         /// <summary>
         /// 순찰 상태 명

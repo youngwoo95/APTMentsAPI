@@ -321,14 +321,18 @@ public partial class AptContext : DbContext
                 .HasComment("시스템 생성시간")
                 .HasColumnType("datetime")
                 .HasColumnName("CREATE_DT");
+            entity.Property(e => e.IoTicketTp)
+                .HasMaxLength(50)
+                .HasComment("차량 구분 2. 방문차량, 6. 정기차량")
+                .HasColumnName("IO_TICKET_TP");
             entity.Property(e => e.ParkId)
                 .HasMaxLength(255)
                 .HasComment("주차장 ID")
                 .HasColumnName("PARK_ID");
-            entity.Property(e => e.PatrolCode)
-                .HasComment("순찰 상태 코드 1: 위반(블랙리스트), 2: 정상(입주민), 3: 방문객(현장), 4:방문객(예약)")
+            entity.Property(e => e.PatrolCd)
+                .HasComment("순찰 코드 1. 순찰, 2.위반(블랙리스트)")
                 .HasColumnType("int(11)")
-                .HasColumnName("PATROL_CODE");
+                .HasColumnName("PATROL_CD");
             entity.Property(e => e.PatrolDtm)
                 .HasComment("순찰일시")
                 .HasColumnType("datetime")
@@ -354,8 +358,8 @@ public partial class AptContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("PATROL_START_DTM");
             entity.Property(e => e.PatrolUserId)
-                .HasMaxLength(255)
-                .HasDefaultValueSql("''")
+                .HasMaxLength(50)
+                .HasDefaultValueSql("'0'")
                 .HasComment("순찰 담당자 ID (사용안함)")
                 .HasColumnName("PATROL_USER_ID");
             entity.Property(e => e.PatrolUserNm)
